@@ -1,6 +1,6 @@
-import { Box, Button, Container, Typography } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Box, Container, Typography } from "@mui/material";
 import heroImg from '../hero-image.svg';
+import UniversalButton from "./UniversalButton";
 
 export default function Hero() {
   return (
@@ -50,33 +50,20 @@ export default function Hero() {
             </Typography>
         </Box>
         <Box sx={{ display: "flex", gap: 2, maxWidth: "500px", ml: "-20px"}}>
-            <Button component={Link} to = "/owner" sx={
-                {   color: "white", 
-                    textTransform: "none", 
-                    backgroundColor: "#F1D77A", 
-                    borderRadius: 20, px: 6, py: 1, 
-                    marginRight: 2 , 
-                }}>
-                <Typography sx ={{fontWeight: 700, color: "#373721" }}>
-                    Είμαι ιδιοκτήτης
-                </Typography>
-                
-                </Button>
+            <UniversalButton 
+                text="Είμαι ιδιοκτήτης" 
+                path="/owner" 
+                bgColor="#F1D77A" 
+                textColor="#373721" 
+            />
 
-            <Button component={Link} to = "/vet" sx={
-                { 
-                    color: "white", 
-                    textTransform: "none", 
-                    backgroundColor: "#6C6D49", 
-                    borderRadius: 20, 
-                    px: 6, py: 1, 
-                    marginRight: 2,
-                }}>
-                <Typography sx ={{fontWeight: 700, color: "#ffffffff" }}>
-                    Είμαι κτηνίατρος
-                </Typography>
-                
-                </Button>
+            {/* 2. Κουμπί Κτηνιάτρου */}
+            <UniversalButton 
+                text="Είμαι κτηνίατρος" 
+                path="/vet" 
+                bgColor="#6C6D49" 
+                textColor="#ffffff" 
+            />
             </Box>
       </Container>
     </Box>
