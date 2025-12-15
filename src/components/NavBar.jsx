@@ -212,7 +212,7 @@ function NavBar() {
             >
               <MenuItem onClick={handleVetClose} component={Link} to ="/vet" >Δυνατότητες</MenuItem>
               <MenuItem onClick={handleVetClose}>Διαχείριση Ζώων</MenuItem>
-              <MenuItem onClick={handleVetClose}>Διαζχείριση Ραντεβού</MenuItem>
+              <MenuItem onClick={handleVetClose}>Διαχείριση Ραντεβού</MenuItem>
               <MenuItem onClick={handleVetClose}>Το προφίλ μου</MenuItem>
             </Menu>
           <Button

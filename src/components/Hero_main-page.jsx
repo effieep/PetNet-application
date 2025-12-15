@@ -46,7 +46,7 @@ export default function Hero() {
             </Typography>
 
             <Typography variant="h5" sx={{ textAlign: "center", maxWidth: "500px", mb: 5 }}>
-            Η παλτφόρμα που συνδέει άμεσα τα κατοικίδια με τους κτηνίατρους!
+            Η πλατφόρμα που συνδέει άμεσα τα κατοικίδια με τους κτηνίατρους!
             </Typography>
         </Box>
         <Box sx={{ display: "flex", gap: 2, maxWidth: "500px", ml: "-20px"}}>
