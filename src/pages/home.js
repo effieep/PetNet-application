@@ -1,12 +1,28 @@
+import { useSearchParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import HeroMain from '../components/Hero_main-page';
 import OurButton from '../components/UniversalButton';
+import LoginDialog from '../components/login';
 import "./styles/home.css";
 
 const Home = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [loginOpen, setLoginOpen] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get("login") === "true") {
+      setLoginOpen(true);
+
+      // optional: clean URL after opening
+      searchParams.delete("login");
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   return (
       <>
       <HeroMain />
+      <LoginDialog open={loginOpen} onClose={() => setLoginOpen(false)} />
       <section className="how-wrapper">
         <h2 className="title">Βρες Κτηνίατρο εύκολα και γρήγορα</h2>
 

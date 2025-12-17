@@ -1,47 +1,61 @@
 import React, { useState } from 'react';
-import { 
-  Stepper, Step, StepLabel, Button, Typography, Box, Paper, TextField, 
-  FormControl, RadioGroup, FormControlLabel, Radio, Grid, Divider 
-} from '@mui/material';
-
-// --- ΤΑ ΒΗΜΑΤΑ ---
-const steps = [
-  'Κατηγορία Χρήστη', 
-  'Προσωπικά Στοιχεία', 
-  'Κωδικός', 
-  'Επιβεβαίωση', 
-  'Σύνοψη'
-];
+import { Collapse } from "@mui/material";
+import { SwitchTransition } from "react-transition-group";
+import UniversalButton from '../components/UniversalButton';
+import { Stepper, Step, StepLabel, Button, Typography, Box, Paper, TextField, Grid, Divider } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 // ==============================================
 // SUB-COMPONENTS (ΤΟ ΠΕΡΙΕΧΟΜΕΝΟ ΤΩΝ ΒΗΜΑΤΩΝ)
 // ==============================================
 
+const RoleOption = ({ label, selected, onClick }) => (
+  <Box
+    onClick={onClick}
+    sx={{
+      px: 4,
+      py: 2,
+      borderRadius: 2,
+      border: "2px solid",
+      borderColor: selected ? "#7a7b4a" : "#ddd",
+      cursor: "pointer",
+      fontWeight: 600,
+      bgcolor: selected ? "rgba(122,123,74,0.1)" : "transparent",
+      transform: selected ? "scale(1.05)" : "scale(1)",
+      transition: "all 0.3s ease",
+      "&:hover": {
+        borderColor: "#7a7b4a",
+      },
+    }}
+  >
+    {label}
+  </Box>
+);
+
 const StepCategory = ({ formData, setFormData }) => (
-  <Box sx={{ textAlign: 'center', mt: 2 }}>
-    <Typography variant="h6" gutterBottom>Επιλέξτε την ιδιότητά σας</Typography>
-    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
-      <FormControl component="fieldset">
-        <RadioGroup
-          row
-          name="userType"
-          value={formData.userType}
-          onChange={(e) => setFormData({ ...formData, userType: e.target.value })}
-        >
-          <FormControlLabel value="owner" control={<Radio />} label="Ιδιοκτήτης Ζώου" sx={{ mr: 4 }} />
-          <FormControlLabel value="vet" control={<Radio />} label="Κτηνίατρος" />
-        </RadioGroup>
-      </FormControl>
+  <Box sx={{ textAlign: "center", mt: 3 }}>
+    <Typography variant="h6">Επιλέξτε την ιδιότητά σας</Typography>
+    <Box sx={{ display: "flex", justifyContent: "center", gap: 3, mt: 3 }}>
+      <RoleOption
+        label="Ιδιοκτήτης Ζώου"
+        selected={formData.userType === "owner"}
+        onClick={() => setFormData({ ...formData, userType: "owner" })}
+      />
+      <RoleOption
+        label="Κτηνίατρος"
+        selected={formData.userType === "vet"}
+        onClick={() => setFormData({ ...formData, userType: "vet" })}
+      />
     </Box>
   </Box>
 );
 
 const StepPersonalDetails = ({ formData, setFormData }) => (
   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-     {/* Γ. ΣΤΟΙΧΕΙΑ ΚΤΗΝΙΑΤΡΟΥ */}
+     {/* Γ. ΠΡΟΣΩΠΙΚΑ ΣΤΟΙΧΕΙΑ */}
     {(
       <Box>
-        <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#9a9b6a', mb: 1 }}>Προσωπικά στοιχεία</Typography>
+        <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#9a9b6a', mb: 2 }}>Προσωπικά στοιχεία</Typography>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6}>
             <TextField 
@@ -66,7 +80,7 @@ const StepPersonalDetails = ({ formData, setFormData }) => (
     )}
     {/* Α. ΣΤΟΙΧΕΙΑ ΚΑΤΟΙΚΙΑΣ */}
     <Box>
-      <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#9a9b6a', mb: 1 }}>Στοιχεία Κατοικίας</Typography>
+      <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#9a9b6a', mb: 2 }}>Στοιχεία Κατοικίας</Typography>
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
           <TextField 
@@ -85,7 +99,7 @@ const StepPersonalDetails = ({ formData, setFormData }) => (
     <Divider />
     {/* Β. ΣΤΟΙΧΕΙΑ ΕΠΙΚΟΙΝΩΝΙΑΣ */}
     <Box>
-      <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#9a9b6a', mb: 1 }}>Στοιχεία Επικοινωνίας</Typography>
+      <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#9a9b6a', mb: 2 }}>Στοιχεία Επικοινωνίας</Typography>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <TextField 
@@ -101,8 +115,6 @@ const StepPersonalDetails = ({ formData, setFormData }) => (
         </Grid>
       </Grid>
     </Box>
-    <Divider />
-   
   </Box>
 );
 
@@ -112,7 +124,7 @@ const StepVetProfessional = ({ formData, setFormData }) => (
 
     {/* Α. ΠΛΗΡΟΦΟΡΙΕΣ ΕΜΠΕΙΡΙΑΣ */}
     <Box>
-      <Typography variant="h6" sx={{ color: '#1565c0', fontWeight: 'bold', mb: 2 }}>
+      <Typography variant="h6" sx={{ color: '#9a9b6a', fontWeight: 'bold', mb: 2 }}>
         Πληροφορίες εμπειρίας
       </Typography>
       <Grid container spacing={2}>
@@ -135,7 +147,6 @@ const StepVetProfessional = ({ formData, setFormData }) => (
         <Grid item xs={12} sm={6}>
           <TextField fullWidth label="Αριθμός Μητρώου Π.Κ.Σ." size="small" 
             value={formData.registryNum} onChange={(e) => setFormData({...formData, registryNum: e.target.value})} 
-            helperText="Ο Α.Μ. Π.Κ.Σ. πρέπει να περιέχει μόνο ψηφία"
             FormHelperTextProps={{ sx: { color: 'red' } }} 
           />
         </Grid>
@@ -150,7 +161,7 @@ const StepVetProfessional = ({ formData, setFormData }) => (
 
     {/* Β. ΠΛΗΡΟΦΟΡΙΕΣ ΙΑΤΡΕΙΟΥ ΕΡΓΑΣΙΑΣ */}
     <Box>
-      <Typography variant="h6" sx={{ color: '#1565c0', fontWeight: 'bold', mb: 2 }}>
+      <Typography variant="h6" sx={{ color: '#9a9b6a', fontWeight: 'bold', mb: 2 }}>
         Πληροφορίες ιατρείου εργασίας
       </Typography>
       <Grid container spacing={2}>
@@ -231,7 +242,6 @@ export default function SignUpStepper() {
   };
 
   const getStepContent = (stepIndex) => {
-    // ΑΝ ΕΙΝΑΙ ΙΔΙΟΚΤΗΤΗΣ
     if (formData.userType === 'owner') {
       switch (stepIndex) {
         case 0: return <StepCategory formData={formData} setFormData={setFormData} />;
@@ -242,12 +252,11 @@ export default function SignUpStepper() {
         default: return 'Άγνωστο';
       }
     } 
-    // ΑΝ ΕΙΝΑΙ ΚΤΗΝΙΑΤΡΟΣ
     else {
       switch (stepIndex) {
         case 0: return <StepCategory formData={formData} setFormData={setFormData} />;
-        case 1: return <StepPersonalDetails formData={formData} setFormData={setFormData} />; // Κοινά στοιχεία (Δνση, Τηλ)
-        case 2: return <StepVetProfessional formData={formData} setFormData={setFormData} />; // <-- ΤΟ ΝΕΟ ΒΗΜΑ
+        case 1: return <StepPersonalDetails formData={formData} setFormData={setFormData} />; 
+        case 2: return <StepVetProfessional formData={formData} setFormData={setFormData} />; 
         case 3: return <StepPassword formData={formData} setFormData={setFormData} />;
         case 4: return <StepConfirmation formData={formData} />;
         case 5: return <StepSummary />;
@@ -256,67 +265,171 @@ export default function SignUpStepper() {
     }
   };
 
+  const navigate = useNavigate();
+  
   return (
-    // Αυξήσαμε το maxWidth για να χωράνε άνετα δίπλα-δίπλα
-    <Paper sx={{ p: 4, maxWidth: 1100, margin: '40px auto', minHeight: '600px' }}>
-      
-      <Typography variant="h4" align="center" sx={{ mb: 5, fontWeight: 'bold', color: '#373721' }}>
-        Εγγραφή
-      </Typography>
+    <Box
+        sx={{
+            minHeight: "100vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            position: "relative",
+            px: 2,
+        }}
+    >
+        <Box sx={{ position: "absolute", top: 16, right: 16 }}>
+            <UniversalButton 
+                text="Αρχική" 
+                path="/"
+                bgColor="#aac95cff"
+                textColor='#000000ff'
+            />
+            <Button onClick={() => navigate("/?login=true")}
+                sx=
+                {{
+                backgroundColor: "#5893caff",
+                color: "#000000ff",
+                textTransform: "none",
+                textShadow: 'none',
+                fontWeight: 700,
+                borderRadius: 15, 
+                boxShadow: 'none',
 
-      {/* --- GRID LAYOUT: ΑΡΙΣΤΕΡΑ STEPPER - ΔΕΞΙΑ CONTENT --- */}
-      <Grid container spacing={4}>
-        
-        {/* ΑΡΙΣΤΕΡΗ ΣΤΗΛΗ (STEPPER) */}
-        {/* xs=12 (κινητά: όλο το πλάτος) | md=3 (pc: το 1/4 της οθόνης) */}
-        <Grid item xs={12} md={3} sx={{ borderRight: { md: '1px solid #e0e0e0' } }}>
-          <Stepper activeStep={activeStep} orientation="vertical">
-            {steps.map((label) => (
-              <Step key={label}>
-                <StepLabel>{label}</StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-        </Grid>
+                px: { xs: 3, sm: 4, md: 6 }, 
+                py: { xs: 0.5, sm: 1 }, 
+                fontSize: { xs: '0.85rem', sm: '0.9rem', md: '1rem' },
+                marginRight: 2, 
+                whiteSpace: 'nowrap', 
 
-        {/* ΔΕΞΙΑ ΣΤΗΛΗ (ΦΟΡΜΑ & ΚΟΥΜΠΙΑ) */}
-        {/* md=9 (pc: τα 3/4 της οθόνης) */}
-        <Grid item xs={12} md={9}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
-            
-            {/* 1. ΠΕΡΙΕΧΟΜΕΝΟ ΦΟΡΜΑΣ */}
-            <Box sx={{ p: 2, minHeight: '300px' }}>
-              {getStepContent(activeStep)}
-            </Box>
-
-            {/* 2. ΚΟΥΜΠΙΑ ΠΛΟΗΓΗΣΗΣ */}
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 5, pt: 2, borderTop: '1px solid #f0f0f0' }}>
-              <Button
-                disabled={activeStep === 0}
-                onClick={handleBack}
-                sx={{ color: '#555', px: 3 }}
-              >
-                Πίσω
-              </Button>
-
-              {activeStep === steps.length - 1 ? (
-                <Button variant="contained" color="success" onClick={handleSubmit} sx={{ px: 4, py: 1 }}>
-                  Ολοκλήρωση Εγγραφής
-                </Button>
-              ) : (
-                <Button 
-                  variant="contained" 
-                  onClick={handleNext} 
-                  sx={{ backgroundColor: '#F1D77A', color: 'black', fontWeight: 'bold', px: 4, py: 1 }}
+                '&:hover': {
+                    backgroundColor: "#7cb1f7ff", 
+                    boxShadow: 'grey 0px 2px 5px' 
+                }
+                }}
                 >
-                  Επόμενο
-                </Button>
-              )}
-            </Box>
-          </Box>
-        </Grid>
+                Σύνδεση
+            </Button>
+        </Box>
 
-      </Grid>
-    </Paper>
+        <Paper
+            sx={{
+            p: 4,
+            maxWidth: 1100,
+            display: "flex",
+            flexDirection: "column",
+            }}
+        >
+            <Typography variant="h4" align="center" sx={{ mb: 4, fontWeight: "bold", color: "#373721" }}>
+                Εγγραφή
+            </Typography>
+
+            <Grid container spacing={4} sx={{ flexGrow: 1 }}>
+                <Grid item xs={12} md={3} sx={{ borderRight: { md: "1px solid #e0e0e0" }, pr: { md: 2 } }}>
+                    <Stepper activeStep={activeStep} orientation="vertical"
+                    sx={{
+                        // icon (circle) smooth
+                        "& .MuiStepIcon-root": {
+                        transition: "all 250ms ease-out",
+                        },
+
+                        // label text smooth
+                        "& .MuiStepLabel-label": {
+                        transition: "color 250ms ease-out, font-weight 250ms ease-out, transform 250ms ease-out",
+                        },
+
+                        // active label “pop” a bit
+                        "& .MuiStepLabel-label.Mui-active": {
+                        fontWeight: 700,
+                        transform: "translateX(2px)",
+                        },
+
+                        // completed label style (optional)
+                        "& .MuiStepLabel-label.Mui-completed": {
+                        opacity: 0.85,
+                        },
+
+                        // connector line smooth (vertical line)
+                        "& .MuiStepConnector-line": {
+                        transition: "border-color 250ms ease-out",
+                        },
+                    }}
+                    >
+                        {[
+                        "Κατηγορία Χρήστη",
+                        "Προσωπικά Στοιχεία",
+                        ...(formData.userType === "vet" ? ["Στοιχεία Κτηνιάτρου"] : []),
+                        "Κωδικός",
+                        "Επιβεβαίωση",
+                        "Σύνοψη",
+                        ].map((label) => (
+                        <Step key={label}>
+                            <StepLabel>{label}</StepLabel>
+                        </Step>
+                        ))}
+                    </Stepper>
+                </Grid>
+
+                <Grid
+                item
+                xs={12}
+                md={9}
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    flexGrow: 1,
+                    alignItems: "center",
+                }}
+                >
+                {/* CONTENT AREA: not vertically centered (less “empty space” feeling) */}
+                <Box sx={{ width: "100%", px: 2, pt: 2}}>
+                    <SwitchTransition mode="out-in">
+                        <Collapse
+                        key={activeStep}
+                        in
+                        timeout={300}
+                        easing={{ enter: "ease-out", exit: "ease-in" }}
+                        >
+                            <Box sx={{ width: "100%", maxWidth: 520 }}>
+                                {getStepContent(activeStep)}
+                            </Box>
+                        </Collapse>
+                    </SwitchTransition>
+                </Box>
+
+                {/* BUTTONS always at bottom */}
+                <Box sx={{ flexGrow: 1 }} />
+
+                <Box
+                    sx={{
+                    width: "100%",
+                    maxWidth: 520,
+                    mt: 2,
+                    pt: 2,
+                    borderTop: "1px solid #f0f0f0",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    px: 2,
+                    pb: 1,
+                    }}
+                >
+                    <Button disabled={activeStep === 0} onClick={handleBack} sx={{ color: "#000000ff", outline: "solid 1px #000000ff", px: 4}}>
+                    ΠΙΣΩ
+                    </Button>
+                    
+                    {(activeStep === 4 && formData.userType === 'owner') || (activeStep === 5 && formData.userType === 'vet') ? (
+                    <Button variant="contained" color="success" onClick={handleSubmit} sx={{ px: 4, py: 1, fontWeight: "bold" }}>
+                        ΟΛΟΚΛΗΡΩΣΗ
+                    </Button>
+                    ) : (
+                    <Button variant="contained" onClick={handleNext} sx={{ px: 4, py: 1, fontWeight: "bold" }}>
+                        ΕΠΟΜΕΝΟ
+                    </Button>
+                    )}
+                </Box>
+                </Grid>
+            </Grid>
+        </Paper>
+    </Box>
   );
 }
