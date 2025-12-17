@@ -1,13 +1,12 @@
 {
-    "users":[
+    "users":
+    [ 
         {
-            "id" : 1, "name": "John"
-        },
-        {
-            "id": 2, "name": "Mary"
-        },
-        { 
-            "id": 3, "name": "Alice"
+            "id": 1,
+            "name": "owner1",
+            "email": "owner1@example.com",
+            "password": "password123",
+            "role": "owner"
         }
     ]
 }

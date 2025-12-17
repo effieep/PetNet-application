@@ -8,9 +8,15 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { Link } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
+import LoginDialog from "../components/login.js";
+
 
 function NavBar() {
 
+
+  const { user, isLoggedIn, logout } = useAuth();
+  const [loginOpen, setLoginOpen] = React.useState(false);
   const [ownerAnchorEl, setOwnerAnchorEl] = React.useState(null);
   const [vetAnchorEl, setVetAnchorEl] = React.useState(null);
 
@@ -55,18 +61,83 @@ function NavBar() {
           
 
           {/* AUTH BUTTONS */}
-          <Box sx={{ flexGrow: 1 , alignItems: 'right', display: 'flex', justifyContent: 'flex-end' }}> 
-            <Button sx={{ color: "white", textTransform: "none", backgroundColor: "#F1D77A", borderRadius: 20, px: 4, py: 1, marginRight: 2 }}>
-              <Typography sx ={{fontWeight: 700, color: "#373721" }}>
-                Σύνδεση
-              </Typography>
-              
-            </Button>
-            <Button variant="contained" sx={{ ml: 1, textTransform: "none", backgroundColor: "#3f4143ff", borderRadius: 20, px: 4, py: 1  }}>
-              <Typography sx ={{fontWeight: 700, color: "white" }}>
-              Εγγραφή
-              </Typography>
-            </Button>
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "center",
+            }}
+          >
+            {!isLoggedIn ? (
+              <>
+                {/* LOGIN */}
+                <Button
+                  onClick={() => setLoginOpen(true)}
+                  sx={{
+                    color: "white",
+                    textTransform: "none",
+                    backgroundColor: "#F1D77A",
+                    borderRadius: 20,
+                    px: 4,
+                    py: 1,
+                    mr: 2,
+                    transition: "background-color 0.25s ease",
+                    "&:hover": { backgroundColor: "#e6c85f" },
+                  }}
+                >
+                  <Typography sx={{ fontWeight: 700, color: "#373721" }}>
+                    Σύνδεση
+                  </Typography>
+                </Button>
+                <LoginDialog open={loginOpen} onClose={() => setLoginOpen(false)} />
+
+
+                {/* SIGNUP */}
+                <Button
+                  component={Link}
+                  to="/signup"
+                  variant="contained"
+                  sx={{
+                    textTransform: "none",
+                    backgroundColor: "#3f4143ff",
+                    borderRadius: 20,
+                    px: 4,
+                    py: 1,
+                  }}
+                >
+                  <Typography sx={{ fontWeight: 700, color: "white" }}>
+                    Εγγραφή
+                  </Typography>
+                </Button>
+              </>
+            ) : (
+              <>
+                {/* USER INFO */}
+                <Typography sx={{ color: "white", mr: 2 }}>
+                  Γεια, {user.name}
+                </Typography>
+
+                {/* LOGOUT */}
+                <Button
+                  onClick={logout}
+                  sx={{
+                    textTransform: "none",
+                    backgroundColor: "#F1D77A",
+                    borderRadius: 20,
+                    px: 4,
+                    py: 1,
+                    "&:hover": {
+                      backgroundColor: "#e6c85f",
+                    },
+                  }}
+                >
+                  <Typography sx={{ fontWeight: 700, color: "#373721" }}>
+                    Αποσύνδεση
+                  </Typography>
+                </Button>
+              </>
+            )}
           </Box>
         </Toolbar>
       </AppBar>
