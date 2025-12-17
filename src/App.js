@@ -7,6 +7,7 @@ import Vet from './pages/vet.js';
 import LostFound from './pages/lost_found.js';
 import Help from './pages/help.js';
 import Profile from './pages/profile.js';
+import SignUp from './pages/signup.js';
 import Error404 from './pages/404.js';
 
 
@@ -22,6 +23,7 @@ function App() {
         <Route path="/lost-found" element={<LostFound />} />
         <Route path="/help" element={<Help />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/signup" element={<SignUp />} />
         <Route path="*" element={<Error404 />} />
       </Routes>
       </>

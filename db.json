@@ -1,12 +1,18 @@
 {
-    "users":
-    [ 
-        {
-            "id": 1,
-            "name": "owner1",
-            "email": "owner1@example.com",
-            "password": "password123",
-            "role": "owner"
-        }
-    ]
+  "users": [
+    {
+      "id": 1,
+      "name": "owner1",
+      "email": "owner1@example.com",
+      "password": "password123",
+      "role": "owner"
+    },
+    {
+      "id": "c725",
+      "name": "Orestyawsd",
+      "email": "adawdawd@awdadawdwad",
+      "password": "1234",
+      "role": "owner"
+    }
+  ]
 }
