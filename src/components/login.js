@@ -14,9 +14,9 @@ import { useAuth } from "../auth/AuthContext"; // <-- adjust path if needed
 export default function LoginDialog({ open, onClose }) {
   const { login } = useAuth(); // ✅ from AuthContext (talks to db.json via json-server)
 
-  const [email, setEmail] = useState(""); // can be email for now
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState(null); // can be email for now
+  const [password, setPassword] = useState(null);
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
@@ -83,8 +83,8 @@ export default function LoginDialog({ open, onClose }) {
       <DialogActions
         sx={{ padding: 3, justifyContent: "center", backgroundColor: "#f9f9f9" }}
       >
-        <Button onClick={onClose} sx={{ color: "gray", mr: 2 }}>
-          Ακύρωση
+        <Button onClick={onClose} sx={{ color: "#373721", mr: 2, backgroundColor: "#e2824bff", px: 4, fontWeight: "bold" }} variant="outlined">
+          ΑΚΥΡΩΣΗ
         </Button>
 
         <Button
@@ -99,7 +99,7 @@ export default function LoginDialog({ open, onClose }) {
             "&:hover": { backgroundColor: "#e6c85f" },
           }}
         >
-          {loading ? "..." : "Είσοδος"}
+          {loading ? "..." : "ΣΥΝΔΕΣΗ"}
         </Button>
       </DialogActions>
     </Dialog>

@@ -34,13 +34,16 @@ export function AuthProvider({ children }) {
   };
 
   const login = async ({ email, password }) => {
+    if (!email || !password) {
+      throw new Error("Παρακαλώ συμπληρώστε όλα τα πεδία.");
+    }
     const res = await fetch(
       `${API_URL}/users?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
     );
     if (!res.ok) throw new Error("Login failed");
 
     const users = await res.json();
-    if (users.length !== 1) throw new Error("Invalid credentials");
+    if (users.length !== 1) throw new Error("Λάθος στοιχεία σύνδεσης.");
 
     setUser(users[0]);
     localStorage.setItem("auth_user", JSON.stringify(users[0]));
