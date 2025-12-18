@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import { Collapse } from "@mui/material";
 import { SwitchTransition } from "react-transition-group";
 import UniversalButton from '../components/UniversalButton';
 import { Stepper, Step, StepLabel, Button, Typography, Box, Paper, TextField, Grid, Divider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
+
 // ==============================================
 // SUB-COMPONENTS (ΤΟ ΠΕΡΙΕΧΟΜΕΝΟ ΤΩΝ ΒΗΜΑΤΩΝ)
 // ==============================================
 
+
+// Επιλογή Ρόλου Ιδιοκτήτη ή Κτηνιάτρου
 const RoleOption = ({ label, selected, onClick }) => (
   <Box
     onClick={onClick}
@@ -32,27 +35,29 @@ const RoleOption = ({ label, selected, onClick }) => (
   </Box>
 );
 
-const StepCategory = ({ formData, setFormData }) => (
-  <Box sx={{ textAlign: "center", mt: 3 }}>
+// Εμφάνιση Βήματος Επιλογής Κατηγορίας Χρήστη
+const StepCategory = ({ formData, onSelectUserType }) => (
+ <Box sx={{ textAlign: "center", mt: 3 }}>
     <Typography variant="h6">Επιλέξτε την ιδιότητά σας</Typography>
     <Box sx={{ display: "flex", justifyContent: "center", gap: 3, mt: 3 }}>
       <RoleOption
         label="Ιδιοκτήτης Ζώου"
         selected={formData.userType === "owner"}
-        onClick={() => setFormData({ ...formData, userType: "owner" })}
+        onClick={() => onSelectUserType("owner")}
       />
       <RoleOption
         label="Κτηνίατρος"
         selected={formData.userType === "vet"}
-        onClick={() => setFormData({ ...formData, userType: "vet" })}
+        onClick={() => onSelectUserType("vet")}
       />
     </Box>
   </Box>
 );
 
-const StepPersonalDetails = ({ formData, setFormData }) => (
+
+const StepPersonalDetails = ({ formData, updateField, errors }) => (
   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-     {/* Γ. ΠΡΟΣΩΠΙΚΑ ΣΤΟΙΧΕΙΑ */}
+     {/* Α. ΠΡΟΣΩΠΙΚΑ ΣΤΟΙΧΕΙΑ */}
     {(
       <Box>
         <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#9a9b6a', mb: 2 }}>Προσωπικά στοιχεία</Typography>
@@ -60,57 +65,73 @@ const StepPersonalDetails = ({ formData, setFormData }) => (
           <Grid item xs={12} sm={6}>
             <TextField 
               fullWidth label="Όνομα" variant="outlined" size="small"
-              value={formData.Name} onChange={(e) => setFormData({...formData, Name: e.target.value})}
+              value={formData.personal.name} onChange={(e) => updateField("personal", "name", e.target.value)}
+              error={!!errors["personal.name"]}
+              helperText={errors["personal.name"]}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField 
               fullWidth label="Επώνυμο" variant="outlined" size="small"
-              value={formData.Surname} onChange={(e) => setFormData({...formData, Surname: e.target.value})}
+              value={formData.personal.surname} onChange={(e) => updateField("personal", "surname", e.target.value)}
+              error={!!errors["personal.surname"]}
+              helperText={errors["personal.surname"]}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField 
               fullWidth label="ΑΦΜ" variant="outlined" size="small"
-              value={formData.afm} onChange={(e) => setFormData({...formData, afm: e.target.value})}
+              value={formData.personal.afm} onChange={(e) => updateField("personal", "afm", e.target.value)}
+              error={!!errors["personal.afm"]}
+              helperText={errors["personal.afm"]}
             />
           </Grid>
         </Grid>
       </Box>
     )}
-    {/* Α. ΣΤΟΙΧΕΙΑ ΚΑΤΟΙΚΙΑΣ */}
+    {/* Β. ΣΤΟΙΧΕΙΑ ΚΑΤΟΙΚΙΑΣ */}
     <Box>
       <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#9a9b6a', mb: 2 }}>Στοιχεία Κατοικίας</Typography>
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
           <TextField 
             fullWidth label="Διεύθυνση" variant="outlined" size="small"
-            value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})}
+            value={formData.address.street} onChange={(e) => updateField("address", "street", e.target.value)}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField 
             fullWidth label="Πόλη" variant="outlined" size="small"
-            value={formData.city} onChange={(e) => setFormData({...formData, city: e.target.value})}
+            value={formData.address.city} onChange={(e) => updateField("address", "city", e.target.value)}
           />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+            <TextField 
+              fullWidth label="Τ.Κ." variant="outlined" size="small"
+              value={formData.address.postalCode} onChange={(e) => updateField("address", "postalCode", e.target.value)}
+            />
         </Grid>
       </Grid>
     </Box>
     <Divider />
-    {/* Β. ΣΤΟΙΧΕΙΑ ΕΠΙΚΟΙΝΩΝΙΑΣ */}
+    {/* Γ. ΣΤΟΙΧΕΙΑ ΕΠΙΚΟΙΝΩΝΙΑΣ */}
     <Box>
       <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#9a9b6a', mb: 2 }}>Στοιχεία Επικοινωνίας</Typography>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <TextField 
             fullWidth label="Email" variant="outlined" size="small"
-            value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})}
+            value={formData.contact.email} onChange={(e) => updateField("contact", "email", e.target.value)}
+            error={!!errors["contact.email"]}
+            helperText={errors["contact.email"]}
           />
         </Grid>
         <Grid item xs={12}>
           <TextField 
             fullWidth label="Τηλέφωνο" variant="outlined" size="small"
-            value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})}
+            value={formData.contact.phone} onChange={(e) => updateField("contact", "phone", e.target.value)}
+            error={!!errors["contact.phone"]}
+            helperText={errors["contact.phone"]}
           />
         </Grid>
       </Grid>
@@ -119,7 +140,7 @@ const StepPersonalDetails = ({ formData, setFormData }) => (
 );
 
 // Στοιχεία του Κτηνιάτρου
-const StepVetProfessional = ({ formData, setFormData }) => (
+const StepVetProfessional = ({ formData, updateField, errors }) => (
   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
 
     {/* Α. ΠΛΗΡΟΦΟΡΙΕΣ ΕΜΠΕΙΡΙΑΣ */}
@@ -129,30 +150,22 @@ const StepVetProfessional = ({ formData, setFormData }) => (
       </Typography>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <TextField fullWidth label="Ίδρυμα απόκτησης πτυχίου" size="small" 
-            value={formData.degreeInst} onChange={(e) => setFormData({...formData, degreeInst: e.target.value})} />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField fullWidth label="Ίδρυμα απόκτησης μεταπτυχιακού (Msc)" size="small" 
-            value={formData.masterInst} onChange={(e) => setFormData({...formData, masterInst: e.target.value})} />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField fullWidth label="Ίδρυμα απόκτησης διδακτορικού (Phd)" size="small" 
-            value={formData.phdInst} onChange={(e) => setFormData({...formData, phdInst: e.target.value})} />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField fullWidth label="Εξειδίκευση" size="small" 
-            value={formData.specialization} onChange={(e) => setFormData({...formData, specialization: e.target.value})} />
+          <TextField fullWidth label="Ίδρυμα Προπτυχιακού Πτυχίου" size="small" 
+          value={formData.vet.degreeInst} onChange={(e) => updateField("vet", "degreeInst", e.target.value)} 
+          error={!!errors["vet.degreeInst"]}
+          helperText={errors["vet.degreeInst"]}/>
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField fullWidth label="Αριθμός Μητρώου Π.Κ.Σ." size="small" 
-            value={formData.registryNum} onChange={(e) => setFormData({...formData, registryNum: e.target.value})} 
+            value={formData.vet.registryNum} onChange={(e) => updateField("vet", "registryNum", e.target.value)} 
             FormHelperTextProps={{ sx: { color: 'red' } }} 
+            error={!!errors["vet.registryNum"]}
+            helperText={errors["vet.registryNum"]}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TextField fullWidth label="Χρόνια άσκησης" size="small" 
-            value={formData.practiceYears} onChange={(e) => setFormData({...formData, practiceYears: e.target.value})} />
+          <TextField fullWidth label="Χρόνια εμπειρίας" size="small" 
+            value={formData.vet.practiceYears} onChange={(e) => updateField("vet", "practiceYears", e.target.value)} />
         </Grid>
       </Grid>
     </Box>
@@ -167,31 +180,41 @@ const StepVetProfessional = ({ formData, setFormData }) => (
       <Grid container spacing={2}>
         <Grid item xs={12} sm={8}>
           <TextField fullWidth label="Διεύθυνση Ιατρείου" size="small" 
-            value={formData.clinicAddress} onChange={(e) => setFormData({...formData, clinicAddress: e.target.value})} />
+            value={formData.vet.clinicAddress} onChange={(e) => updateField("vet", "clinicAddress", e.target.value)} 
+            error ={!!errors["vet.clinicAddress"]}
+            helperText={errors["vet.clinicAddress"]}/>
         </Grid>
         <Grid item xs={12} sm={4}>
           <TextField fullWidth label="Τ.Κ." size="small" 
-            value={formData.clinicZip} onChange={(e) => setFormData({...formData, clinicZip: e.target.value})} />
+            value={formData.vet.clinicZip} onChange={(e) => updateField("vet", "clinicZip", e.target.value)} 
+            error ={!!errors["vet.clinicZip"]}
+            helperText={errors["vet.clinicZip"]}/>
         </Grid>
         <Grid item xs={12}>
           <TextField fullWidth label="Πόλη" size="small" 
-            value={formData.clinicCity} onChange={(e) => setFormData({...formData, clinicCity: e.target.value})} />
+            value={formData.vet.clinicCity} onChange={(e) => updateField("vet", "clinicCity", e.target.value)} 
+            error ={!!errors["vet.clinicCity"]}
+            helperText={errors["vet.clinicCity"]}/>
         </Grid>
       </Grid>
     </Box>
   </Box>
 );
 
-const StepPassword = ({ formData, setFormData }) => (
+const StepPassword = ({ formData, updateField, errors }) => (
   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, maxWidth: '400px', margin: 'auto' }}>
     <Typography align="center" sx={{ mb: 2 }}>Ορίστε έναν ασφαλή κωδικό πρόσβασης.</Typography>
     <TextField 
       fullWidth type="password" label="Κωδικός" 
-      value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})}
+      value={formData.auth.password} onChange={(e) => updateField("auth", "password", e.target.value)}
+      error={!!errors["auth.password"]}
+      helperText={errors["auth.password"]}
     />
     <TextField 
       fullWidth type="password" label="Επιβεβαίωση Κωδικού" 
-      value={formData.confirmPassword} onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
+      value={formData.auth.confirmPassword} onChange={(e) => updateField("auth", "confirmPassword", e.target.value)}
+      error={!!errors["auth.confirmPassword"]}
+      helperText={errors["auth.confirmPassword"]}
     />
   </Box>
 );
@@ -202,12 +225,11 @@ const StepConfirmation = ({ formData }) => (
     <Paper elevation={0} sx={{ bgcolor: '#f5f5f5', p: 3, borderRadius: 2 }}>
       <ul style={{ listStyle: 'none', padding: 0, margin: 0, lineHeight: '2' }}>
         <li><strong>Τύπος:</strong> {formData.userType === 'owner' ? 'Ιδιοκτήτης' : 'Κτηνίατρος'}</li>
-        <li><strong>Όνομα:</strong> {formData.Name}</li>
-        <li><strong>Επώνυμο:</strong> {formData.Surname}</li>
-        <li><strong>Email:</strong> {formData.email}</li>
-        <li><strong>Διεύθυνση:</strong> {formData.address}, {formData.city}</li>
-        <li><strong>Τηλέφωνο:</strong> {formData.phone}</li>
-        {formData.userType === 'owner' && <li><strong>Κτηνίατρος:</strong> {formData.Name || '-'}</li>}
+        <li><strong>Όνομα:</strong> {formData.personal.name}</li>
+        <li><strong>Επώνυμο:</strong> {formData.personal.surname}</li>
+        <li><strong>Email:</strong> {formData.contact.email}</li>
+        <li><strong>Τηλέφωνο:</strong> {formData.contact.phone}</li>
+        <li><strong>Διεύθυνση:</strong> {formData.address.street}, {formData.address.city}</li>
       </ul>
     </Paper>
   </Box>
@@ -228,12 +250,160 @@ export default function SignUpStepper() {
 
   // State Δεδομένων
   const [formData, setFormData] = useState({
-    userType: 'owner',
-    address: '', city: '', email: '', phone: '', Name: '',
-    password: '', confirmPassword: ''
+    userType: "owner",
+
+    personal: {
+      name: "",
+      surname: "",
+      afm: ""
+    },
+
+    address: {
+      street: "",
+      city: "",
+      postalCode: ""
+    },
+
+    contact: {
+      email: "",
+      phone: ""
+    },
+
+    vet: {
+      degreeInst: "",
+      masterInst: "",
+      phdInst: "",
+      specialization: "",
+      registryNum: "",
+      practiceYears: "",
+      clinicAddress: "",
+      clinicZip: "",
+      clinicCity: ""
+    },
+
+    auth: {
+      password: "",
+      confirmPassword: ""
+    }
   });
 
-  const handleNext = () => setActiveStep((prev) => prev + 1);
+  //helper function to update nested form data
+  const updateField = (section, field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [field]: value
+      }
+    }));
+  };
+
+  const handleSelectUserType = (type) => {
+  setFormData(prev => ({
+    ...prev,
+    userType: type
+  }));
+
+  setActiveStep(1); // ⬅️ πάει κατευθείαν στο επόμενο step
+};
+
+
+  const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    setErrors({});
+  }, [activeStep]);
+
+
+  const validatePersonalDetails = () => {
+    const newErrors = {};
+
+    if (!formData.personal.name.trim())
+      newErrors["personal.name"] = "Το όνομα είναι υποχρεωτικό";
+
+    if (!formData.personal.surname.trim())
+      newErrors["personal.surname"] = "Το επώνυμο είναι υποχρεωτικό";
+
+    if (!formData.personal.afm.trim())
+      newErrors["personal.afm"] = "Ο ΑΦΜ είναι υποχρεωτικός";
+    else if (!/^\d+$/.test(formData.personal.afm)) {
+      newErrors["personal.afm"] = "Ο ΑΦΜ πρέπει να περιέχει μόνο αριθμούς";
+    }else if (formData.personal.afm.length !== 9) {
+      newErrors["personal.afm"] = "Ο ΑΦΜ πρέπει να έχει 9 ψηφία";
+    }
+
+    if (!formData.contact.email)
+      newErrors["contact.email"] = "Το email είναι υποχρεωτικό";
+    else if (!/\S+@\S+\.\S+/.test(formData.contact.email))
+      newErrors["contact.email"] = "Μη έγκυρο email";
+
+    if (!formData.contact.phone)
+      newErrors["contact.phone"] = "Το τηλέφωνο είναι υποχρεωτικό";
+    else if (!/^\d+$/.test(formData.contact.phone)) {
+      newErrors["contact.phone"] = "Το τηλέφωνο πρέπει να περιέχει μόνο αριθμούς";
+    }else if (formData.contact.phone.length !== 10) {
+      newErrors["contact.phone"] = "Το τηλέφωνο πρέπει να έχει 10 ψηφία";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const validatePassword = () => {
+    const newErrors = {};
+
+    if (formData.auth.password.length < 8)
+      newErrors["auth.password"] = "Τουλάχιστον 8 χαρακτήρες";
+
+    if (formData.auth.password !== formData.auth.confirmPassword)
+      newErrors["auth.confirmPassword"] = "Οι κωδικοί δεν ταιριάζουν";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const validateVetDetails = () => {
+    if (formData.userType !== "vet") return true;
+
+    const newErrors = {};
+
+    if (!formData.vet.degreeInst)
+      newErrors["vet.degreeInst"] = "Υποχρεωτικό";
+
+    if (!formData.vet.registryNum)
+      newErrors["vet.registryNum"] = "Υποχρεωτικό";
+
+    if (!formData.vet.clinicAddress)
+      newErrors["vet.clinicAddress"] = "Η διεύθυνση ιατρείου είναι υποχρεωτική";
+
+    if (!formData.vet.clinicZip)
+      newErrors["vet.clinicZip"] = "Ο Τ.Κ. ιατρείου είναι υποχρεωτικός";
+    
+    if (!formData.vet.clinicCity)
+      newErrors["vet.clinicCity"] = "Η πόλη ιατρείου είναι υποχρεωτική";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+
+
+  const handleNext = () => {
+    let isValid = true;
+
+    if (activeStep === 1) isValid = validatePersonalDetails();
+
+    if (formData.userType === "vet" && activeStep === 2)
+      isValid = validateVetDetails();
+
+    if (
+      (formData.userType === "owner" && activeStep === 2) ||
+      (formData.userType === "vet" && activeStep === 3)
+    )
+      isValid = validatePassword();
+
+    if (isValid) setActiveStep(prev => prev + 1);
+  };
+
   const handleBack = () => setActiveStep((prev) => prev - 1);
   
   const handleSubmit = () => {
@@ -244,9 +414,9 @@ export default function SignUpStepper() {
   const getStepContent = (stepIndex) => {
     if (formData.userType === 'owner') {
       switch (stepIndex) {
-        case 0: return <StepCategory formData={formData} setFormData={setFormData} />;
-        case 1: return <StepPersonalDetails formData={formData} setFormData={setFormData} />;
-        case 2: return <StepPassword formData={formData} setFormData={setFormData} />;
+        case 0: return <StepCategory formData={formData} onSelectUserType={handleSelectUserType} />;
+        case 1: return <StepPersonalDetails formData={formData} updateField={updateField} errors={errors} />;
+        case 2: return <StepPassword formData={formData} updateField={updateField} errors={errors} />;
         case 3: return <StepConfirmation formData={formData} />;
         case 4: return <StepSummary />;
         default: return 'Άγνωστο';
@@ -254,10 +424,10 @@ export default function SignUpStepper() {
     } 
     else {
       switch (stepIndex) {
-        case 0: return <StepCategory formData={formData} setFormData={setFormData} />;
-        case 1: return <StepPersonalDetails formData={formData} setFormData={setFormData} />; 
-        case 2: return <StepVetProfessional formData={formData} setFormData={setFormData} />; 
-        case 3: return <StepPassword formData={formData} setFormData={setFormData} />;
+        case 0: return <StepCategory formData={formData} onSelectUserType={handleSelectUserType} />;
+        case 1: return <StepPersonalDetails formData={formData} updateField={updateField} errors={errors} />;
+        case 2: return <StepVetProfessional formData={formData} updateField={updateField} errors={errors} />;
+        case 3: return <StepPassword formData={formData} updateField={updateField} errors={errors} />;
         case 4: return <StepConfirmation formData={formData} />;
         case 5: return <StepSummary />;
         default: return 'Άγνωστο';
@@ -278,13 +448,15 @@ export default function SignUpStepper() {
             px: 2,
         }}
     >
-        <Box sx={{ position: "absolute", top: 16, right: 16 }}>
+        <Box sx={{ position: "absolute", top: 16, left: 16 }}>
             <UniversalButton 
                 text="Αρχική" 
                 path="/"
                 bgColor="#aac95cff"
                 textColor='#000000ff'
             />
+        </Box>
+        <Box sx={{ position: "absolute", top: 16, right: 16 }}>
             <Button onClick={() => navigate("/?login=true")}
                 sx=
                 {{
@@ -360,8 +532,8 @@ export default function SignUpStepper() {
                         "Προσωπικά Στοιχεία",
                         ...(formData.userType === "vet" ? ["Στοιχεία Κτηνιάτρου"] : []),
                         "Κωδικός",
-                        "Επιβεβαίωση",
                         "Σύνοψη",
+                        "Ολοκλήρωση",
                         ].map((label) => (
                         <Step key={label}>
                             <StepLabel>{label}</StepLabel>
@@ -413,19 +585,40 @@ export default function SignUpStepper() {
                     pb: 1,
                     }}
                 >
-                    <Button disabled={activeStep === 0} onClick={handleBack} sx={{ color: "#000000ff", outline: "solid 1px #000000ff", px: 4, "&.Mui-disabled": {outline: "none"} }}>
-                    ΠΙΣΩ
-                    </Button>
-                    
-                    {(activeStep === 4 && formData.userType === 'owner') || (activeStep === 5 && formData.userType === 'vet') ? (
-                    <Button variant="contained" color="success" onClick={handleSubmit} sx={{ px: 4, py: 1, fontWeight: "bold" }}>
-                        ΟΛΟΚΛΗΡΩΣΗ
-                    </Button>
-                    ) : (
-                    <Button variant="contained" onClick={handleNext} sx={{ px: 4, py: 1, fontWeight: "bold" }}>
-                        ΕΠΟΜΕΝΟ
-                    </Button>
-                    )}
+                    {activeStep !== 0 && (
+                    <>
+                      <Button
+                        onClick={handleBack}
+                        sx={{
+                          color: "#000000ff",
+                          outline: "solid 1px #000000ff",
+                          px: 4,
+                        }}
+                      >
+                        ΠΙΣΩ
+                      </Button>
+
+                      {(activeStep === 4 && formData.userType === 'owner') ||
+                      (activeStep === 5 && formData.userType === 'vet') ? (
+                        <Button
+                          variant="contained"
+                          color="success"
+                          onClick={handleSubmit}
+                          sx={{ px: 4, py: 1, fontWeight: "bold" }}
+                        >
+                          ΟΛΟΚΛΗΡΩΣΗ
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="contained"
+                          onClick={handleNext}
+                          sx={{ px: 4, py: 1, fontWeight: "bold" }}
+                        >
+                          ΕΠΟΜΕΝΟ
+                        </Button>
+                      )}
+                    </>
+                  )}
                 </Box>
                 </Grid>
             </Grid>
@@ -433,3 +626,5 @@ export default function SignUpStepper() {
     </Box>
   );
 }
+
+

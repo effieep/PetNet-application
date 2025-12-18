@@ -83,8 +83,8 @@ export default function LoginDialog({ open, onClose }) {
       <DialogActions
         sx={{ padding: 3, justifyContent: "center", backgroundColor: "#f9f9f9" }}
       >
-        <Button onClick={onClose} sx={{ color: "#373721", mr: 2, backgroundColor: "#4b74e2ff", px: 4, fontWeight: "bold" }} variant="outlined">
-          Ακύρωση
+        <Button onClick={onClose} sx={{ color: "#373721", mr: 2, backgroundColor: "#e2824bff", px: 4, fontWeight: "bold" }} variant="outlined">
+          ΑΚΥΡΩΣΗ
         </Button>
 
         <Button
@@ -99,7 +99,7 @@ export default function LoginDialog({ open, onClose }) {
             "&:hover": { backgroundColor: "#e6c85f" },
           }}
         >
-          {loading ? "..." : "Είσοδος"}
+          {loading ? "..." : "ΣΥΝΔΕΣΗ"}
         </Button>
       </DialogActions>
     </Dialog>
