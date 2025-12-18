@@ -413,7 +413,7 @@ export default function SignUpStepper() {
                     pb: 1,
                     }}
                 >
-                    <Button disabled={activeStep === 0} onClick={handleBack} sx={{ color: "#000000ff", outline: "solid 1px #000000ff", px: 4}}>
+                    <Button disabled={activeStep === 0} onClick={handleBack} sx={{ color: "#000000ff", outline: "solid 1px #000000ff", px: 4, "&.Mui-disabled": {outline: "none"} }}>
                     ΠΙΣΩ
                     </Button>
                     
