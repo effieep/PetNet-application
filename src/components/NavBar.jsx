@@ -139,7 +139,7 @@ function NavBar() {
                   onClick={handleProfileClick}
                   sx={{
                     textTransform: "none",
-                    backgroundColor: "#A4DDA7",
+                    backgroundColor: "#1D5128",
                     borderRadius: 20,
                     px: 1,
                     py: 1,
@@ -148,7 +148,7 @@ function NavBar() {
                     },
                   }}
                   >
-                    <Typography sx={{ fontSize: "1rem", fontWeight: 700, color: "#373721" }}>
+                    <Typography sx={{ fontSize: "1rem", fontWeight: 700, color: "#A4DDA7" }}>
                       Το προφίλ μου
                     </Typography>
                     <KeyboardArrowDownIcon
@@ -195,7 +195,7 @@ function NavBar() {
                         fontWeight: 790,
                         fontSize: "1rem",
                         color: "#000000ff",
-                        backgroundColor: "#eed169ff",
+                        backgroundColor: "#b4dd8dff",
                         textAlign: "center",
                         py: 1,
                       }}
