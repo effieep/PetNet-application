@@ -9,12 +9,12 @@ import {
   Box,
   Typography,
 } from "@mui/material";
-import { useAuth } from "../auth/AuthContext"; // <-- adjust path if needed
+import { useAuth } from "../auth/AuthContext"; 
 
 export default function LoginDialog({ open, onClose }) {
-  const { login } = useAuth(); // ✅ from AuthContext (talks to db.json via json-server)
+  const { login } = useAuth(); 
 
-  const [email, setEmail] = useState(null); // can be email for now
+  const [email, setEmail] = useState(null); 
   const [password, setPassword] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
