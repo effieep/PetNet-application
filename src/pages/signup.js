@@ -2,8 +2,9 @@ import React, { useState, useEffect} from 'react';
 import { Collapse } from "@mui/material";
 import { SwitchTransition } from "react-transition-group";
 import UniversalButton from '../components/UniversalButton';
-import { Stepper, Step, StepLabel, Button, Typography, Box, Paper, TextField, Grid, Divider } from '@mui/material';
+import { Stepper, Step, StepLabel, Button, Typography, Box, Paper, TextField, Grid, Divider, MenuItem } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../auth/AuthContext';
 
 
 // ==============================================
@@ -109,6 +110,8 @@ const StepPersonalDetails = ({ formData, updateField, errors }) => (
             <TextField 
               fullWidth label="Τ.Κ." variant="outlined" size="small"
               value={formData.address.postalCode} onChange={(e) => updateField("address", "postalCode", e.target.value)}
+              error={!!errors["address.postalCode"]}
+              helperText={errors["address.postalCode"]}
             />
         </Grid>
       </Grid>
@@ -164,8 +167,27 @@ const StepVetProfessional = ({ formData, updateField, errors }) => (
           />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TextField fullWidth label="Χρόνια εμπειρίας" size="small" 
-            value={formData.vet.practiceYears} onChange={(e) => updateField("vet", "practiceYears", e.target.value)} />
+          <TextField
+            select
+            size = "small"
+            label="Χρόνια εμπειρίας"
+            value={formData.vet.practiceYears}
+            onChange={(e) =>
+              updateField("vet", "practiceYears", Number(e.target.value))
+            }
+            error={!!errors["vet.practiceYears"]}
+            helperText={errors["vet.practiceYears"]}
+            sx={{
+                minWidth: 260,
+            }}
+          >
+            <MenuItem key="0" value="0">0 (Καθόλου εμπειρία)</MenuItem>
+            {Array.from({ length: 60 }, (_, i) => (
+              <MenuItem key={i+1} value={i+1}>
+                {i+1}
+              </MenuItem>
+            ))}
+          </TextField>
         </Grid>
       </Grid>
     </Box>
@@ -229,7 +251,15 @@ const StepConfirmation = ({ formData }) => (
         <li><strong>Επώνυμο:</strong> {formData.personal.surname}</li>
         <li><strong>Email:</strong> {formData.contact.email}</li>
         <li><strong>Τηλέφωνο:</strong> {formData.contact.phone}</li>
-        <li><strong>Διεύθυνση:</strong> {formData.address.street}, {formData.address.city}</li>
+        <li><strong>Διεύθυνση:</strong> {formData.address.street}, {formData.address.city} {formData.address.postalCode} </li>
+        {formData.userType === 'vet' && (
+          <>
+            <li><strong>Ίδρυμα Πτυχίου:</strong> {formData.vet.degreeInst}</li>
+            <li><strong>Αριθμός Μητρώου Π.Κ.Σ.:</strong> {formData.vet.registryNum}</li>
+            <li><strong>Χρόνια Εμπειρίας:</strong> {formData.vet.practiceYears}</li>
+            <li><strong>Διεύθυνση Ιατρείου:</strong> {formData.vet.clinicAddress}, {formData.vet.clinicCity} {formData.vet.clinicZip}</li>
+          </>
+        )}
       </ul>
     </Paper>
   </Box>
@@ -248,6 +278,7 @@ const StepSummary = () => (
 export default function SignUpStepper() {
   const [activeStep, setActiveStep] = useState(0);
 
+  const { signup } = useAuth();
   // State Δεδομένων
   const [formData, setFormData] = useState({
     userType: "owner",
@@ -344,7 +375,14 @@ export default function SignUpStepper() {
     }else if (formData.contact.phone.length !== 10) {
       newErrors["contact.phone"] = "Το τηλέφωνο πρέπει να έχει 10 ψηφία";
     }
-
+    
+    if (!formData.address.postalCode)
+      newErrors["address.postalCode"] = "Ο Τ.Κ. είναι υποχρεωτικός";
+    else if (!/^\d+$/.test(formData.address.postalCode)) {
+      newErrors["address.postalCode"] = "Ο Τ.Κ. πρέπει να περιέχει μόνο αριθμούς";
+    }else if (formData.address.postalCode.length !== 5) {
+      newErrors["address.postalCode"] = "Ο Τ.Κ. πρέπει να έχει 5 ψηφία";
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -372,12 +410,31 @@ export default function SignUpStepper() {
 
     if (!formData.vet.registryNum)
       newErrors["vet.registryNum"] = "Υποχρεωτικό";
+    else if (!/^\d+$/.test(formData.vet.registryNum)) {
+      newErrors["vet.registryNum"] = "Πρέπει να περιέχει μόνο αριθμούς";
+    }else if (formData.vet.registryNum.length < 4 || formData.vet.registryNum.length > 6) {
+      newErrors["vet.registryNum"] = "Πρέπει να έχει από 4 έως 6 ψηφία";
+    }
 
     if (!formData.vet.clinicAddress)
       newErrors["vet.clinicAddress"] = "Η διεύθυνση ιατρείου είναι υποχρεωτική";
 
     if (!formData.vet.clinicZip)
       newErrors["vet.clinicZip"] = "Ο Τ.Κ. ιατρείου είναι υποχρεωτικός";
+    else if (!/^\d+$/.test(formData.vet.clinicZip)) {
+      newErrors["vet.clinicZip"] = "Ο Τ.Κ. πρέπει να περιέχει μόνο αριθμούς";
+    }
+    else if (formData.vet.clinicZip.length !== 5) {
+      newErrors["vet.clinicZip"] = "Ο Τ.Κ. πρέπει να έχει 5 ψηφία";
+    }
+
+    if(formData.vet.practiceYears === "")
+      newErrors["vet.practiceYears"] = "Τα χρόνια εμπειρίας είναι υποχρεωτικά";
+    else if (isNaN(formData.vet.practiceYears) || formData.vet.practiceYears < 0 || formData.vet.practiceYears > 60) {
+      newErrors["vet.practiceYears"]
+        = "Τα χρόνια εμπειρίας πρέπει να είναι αριθμός από 0 έως 60";
+    }
+
     
     if (!formData.vet.clinicCity)
       newErrors["vet.clinicCity"] = "Η πόλη ιατρείου είναι υποχρεωτική";
@@ -406,10 +463,14 @@ export default function SignUpStepper() {
 
   const handleBack = () => setActiveStep((prev) => prev - 1);
   
-  const handleSubmit = () => {
-    console.log("Final Data:", formData);
-    alert("Η εγγραφή ολοκληρώθηκε!");
-  };
+  const handleSubmit = async () => {
+  try {
+    await signup(formData);   
+    navigate("/");            
+  } catch (e) {
+    alert(e.message || "Κάτι πήγε στραβά");
+  }
+};
 
   const getStepContent = (stepIndex) => {
     if (formData.userType === 'owner') {
