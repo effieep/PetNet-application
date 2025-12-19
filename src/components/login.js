@@ -9,14 +9,14 @@ import {
   Box,
   Typography,
 } from "@mui/material";
-import { useAuth } from "../auth/AuthContext"; 
+import { useAuth } from "../auth/AuthContext";
 
 export default function LoginDialog({ open, onClose }) {
-  const { login } = useAuth(); 
+  const { login } = useAuth();
 
-  const [email, setEmail] = useState(null); 
-  const [password, setPassword] = useState(null);
-  const [error, setError] = useState(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
@@ -24,14 +24,18 @@ export default function LoginDialog({ open, onClose }) {
     setLoading(true);
 
     try {
-      await login({ email: email, password });
-
-      onClose(); 
+      await login({ email, password });
+      onClose();
     } catch (err) {
       setError(err.message || "Λάθος στοιχεία σύνδεσης.");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!loading) handleLogin();
   };
 
   return (
@@ -48,7 +52,11 @@ export default function LoginDialog({ open, onClose }) {
       </DialogTitle>
 
       <DialogContent sx={{ mt: 2 }}>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 2 }}>
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 2 }}
+        >
           <Typography variant="body1" textAlign="center">
             Συμπληρώστε τα στοιχεία σας για είσοδο.
           </Typography>
@@ -77,17 +85,30 @@ export default function LoginDialog({ open, onClose }) {
             onChange={(e) => setPassword(e.target.value)}
             autoComplete="current-password"
           />
+
+          <button type="submit" style={{ display: "none" }} />
         </Box>
       </DialogContent>
 
       <DialogActions
         sx={{ padding: 3, justifyContent: "center", backgroundColor: "#f9f9f9" }}
       >
-        <Button onClick={onClose} sx={{ color: "#373721", mr: 2, backgroundColor: "#e2824bff", px: 4, fontWeight: "bold" }} variant="outlined">
+        <Button
+          onClick={onClose}
+          sx={{
+            color: "#373721",
+            mr: 2,
+            backgroundColor: "#e2824bff",
+            px: 4,
+            fontWeight: "bold",
+          }}
+          variant="outlined"
+        >
           ΑΚΥΡΩΣΗ
         </Button>
 
         <Button
+          type="submit"
           onClick={handleLogin}
           variant="contained"
           disabled={loading}
