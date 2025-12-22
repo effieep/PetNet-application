@@ -1,8 +1,11 @@
 import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { Box, Grid } from "@mui/material";
 import HeroMain from '../components/Hero_main-page';
 import OurButton from '../components/UniversalButton';
 import LoginDialog from '../components/login';
+import InfoCard from "../components/infoCard";
+import LostFoundSection from "../components/lostAndFound";
 import "./styles/home.css";
 
 const Home = () => {
@@ -20,9 +23,53 @@ const Home = () => {
   }, [searchParams, setSearchParams]);
 
   return (
-      <>
-      <HeroMain />
-      <LoginDialog open={loginOpen} onClose={() => setLoginOpen(false)} />
+    <>
+    <HeroMain />
+    <LoginDialog open={loginOpen} onClose={() => setLoginOpen(false)} />
+    <Box
+        sx={{
+          px: 3,
+          pt: 4,   // 👈 απόσταση από hero
+          pb: 6,
+        }}
+      >
+        <Grid
+          container
+          spacing={4}
+          justifyContent="center"
+          alignItems="stretch"
+          maxWidth="lg"
+          sx={{ mx: "auto" }} 
+        >
+          <Grid item xs={16} md={6}>
+            <InfoCard
+              title="Τι δυνατότητες έχει ένας ιδιοκτήτης;"
+              items={[
+                "Προβολή ηλεκτρονικού βιβλιαρίου υγείας και στοιχείων του ζώου",
+                "Αναζήτηση κτηνιάτρου βάσει εξατομικευμένων κριτηρίων",
+                "Προγραμματισμός ραντεβού με κτηνίατρο online",
+                "Δήλωση απώλειας και εύρεσης κατοικιδίου",
+              ]}
+              titleboxcolour="#8c8d5d68"
+              boxcolour="#FFF1C2"
+            />
+          </Grid>
+
+          <Grid item xs={16} md={6}>
+            <InfoCard
+              title="Τι δυνατότητες έχει ένας κτηνίατρος;"
+              items={[
+                "Αρχικοποίηση βιβλιαρίου υγείας ζώου και καταγραφή ιατρικών πράξεων",
+                "Εγγραφή στην υπηρεσία της αναζήτησης κτηνιάτρων",
+                "Προβολή αξιολογήσεων και πλήρης διαχείριση των ραντεβού του",
+                "Ιστορικό επισκέψεων και ιατρικών πράξεων για όλα τα ζώα που διαχειρίζεται",
+              ]}
+              titleboxcolour="#FFF1C2"
+              boxcolour="#8c8d5d6a"
+            />
+          </Grid>
+        </Grid>
+      </Box>
       <section className="how-wrapper">
         <h2 className="title">Βρες Κτηνίατρο εύκολα και γρήγορα</h2>
 
@@ -47,7 +94,7 @@ const Home = () => {
 
         <OurButton text="Αναζήτηση Κτηνιάτρου" path="/search" bgColor="#b0c679ff" textColor='#ffffff' />
       </section>
-
+      <LostFoundSection />
       </>
   );
 }

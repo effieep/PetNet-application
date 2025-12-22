@@ -41,15 +41,16 @@ export default function Hero() {
         <Box 
             sx={
             { display: "flex", flexDirection: "column", alignItems: "left", maxWidth: "400px" }}>
-            <Typography variant="h3" sx={{ textAlign: "center",fontWeight: "bold", mb: 4 }}>
+            <Typography variant="h3" sx={{fontSize: { xs: "25px", md: "28px", lg: "30px" }, textAlign: "center",fontWeight: "bold", mb: 4 }}>
             PetNet
             </Typography>
 
-            <Typography variant="h5" sx={{ textAlign: "center", maxWidth: "500px", mb: 5 }}>
+            <Typography variant="h5" sx={{ fontSize: { xs: "20px", md: "23px", lg: "25px" }, textAlign: "center", maxWidth: "500px", mb: 5 }}>
             Η πλατφόρμα που συνδέει άμεσα τα κατοικίδια με τους κτηνίατρους!
             </Typography>
         </Box>
         <Box sx={{ display: "flex", gap: 2, maxWidth: "500px", ml: "-20px"}}>
+            {/*1. Κουμπί Ιδιοκτήτη */}
             <UniversalButton 
                 text="Είμαι ιδιοκτήτης" 
                 path="/owner" 
