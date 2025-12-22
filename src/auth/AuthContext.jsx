@@ -13,24 +13,50 @@ export function AuthProvider({ children }) {
     if (saved) setUser(JSON.parse(saved));
   }, []);
 
-  const signup = async ({ name, email, password, role }) => {
-    // Optional: prevent duplicate emails
-    const existingRes = await fetch(`${API_URL}/users?email=${encodeURIComponent(email)}`);
+  const signup = async ( formData ) => {
+    const existingRes = await fetch(`${API_URL}/users?email=${encodeURIComponent(formData.contact.email)}`);
     const existing = await existingRes.json();
     if (existing.length > 0) throw new Error("Email already exists");
+    if( formData.userType === 'owner'){
+      const res = await fetch(`${API_URL}/users`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData.personal,
+          ...formData.contact,
+          password: formData.auth.password,
+          role: formData.userType,
+        })
+      });
 
-    const res = await fetch(`${API_URL}/users`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password, role }),
-    });
+      if (!res.ok) throw new Error("Signup failed");
+      const savedUser = await res.json();
 
-    if (!res.ok) throw new Error("Signup failed");
-    const savedUser = await res.json();
+      setUser(savedUser);
+      localStorage.setItem("auth_user", JSON.stringify(savedUser));
+      return savedUser;
+    } else {
+      const res = await fetch(`${API_URL}/users`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData.personal,
+          ...formData.contact,
+          password: formData.auth.password,
+          ...formData.vet,
+          role: formData.userType,
+        })
+      });
 
-    setUser(savedUser);
-    localStorage.setItem("auth_user", JSON.stringify(savedUser));
-    return savedUser;
+      if (!res.ok) throw new Error("Signup failed");
+      const savedUser = await res.json();
+
+      setUser(savedUser);
+      localStorage.setItem("auth_user", JSON.stringify(savedUser));
+      return savedUser;
+      
+    }
+    
   };
 
   const login = async ({ email, password }) => {

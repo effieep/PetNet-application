@@ -9,26 +9,38 @@ import Help from './pages/help.js';
 import Profile from './pages/profile.js';
 import SignUp from './pages/signup.js';
 import Error404 from './pages/404.js';
+import Footer from './components/footer.jsx';
+import { Box } from "@mui/material";
 
 function App() {
   const location = useLocation();
-  const hideNav = location.pathname === "/signup"; // add more routes if needed
+  const hideNav = location.pathname === "/signup";
 
   return (
-    <>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       {!hideNav && <NavBar />}
 
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/owner" element={<Owner />} />
-        <Route path="/vet" element={<Vet />} />
-        <Route path="/lost-found" element={<LostFound />} />
-        <Route path="/help" element={<Help />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="*" element={<Error404 />} />
-      </Routes>
-    </>
+      <Box sx={{ flex: 1 }}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/owner" element={<Owner />} />
+          <Route path="/vet" element={<Vet />} />
+          <Route path="/lost-found" element={<LostFound />} />
+          <Route path="/help" element={<Help />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="*" element={<Error404 />} />
+        </Routes>
+      </Box>
+
+      <Footer />
+    </Box>
   );
 }
 
