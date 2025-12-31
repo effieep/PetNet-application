@@ -18,8 +18,14 @@
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "json-server": "^1.0.0-beta.3"
+  },
   "scripts": {
     "start": "react-scripts start",
+    "server": "json-server --host 127.0.0.1 --port 3001 db.json",
+    "dev": "concurrently -k -n WEB,API -c blue,green \"npm start\" \"npm run server\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
