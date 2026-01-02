@@ -4,6 +4,11 @@ services:
     build: .
     ports:
       - "3000:3000"
+    environment:
+      - HOST=0.0.0.0
+      - WATCHPACK_POLLING=true
+      - CHOKIDAR_USEPOLLING=true
+      - CHOKIDAR_INTERVAL=500
     volumes:
       - .:/app
       - /app/node_modules
