@@ -95,9 +95,6 @@ export default function FoundPetRequirements({
           >
             Δήλωση εύρεσης
           </Button>
-
-          <Typography sx={{ color: "#d97706", fontSize: 14, fontWeight: 700 }}>
-          </Typography>
         </Box>
       </Box>
     </Box>
