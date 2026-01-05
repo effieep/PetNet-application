@@ -24,6 +24,7 @@ export function AuthProvider({ children }) {
         body: JSON.stringify({
           ...formData.personal,
           ...formData.contact,
+          ...formData.address,
           password: formData.auth.password,
           role: formData.userType,
         })
@@ -42,6 +43,7 @@ export function AuthProvider({ children }) {
         body: JSON.stringify({
           ...formData.personal,
           ...formData.contact,
+          ...formData.address,
           password: formData.auth.password,
           ...formData.vet,
           role: formData.userType,
