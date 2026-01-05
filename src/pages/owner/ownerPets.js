@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Card, CardContent, Typography, Button, Avatar } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Grid,  Typography, Button,  Box } from "@mui/material";
 import ProfileLayout from "../../components/profileLayout";
+import PetPreviewCard from "../../components/PetPreviewCard";
+import PetDetailsCard from "../../components/PetDetailsCard";
+import Divider from '@mui/material/Divider';
+import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
 import { useAuth } from "../../auth/AuthContext";
-import { FaCat, FaDog } from "react-icons/fa";
+
 
 const OwnerPets = () => {
   const { user, isLoggedIn } = useAuth();
