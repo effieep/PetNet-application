@@ -228,8 +228,8 @@ function NavBar() {
                     <MenuItem 
                       onClick={handleProfileClose} 
                       component={Link} 
-                      // Αν ο ρόλος είναι vet, πήγαινε στο /vetProfile, αλλιώς στο /owner/profile
-                      to={user?.role === "vet" ? "/vetProfile" : "/owner/profile"} 
+                      // Αν ο ρόλος είναι vet, πήγαινε στο /vet/info, αλλιώς στο /owner/info
+                      to={user?.role === "vet" ? "/vet/info" : "/owner/info"} 
                       sx={{ color: "#000000ff", fontWeight: 700 }}
                     >
                       Προφίλ
@@ -325,7 +325,7 @@ function NavBar() {
               <MenuItem onClick={handleOwnerClose} component={Link} to = "/owner">Δυνατότητες</MenuItem>
               <MenuItem onClick={handleOwnerClose}>Αναζήτηση Κτηνιάτρου</MenuItem>
               <MenuItem onClick={handleOwnerClose}>Χάθηκε/Βρέθηκε Ζώο</MenuItem>
-              <MenuItem onClick={handleOwnerClose} component={Link} to = "/owner/profile">Το προφίλ μου</MenuItem>
+              <MenuItem onClick={handleOwnerClose} component={Link} to = "/owner/info">Το προφίλ μου</MenuItem>
             </Menu>
           <Button
               onClick={handleVetClick}
