@@ -5,6 +5,7 @@ import { PiStethoscopeLight } from 'react-icons/pi';
 import { BsPencilSquare  } from 'react-icons/bs';
 import { MdPets } from 'react-icons/md';
 import { useNavigate } from "react-router-dom";
+import Hero from "../../components/Hero";
 
 const vivliItems = [
   "Προβολή και εκτύπωση του βιβλιάριου υγείας (περιλαμβάνει όλα τα στοιχεία του ζώου σας, microchip αριθμό, φυλή κ.α.)",
@@ -57,6 +58,7 @@ const Owner = () => {
   const navigate = useNavigate();
   return (
     <>
+        <Hero image={'/owner-hero.png'} title={"Ιδιοκτήτης κατοικιδίου"} subtitle={"Όλες οι υπηρεσίες για ιδιοκτήτες σε ένα σημείο!"} height={"50vh"}/>
         <Box sx ={{ display: "flex", gap: 30, justifyContent: "center" }}>
           <UButton 
             text="Tα κατοικίδιά μου"

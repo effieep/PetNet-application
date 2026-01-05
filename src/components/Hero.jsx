@@ -13,6 +13,8 @@ const Hero = ({ image, title, subtitle, height = "60vh" }) => {
         display: "flex",
         alignItems: "center",
         position: "relative",
+        marginBottom: 4,
+        justifyContent: "center",
       }}
     >
       {/* Overlay για καλύτερη αναγνωσιμότητα */}
