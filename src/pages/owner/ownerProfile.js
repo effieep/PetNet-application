@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography, TextField, Button, Grid, CircularProgress, Alert } from "@mui/material";
-import { useAuth } from "../auth/AuthContext";
-import ProfileLayout from "../components/profileLayout"; // Σιγουρέψου για το σωστό path
+import { useAuth } from "../../auth/AuthContext";
+import ProfileLayout from "../../components/profileLayout"; // Σιγουρέψου για το σωστό path
 
 const OwnerProfile = () => {
   const { user, isLoggedIn } = useAuth(); // Παίρνουμε τον χρήστη από το Context

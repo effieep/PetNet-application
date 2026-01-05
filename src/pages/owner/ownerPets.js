@@ -1,43 +1,9 @@
-// import React, { useState, useEffect } from "react";
-// import { Grid,  Typography } from "@mui/material";
-// import ProfileLayout from "../components/profileLayout";
-// import { useAuth } from "../auth/AuthContext";
-// import PetPreviewCard from "../components/PetPreviewCard";
-
-// const OwnerPets = () => {
-//   const { user } = useAuth();
-//   const [pets, setPets] = useState([]);
-
-//   useEffect(() => {
-//     fetch(`http://localhost:3001/pets?ownerId=${user.id}`)
-//       .then(res => res.json())
-//       .then(data => setPets(data));
-//   }, [user.id]);
-
-//   return (
-//     <ProfileLayout role="owner">
-//       <Typography variant="h5" sx={{ mb: 4, fontWeight: "bold", color: "#373721" }}>
-//         Τα κατοικίδιά μου
-//       </Typography>
-
-//       <Grid container spacing={3}>
-//         {pets.map((pet) => (
-//             <PetPreviewCard key={pet.id} pet={pet} />
-//         ))}
-//       </Grid>
-//     </ProfileLayout>
-//   );
-// };
-
-// export default OwnerPets;
-
-import React, { useState, useEffect } from 'react';
-import PetPreviewCard from '../components/petPreviewCard';
-import PetDetailsCard from '../components/PetDetailsCard';
-import { Grid, Typography, Box, Divider, Button } from '@mui/material';
-import ProfileLayout from '../components/profileLayout';
-import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
-import { useAuth } from '../auth/AuthContext';
+import React, { useState, useEffect } from "react";
+import { Grid, Card, CardContent, Typography, Button, Avatar } from "@mui/material";
+import { Link } from "react-router-dom";
+import ProfileLayout from "../../components/profileLayout";
+import { useAuth } from "../../auth/AuthContext";
+import { FaCat, FaDog } from "react-icons/fa";
 
 const OwnerPets = () => {
   const { user, isLoggedIn } = useAuth();

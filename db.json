@@ -16,6 +16,18 @@
       "phone": "6985595009",
       "password": "blablabla",
       "role": "owner"
+    },
+    {
+      "id": "c043",
+      "name": "Ορεστης",
+      "surname": "Πετο",
+      "afm": "111111111",
+      "email": "peto.orestis@gmail.com",
+      "phone": "6999999999",
+      "street": "Τεστ, 13",
+      "city": "Τεστανδρι",
+      "postalCode": "15111",
+      "role": "owner"
     }
   ],
   "pets": [
