@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Grid, Paper, Divider, CircularProgress } from '@mui/material';
+import { Box, Typography, Grid, Paper, Divider, CircularProgress, Stack} from '@mui/material';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 
 const PetDetailsCard = ({ petId }) => {
@@ -56,14 +56,16 @@ const PetDetailsCard = ({ petId }) => {
             </Box>
           </Box>
 
-          <Box sx={{ flex: 1, backgroundColor: 'rgba(255,255,255,0.2)', p: 2, borderRadius: '15px' }}>
-            <DetailRow label="Microchip:" value={pet.microchip} />
-            <DetailRow label="Είδος:" value={pet.species} />
-            <DetailRow label="Φύλο:" value={pet.gender || "Μη ορισμένο"} />
-            <DetailRow label="Φυλή:" value={pet.breed || "Ημίαιμο"} />
-            <DetailRow label="Ημερομηνία Γέννησης:" value={pet.birthDate || "-"} />
-            <DetailRow label="Βάρος:" value={pet.weight || "-"} />
-            <DetailRow label="Χρώμα:" value={pet.color || "-"} />
+          <Box sx={{ flex: 1, minWidth: '250px', backgroundColor: 'rgba(255,255,255,0.2)', p: 2, borderRadius: '15px' }}>
+            <Stack spacing={3}>
+              <DetailRow label="Microchip:" value={pet.microchip} />
+              <DetailRow label="Είδος:" value={pet.species} />
+              <DetailRow label="Φύλο:" value={pet.gender || "Μη ορισμένο"} />
+              <DetailRow label="Φυλή:" value={pet.breed || "Ημίαιμο"} />
+              <DetailRow label="Ημ/νία Γέννησης:" value={pet.birthDate || "-"} />
+              <DetailRow label="Βάρος:" value={pet.weight || "-"} />
+              <DetailRow label="Χρώμα:" value={pet.color || "-"} />
+            </Stack>
           </Box>
         </Grid>
 
@@ -72,10 +74,10 @@ const PetDetailsCard = ({ petId }) => {
         {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΣΤΟΙΧΕΙΑ ΙΔΙΟΚΤΗΤΗ */}
         <Grid item xs={12} md={4}>
           <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 3 }}>Στοιχεία Ιδιοκτήτη</Typography>
-          <OwnerField label="Ονοματεπώνυμο / Όνομα Φορέα" value={`${owner?.name} ${owner?.surname}`} />
+          <OwnerField label="Ονοματεπώνυμο" value={`${owner?.name} ${owner?.surname}`} />
           <OwnerField label="Τηλέφωνο επικοινωνίας" value={owner?.phone} />
-          <OwnerField label="email" value={owner?.email} />
-          <OwnerField label="Διεύθυνση" value={owner?.address || "Δεν έχει οριστεί"} />
+          <OwnerField label="Εmail" value={owner?.email} />
+          <OwnerField label="Διεύθυνση κατοικίας" value={owner?.street || "Δεν έχει οριστεί"} />
         </Grid>
       </Grid>
     </Paper>
