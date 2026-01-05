@@ -4,7 +4,7 @@ import { useAuth } from "../auth/AuthContext";
 import ProfileLayout from "../components/profileLayout"; // Σιγουρέψου για το σωστό path
 
 const OwnerProfile = () => {
-  const { user } = useAuth(); // Παίρνουμε τον χρήστη από το Context
+  const { user, isLoggedIn } = useAuth(); // Παίρνουμε τον χρήστη από το Context
   const [userData, setUserData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -61,7 +61,9 @@ const OwnerProfile = () => {
   if (loading) return <Box sx={{ display: 'flex', justifyContent: 'center', mt: 10 }}><CircularProgress /></Box>;
   if (error) return <Alert severity="error">{error}</Alert>;
 
-  return (
+  return ( 
+    isLoggedIn ?
+    (
     <ProfileLayout role={userData?.role || "owner"}>
       <Typography variant="h5" sx={{ mb: 4, fontWeight: "bold", color: "#373721" }}>
         Προσωπικά στοιχεία
@@ -166,6 +168,12 @@ const OwnerProfile = () => {
         )}
       </Box>
     </ProfileLayout>
+  ) :
+  (
+    <Typography variant="h6" color="error" textAlign="center" sx={{ mt: 10 }}>
+      Παρακαλώ συνδεθείτε για να δείτε το προφίλ σας.
+    </Typography>
+  )
   );
 };
 

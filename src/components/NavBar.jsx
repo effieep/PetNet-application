@@ -11,6 +11,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import LoginDialog from "../components/login.js";
+import Breadcrumbs from "../components/BreadCrumbs.jsx";
 
 
 function NavBar() {
@@ -246,7 +247,7 @@ function NavBar() {
       <AppBar
         position="static"
         sx={{
-          backgroundColor: "#f5e08a",
+          backgroundColor: "#d6c47cff",
           boxShadow: "none",
         }}
       >
@@ -418,6 +419,7 @@ function NavBar() {
             </Button>
         </Toolbar>
       </AppBar>
+      <Breadcrumbs />
     </Box>
   );
 }
