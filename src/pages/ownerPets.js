@@ -1,16 +1,51 @@
-import React, { useState, useEffect } from "react";
-import { Grid, Card, CardContent, Typography, Button, Avatar } from "@mui/material";
-import { Link } from "react-router-dom";
-import ProfileLayout from "../components/profileLayout";
-import { useAuth } from "../auth/AuthContext";
-import { FaCat, FaDog } from "react-icons/fa";
+// import React, { useState, useEffect } from "react";
+// import { Grid,  Typography } from "@mui/material";
+// import ProfileLayout from "../components/profileLayout";
+// import { useAuth } from "../auth/AuthContext";
+// import PetPreviewCard from "../components/PetPreviewCard";
+
+// const OwnerPets = () => {
+//   const { user } = useAuth();
+//   const [pets, setPets] = useState([]);
+
+//   useEffect(() => {
+//     fetch(`http://localhost:3001/pets?ownerId=${user.id}`)
+//       .then(res => res.json())
+//       .then(data => setPets(data));
+//   }, [user.id]);
+
+//   return (
+//     <ProfileLayout role="owner">
+//       <Typography variant="h5" sx={{ mb: 4, fontWeight: "bold", color: "#373721" }}>
+//         Τα κατοικίδιά μου
+//       </Typography>
+
+//       <Grid container spacing={3}>
+//         {pets.map((pet) => (
+//             <PetPreviewCard key={pet.id} pet={pet} />
+//         ))}
+//       </Grid>
+//     </ProfileLayout>
+//   );
+// };
+
+// export default OwnerPets;
+
+import React, { useState, useEffect } from 'react';
+import PetPreviewCard from '../components/PetPreviewCard';
+import PetDetailsCard from '../components/PetDetailsCard';
+import { Grid, Typography, Box, Divider, Button } from '@mui/material';
+import ProfileLayout from '../components/profileLayout';
+import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
+import { useAuth } from '../auth/AuthContext';
 
 const OwnerPets = () => {
   const { user } = useAuth();
   const [pets, setPets] = useState([]);
+  const [selectedId, setSelectedId] = useState(null);
 
   useEffect(() => {
-    fetch(`http://localhost:3001/pets?ownerId=${user.id}`)
+      fetch(`http://localhost:3001/pets?ownerId=${user.id}`)
       .then(res => res.json())
       .then(data => setPets(data));
   }, [user.id]);
@@ -21,32 +56,36 @@ const OwnerPets = () => {
         Τα κατοικίδιά μου
       </Typography>
 
+      {/* Η ΛΙΣΤΑ ΠΑΡΑΜΕΝΕΙ ΠΑΝΤΑ ΟΡΑΤΗ */}
       <Grid container spacing={3}>
         {pets.map((pet) => (
-          <Grid item xs={12} sm={6} md={4} key={pet.id}>
-            <Card sx={{ borderRadius: 4, border: "1px solid #e0e0e0", textAlign: "center", p: 2 }}>
-              <Avatar sx={{ bgcolor: "#9a9b6a", width: 60, height: 60, m: "auto", mb: 2 }}>
-                {pet.species === "Γάτα" && <FaCat />}
-                {pet.species === "Σκύλος" && <FaDog />} {/* Μπορείτε να αλλάξετε το εικονίδιο */}
-              </Avatar>
-              <CardContent>
-                <Typography variant="h6" fontWeight="bold">{pet.name}</Typography>
-                <Typography color="textSecondary">Είδος: {pet.species}</Typography>
-                <Typography variant="body2" sx={{ mt: 1 }}>Microchip: {pet.microchip}</Typography>
-                <Button 
-                  component={Link} 
-                  to={`/owner/pets/${pet.id}`} 
-                  variant="contained" 
-                  fullWidth
-                  sx={{ mt: 2, backgroundColor: "#9a9b6a" }}
-                >
-                  ΠΡΟΒΟΛΗ ΣΤΟΙΧΕΙΩΝ
-                </Button>
-              </CardContent>
-            </Card>
-          </Grid>
+          <PetPreviewCard 
+            pet={pet} 
+            onSelect={() => setSelectedId(pet.id)} 
+          />
         ))}
       </Grid>
+
+      {/* Η ΚΑΡΤΕΛΑ ΕΜΦΑΝΙΖΕΤΑΙ ΜΟΝΟ ΟΤΑΝ ΕΠΙΛΕΓΕΙ ΚΑΠΟΙΟ ΖΩΟ */}
+      {selectedId && (
+        <Box sx={{ mt: 6 }}>
+          <Divider sx={{ mb: 4, borderBottomWidth: 2 }} />
+          <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
+            Λεπτομέρειες Επιλεγμένου Ζώου
+          </Typography>
+          <Button 
+            // component={Link}
+            // to={`/owner/pets/${petId}/health`} // Δυναμικό link για το βιβλιάριο
+            variant="outlined" 
+            startIcon={<MedicalServicesIcon />}
+            sx={{ py: 2, borderRadius: '12px', borderColor: '#9a9b6a', color: '#373721' }}
+          >
+              Βιβλιάριο Υγείας
+          </Button>
+          <PetDetailsCard petId={selectedId} />
+          
+        </Box>
+      )}
     </ProfileLayout>
   );
 };

@@ -17,7 +17,7 @@ import PetsIcon from '@mui/icons-material/Pets';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import EventIcon from '@mui/icons-material/Event';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const ProfileLayout = ({ children, role }) => {
   
