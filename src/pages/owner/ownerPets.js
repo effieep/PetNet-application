@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Grid, Card, CardContent, Typography, Button, Avatar } from "@mui/material";
 import { Link } from "react-router-dom";
-import ProfileLayout from "../components/profileLayout";
-import { useAuth } from "../auth/AuthContext";
+import ProfileLayout from "../../components/profileLayout";
+import { useAuth } from "../../auth/AuthContext";
 import { FaCat, FaDog } from "react-icons/fa";
 
 const OwnerPets = () => {
