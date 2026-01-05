@@ -24,7 +24,7 @@ export function AuthProvider({ children }) {
         body: JSON.stringify({
           ...formData.personal,
           ...formData.contact,
-          ...formData.adress,
+          ...formData.address,
           role: formData.userType,
         })
       });
