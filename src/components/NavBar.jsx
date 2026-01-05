@@ -224,7 +224,15 @@ function NavBar() {
                         </Typography>
                       </Box>
                     </ListSubheader>
-                    <MenuItem onClick={handleProfileClose} component={Link} to="/profile" sx={{color: "#000000ff", fontWeight: 700}}>Προφίλ</MenuItem>
+                    <MenuItem 
+                      onClick={handleProfileClose} 
+                      component={Link} 
+                      // Αν ο ρόλος είναι vet, πήγαινε στο /vetProfile, αλλιώς στο /owner/profile
+                      to={user?.role === "vet" ? "/vetProfile" : "/owner/profile"} 
+                      sx={{ color: "#000000ff", fontWeight: 700 }}
+                    >
+                      Προφίλ
+                    </MenuItem>
                     <MenuItem onClick={logout} sx={{color: "#bb1515ff", fontWeight: 700}}>Αποσύνδεση</MenuItem>
                   </Menu>
               </Box>
@@ -316,7 +324,7 @@ function NavBar() {
               <MenuItem onClick={handleOwnerClose} component={Link} to = "/owner">Δυνατότητες</MenuItem>
               <MenuItem onClick={handleOwnerClose}>Αναζήτηση Κτηνιάτρου</MenuItem>
               <MenuItem onClick={handleOwnerClose}>Χάθηκε/Βρέθηκε Ζώο</MenuItem>
-              <MenuItem onClick={handleOwnerClose}>Το προφίλ μου</MenuItem>
+              <MenuItem onClick={handleOwnerClose} component={Link} to = "/owner/profile">Το προφίλ μου</MenuItem>
             </Menu>
           <Button
               onClick={handleVetClick}
