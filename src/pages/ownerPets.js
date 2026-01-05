@@ -6,17 +6,22 @@ import { useAuth } from "../auth/AuthContext";
 import { FaCat, FaDog } from "react-icons/fa";
 
 const OwnerPets = () => {
-  const { user } = useAuth();
+  const { user, isLoggedIn } = useAuth();
   const [pets, setPets] = useState([]);
 
   useEffect(() => {
-    fetch(`http://localhost:3001/pets?ownerId=${user.id}`)
-      .then(res => res.json())
-      .then(data => setPets(data));
-  }, [user.id]);
+  if (!isLoggedIn || !user?.id) return;
+
+  fetch(`http://localhost:3001/pets?ownerId=${user.id}`)
+    .then(res => res.json())
+    .then(data => setPets(data))
+    .catch(err => console.error(err));
+}, [isLoggedIn, user?.id]);
+
 
   return (
-    <ProfileLayout role="owner">
+    isLoggedIn ?
+    (<ProfileLayout role="owner">
       <Typography variant="h5" sx={{ mb: 4, fontWeight: "bold", color: "#373721" }}>
         Τα κατοικίδιά μου
       </Typography>
@@ -48,6 +53,11 @@ const OwnerPets = () => {
         ))}
       </Grid>
     </ProfileLayout>
+  ) : (
+    <Typography variant="h6" color="error" textAlign="center" sx={{ mt: 10 }}>
+      Παρακαλώ συνδεθείτε για να δείτε τα κατοικίδιά σας.
+    </Typography>
+  )
   );
 };
 
