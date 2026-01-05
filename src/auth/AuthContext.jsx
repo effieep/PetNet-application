@@ -25,6 +25,7 @@ export function AuthProvider({ children }) {
           ...formData.personal,
           ...formData.contact,
           ...formData.address,
+          password: formData.auth.password,
           role: formData.userType,
         })
       });
