@@ -17,6 +17,7 @@ import PetsIcon from '@mui/icons-material/Pets';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import EventIcon from '@mui/icons-material/Event';
 import SettingsIcon from '@mui/icons-material/Settings';
+import { Link} from 'react-router-dom';
 
 const ProfileLayout = ({ children, role }) => {
   
@@ -49,11 +50,32 @@ const ProfileLayout = ({ children, role }) => {
             <List>
               {menuItems.map((item) => (
                 <ListItem key={item.text} disablePadding>
-                  <ListItemButton>
-                    <ListItemIcon sx={{ minWidth: 40 }}>{item.icon}</ListItemIcon>
-                    <ListItemText primary={item.text} primaryTypographyProps={{ fontSize: '0.9rem' }} />
-                  </ListItemButton>
-                </ListItem>
+                <ListItemButton 
+                component={Link}           // 2. Κάνει το κουμπί να συμπεριφέρεται σαν Link
+                to={item.path}              // 3. Στέλνει στο path (π.χ. /owner/pets)
+                selected={window.location.pathname === item.path} // 4. Φωτίζει το κουμπί αν είμαστε σε αυτή τη σελίδα
+                sx={{
+                    "&.Mui-selected": {
+                    backgroundColor: "rgba(154, 155, 106, 0.1)",
+                    borderRight: "4px solid #9a9b6a",
+                    },
+                    "&:hover": {
+                    backgroundColor: "rgba(154, 155, 106, 0.05)",
+                    }
+                }}
+                >
+                <ListItemIcon sx={{ minWidth: 40, color: '#9a9b6a' }}>
+                    {item.icon}
+                </ListItemIcon>
+                <ListItemText 
+                    primary={item.text} 
+                    primaryTypographyProps={{ 
+                    fontSize: '0.9rem',
+                    fontWeight: window.location.pathname === item.path ? 'bold' : 'normal'
+                    }} 
+                />
+                </ListItemButton>
+            </ListItem>
               ))}
             </List>
           </Paper>

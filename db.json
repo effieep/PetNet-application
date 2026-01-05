@@ -6,6 +6,83 @@
       "email": "owner1@example.com",
       "password": "password123",
       "role": "owner"
+    },
+    {
+      "id": "u1",
+      "name": "Efthymia",
+      "surname": "Papafili",
+      "afm": "154789635",
+      "email": "epapafili2003@gmail.com",
+      "phone": "6985595009",
+      "password": "blablabla",
+      "role": "owner"
+    }
+  ],
+  "pets": [
+    {
+      "id": "p1",
+      "ownerId": "u1",
+      "name": "Ρούσκα",
+      "species": "Γάτα",
+      "breed": "Siam",
+      "microchip": "9585764839",
+      "birthDate": "2020-05-12",
+      "gender": "Θηλυκό"
+    },
+    {
+      "id": "p2",
+      "ownerId": "u1",
+      "name": "Μαξ",
+      "species": "Σκύλος",
+      "breed": "Labrador",
+      "microchip": "1234567890",
+      "birthDate": "2019-08-22",
+      "gender": "Αρσενικό"
+    },
+    {
+      "id": "p3",
+      "ownerId": "u1",
+      "name": "Λούνα",
+      "species": "Γάτα",
+      "breed": "Maine Coon",
+      "microchip": "9876543210",
+      "birthDate": "2021-03-15",
+      "gender": "Θηλυκό"
+    }
+  ],
+  "appointments": [
+    {
+      "id": "a1",
+      "ownerId": "u1",
+      "vetId": "v1",
+      "petId": "p1",
+      "date": "2024-02-15",
+      "time": "10:30",
+      "service": "Εμβολιασμός",
+      "status": "pending"
+    }
+  ],
+  "medicalRecords": [
+    {
+      "id": "m1",
+      "petId": "p1",
+      "vetId": "v1",
+      "type": "vaccine",
+      "date": "2024-01-10",
+      "title": "Εμβόλιο Λύσσας",
+      "details": "Επόμενη δόση σε 1 χρόνο",
+      "documentUrl": ""
+    }
+  ],
+  "lostFound": [
+    {
+      "id": "lf1",
+      "type": "lost",
+      "petName": "Μαξ",
+      "area": "Καλλιθέα",
+      "contactPhone": "69...",
+      "photo": "base64_string_or_url",
+      "description": "Φοράει κόκκινο περιλαίμιο"
     }
   ]
 }
