@@ -6,7 +6,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import { CiGlobe, CiCalendar   } from "react-icons/ci";
 import { MdOutlinePets } from "react-icons/md";
-import UButton from "../components/UniversalButton"; 
+import UButton from "../../components/UniversalButton"; 
 
 const managementItems = [
   "Καταχώρηση Ζώου & Βιβλιάριο: Εγγραφή ζώου και δημιουργία ηλεκτρονικού βιβλιαρίου υγείας συνδεδεμένου με τον ιδιοκτήτη.",
