@@ -15,7 +15,10 @@
       "email": "epapafili2003@gmail.com",
       "phone": "6985595009",
       "password": "blablabla",
-      "role": "owner"
+      "role": "owner",
+      "street": "Δημοσθένους 12",
+      "city": "Καλλιθέα",
+      "postalCode": "17676"
     },
     {
       "id": "c043",
@@ -24,6 +27,7 @@
       "afm": "111111111",
       "email": "peto.orestis@gmail.com",
       "phone": "6999999999",
+      "password": "123456789",
       "street": "Τεστ, 13",
       "city": "Τεστανδρι",
       "password": "123456789",
