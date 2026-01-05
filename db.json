@@ -26,6 +26,7 @@
       "phone": "6999999999",
       "street": "Τεστ, 13",
       "city": "Τεστανδρι",
+      "password": "123456789",
       "postalCode": "15111",
       "role": "owner"
     }
