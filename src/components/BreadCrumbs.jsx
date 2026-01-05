@@ -3,12 +3,16 @@ import { Link as RouterLink, useLocation } from "react-router-dom";
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
 const breadcrumbMap = {
-  owner: 'Ιδιοκτήτης',
+  owner: 'Ιδιοκτήτης/τρια',
   vet: 'Κτηνίατρος',
-  profile: 'Προφίλ',
+  info: 'Στοιχεία',
   pets: 'Κατοικίδια',
   declarations: 'Δηλώσεις',
   appointments: 'Ραντεβού',
+  'manage-pets': 'Διαχείριση Ζώων',
+  'manage-appointments': 'Διαχείριση Ραντεβού',
+  'search-vet': 'Αναζήτηση Κτηνιάτρου',
+  lost_pet: 'Xάθηκε Ζώο',
 };
 
 function AppBreadcrumbs() {

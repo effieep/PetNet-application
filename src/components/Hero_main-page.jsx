@@ -1,5 +1,4 @@
 import { Box, Container, Typography } from "@mui/material";
-import heroImg from '../hero-image.svg';
 import UniversalButton from "./UniversalButton";
 
 export default function Hero() {
@@ -8,8 +7,7 @@ export default function Hero() {
       sx={{
         width: "100%",
         height: "80vh",
-        backgroundImage:
-          `url(${heroImg})`,
+        backgroundImage: `url('/hero-image.svg')`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         maxHeight: "600px",

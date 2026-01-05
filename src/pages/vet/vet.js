@@ -1,11 +1,9 @@
 
-import { Box, Typography, Divider, Container, Grid, Avatar} from "@mui/material";
-import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
-import PublicIcon from '@mui/icons-material/Public';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
+import { Box, Typography, Divider, Container } from "@mui/material";
 import { CiGlobe, CiCalendar   } from "react-icons/ci";
-import { MdOutlinePets } from "react-icons/md";
+import { MdOutlinePets, MdPublic, MdContactPage   } from "react-icons/md";
+import {FaCheckDouble } from "react-icons/fa";
+import {CgArrowLongRight } from "react-icons/cg";
 import UButton from "../../components/UniversalButton"; 
 
 const managementItems = [
@@ -43,13 +41,13 @@ const Vet = () => {
         <Box sx ={{ display: "flex", gap: 60, justifyContent: "center" }}>
           <UButton 
             text="Διαχείριση Κατοικιδίων"
-            path="/vet/pets" 
+            path="/vet/manage-pets" 
             bgColor="#0c0c0868"
             textColor="#ffffffff"
           />
           <UButton 
             text="Διαχείριση Ραντεβού"
-            path="/vet/appointments"
+            path="/vet/manage-appointments"
             bgColor="#0c0c0868"
             textColor="#ffffffff"
           />
@@ -160,147 +158,51 @@ const Vet = () => {
       <Divider sx={{borderBottomWidth: 1, borderColor: 'black', mx: 5, my: 3}}  />
       <Typography variant="h4" align="left" sx={{mx: 3, mt : 3, fontSize: '20px', fontWeight: 'bold', color: '#42422B' }}>
         Πώς λειτουργεί;
-      </Typography>
-      <Box
-      sx={{
-        width: '100%',
-        py: 8,
-        fontFamily: 'Roboto, sans-serif',
-        color: '#000',
-      }}
-    >
-      <Container maxWidth="lg">
-        <Grid container spacing={4} alignItems="flex-start" justifyContent="center">
-          
-          {/* --- STEP 1 --- */}
-          <Grid item xs={12} md={4} sx={{ position: 'relative' }}>
-            <Box display="flex" flexDirection="column" alignItems="center">
-              {/* Icon Circle */}
-              <Avatar
-                sx={{
-                  width: 120,
-                  height: 120,
-                  bgcolor: '#DB9245', // Darker circle background
-                  mb: 3,
-                  boxShadow: 1,
-                }}
-              >
-                <AppRegistrationIcon sx={{ fontSize: 60, color: 'black' }} />
-              </Avatar>
+      </Typography> 
+      <Container sx={{ my: 4, display: 'flex', flexDirection: 'row', gap: 10, justifyContent: 'center', position: 'relative' }}>
+        <Box sx={{position: 'relative', textAlign: 'center'}}>
+          <MdContactPage  style={{ fontSize: "96px", color: "#42422B", position: "center", backgroundColor: "#DB9245", borderRadius: "50%", padding: 20 }} />
 
-              {/* Arrow Connector (Visible on Desktop only) */}
-              <Box
-                sx={{
-                  display: { xs: 'none', md: 'block' },
-                  position: 'absolute',
-                  top: 60, // Vertically center with Avatar
-                  right: -25, // Push to right edge of column
-                  zIndex: 0,
-                  transform: 'translateY(-50%)'
-                }}
-              >
-                <ArrowRightAltIcon sx={{ fontSize: 60, color: 'black' }} />
-              </Box>
-
-              {/* Text Content */}
-              <Box sx={{ width: '100%', px: 2 }}>
-                <Typography variant="h6" fontWeight="bold" gutterBottom align="left">
-                  1. Εγγραφή και Επαλήθευση Στοιχείων
-                </Typography>
-                <Typography variant="body1" gutterBottom align="left">
-                  Συμπληρώνετε τα απαραίτητα επαγγελματικά στοιχεία σας:
-                </Typography>
-                <Box component="ul" sx={{ pl: 2, mt: 1, textAlign: 'left' }}>
-                  <li><Typography variant="body2">Αριθμό Μητρώου Π.Κ.Σ.</Typography></li>
-                  <li><Typography variant="body2">Πτυχία & εξειδικεύσεις</Typography></li>
-                  <li><Typography variant="body2">Διεύθυνση ιατρείου</Typography></li>
-                </Box>
-              </Box>
-            </Box>
-          </Grid>
-
-          {/* --- STEP 2 --- */}
-          <Grid item xs={12} md={4} sx={{ position: 'relative' }}>
-            <Box display="flex" flexDirection="column" alignItems="center">
-              {/* Icon Circle */}
-              <Avatar
-                sx={{
-                  width: 120,
-                  height: 120,
-                  bgcolor: '#DB9245',
-                  mb: 3,
-                  boxShadow: 1,
-                }}
-              >
-                <PublicIcon sx={{ fontSize: 60, color: 'black' }} />
-              </Avatar>
-
-              {/* Arrow Connector (Visible on Desktop only) */}
-              <Box
-                sx={{
-                  display: { xs: 'none', md: 'block' },
-                  position: 'absolute',
-                  top: 60,
-                  right: -25,
-                  zIndex: 0,
-                  transform: 'translateY(-50%)'
-                }}
-              >
-                <ArrowRightAltIcon sx={{ fontSize: 60, color: 'black' }} />
-              </Box>
-
-              {/* Text Content */}
-              <Box sx={{ width: '100%', px: 2 }}>
-                <Typography variant="h6" fontWeight="bold" gutterBottom align="left">
-                  2. Δημιουργία Δημόσιου Προφίλ
-                </Typography>
-                <Typography variant="body1" gutterBottom align="left">
-                  Ρυθμίζετε το προφίλ σας όπως θέλετε:
-                </Typography>
-                <Box component="ul" sx={{ pl: 2, mt: 1, mb: 2, textAlign: 'left' }}>
-                  <li><Typography variant="body2">Παρουσίαση υπηρεσιών</Typography></li>
-                  <li><Typography variant="body2">Αναλυτικές σπουδές & εμπειρία</Typography></li>
-                  <li><Typography variant="body2">Φωτογραφίες</Typography></li>
-                  <li><Typography variant="body2">Διαθεσιμότητα για ραντεβού</Typography></li>
-                </Box>
-                <Typography variant="body2" fontWeight="medium" align="left">
-                  Το προφίλ σας γίνεται ορατό στους ιδιοκτήτες που αναζητούν τον κατάλληλο κτηνίατρο.
-                </Typography>
-              </Box>
-            </Box>
-          </Grid>
-
-          {/* --- STEP 3 --- */}
-          <Grid item xs={12} md={4}>
-            <Box display="flex" flexDirection="column" alignItems="center">
-              {/* Icon Circle */}
-              <Avatar
-                sx={{
-                  width: 120,
-                  height: 120,
-                  bgcolor: '#DB9245',
-                  mb: 3,
-                  boxShadow: 1,
-                }}
-              >
-                <CheckCircleOutlineIcon sx={{ fontSize: 60, color: 'black' }} />
-              </Avatar>
-
-              {/* Text Content */}
-              <Box sx={{ width: '100%', px: 2 }}>
-                <Typography variant="h6" fontWeight="bold" gutterBottom align="left">
-                  3. Έτοιμος για χρήση – Πλήρης Πρόσβαση
-                </Typography>
-                <Typography variant="body1" align="left">
-                  Μετά την ενεργοποίηση, έχετε άμεση πρόσβαση σε όλες τις λειτουργίες:
-                </Typography>
-              </Box>
-            </Box>
-          </Grid>
-
-        </Grid>
+          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1}}>
+            1. Εγγραφή και Επαλήθευση Στοιχείων 
+          </Typography>
+          <Typography>
+            Συμπληρώνετε τα απαραίτητα επαγγελματικά στοιχεία σας:
+            <ul>
+              <li>Αριθμό Μητρώου Π.Κ.Σ.</li>
+              <li>Πτυχία και Εξειδικεύσεις</li>
+              <li>Διεύθυνση ιατρείου</li>
+            </ul>
+          </Typography>
+        </Box>
+        <CgArrowLongRight style={{ fontSize: "192px", color: "#42422B", alignSelf: "start"}} />
+        <Box sx={{position: 'relative', textAlign: 'center'}}>
+          <MdPublic  style={{ fontSize: "96px", color: "#42422B", position: "center", backgroundColor: "#DB9245", borderRadius: "50%", padding: 20 }} />
+          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1}}>
+            2. Δημιουργία Δημόσιου Προφίλ
+          </Typography>
+          <Typography>
+            Ρυθμίζετε το προφίλ σας όπως θέλετε:
+            <ul>
+              <li>Παρουσίαση υπηρεσιών</li>
+              <li>Αναλυτικές σπουδές & εμπειρία</li>
+              <li>Φωτογραφίες</li>
+              <li>Διαθεσιμότητα για ραντεβού</li>
+            </ul>
+            Το προφίλ σας γίνεται ορατό στους ιδιοκτήτες που αναζητούν τον κατάλληλο κτηνίατρο.
+          </Typography>
+        </Box>
+        <CgArrowLongRight style={{ fontSize: "192px", color: "#42422B", alignSelf: "start" }} />
+        <Box sx={{position: 'relative', textAlign: 'center'}}>
+          <FaCheckDouble  style={{ fontSize: "96px", color: "#42422B", position: "center", backgroundColor: "#DB9245", borderRadius: "50%", padding: 20 }} />
+          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1}}>
+            3.  Έτοιμος για χρήση – Πλήρης Πρόσβαση
+          </Typography>
+          <Typography>
+            Μετά την ενεργοποίηση, έχετε άμεση πρόσβαση σε όλες τις λειτουργίες
+          </Typography>
+        </Box>
       </Container>
-    </Box>
     </>
   );
 };

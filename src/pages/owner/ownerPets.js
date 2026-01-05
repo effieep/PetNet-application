@@ -47,17 +47,18 @@ const OwnerPets = () => {
           <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
             Λεπτομέρειες Επιλεγμένου Ζώου
           </Typography>
-          <Button 
-            // component={Link}
-            // to={`/owner/pets/${petId}/health`} // Δυναμικό link για το βιβλιάριο
-            variant="outlined" 
-            startIcon={<MedicalServicesIcon />}
-            sx={{ py: 2, borderRadius: '12px', borderColor: '#9a9b6a', color: '#373721' }}
-          >
-              Βιβλιάριο Υγείας
-          </Button>
+          <Box sx={{ mt: 2, mb: 2, display: 'flex', justifyContent: 'center' }}>
+            <Button 
+              // component={Link}
+              // to={`/owner/pets/${petId}/health`} // Δυναμικό link για το βιβλιάριο
+              variant="outlined" 
+              startIcon={<MedicalServicesIcon />}
+              sx={{ py: 2, borderRadius: '12px', borderColor: '#4a6cc4ff', color: '#f4f4f4ff', backgroundColor: '#3641a6ff' }}
+            >
+                ΒΙΒΛΙΑΡΙΟ ΥΓΕΙΑΣ
+            </Button>
+          </Box>
           <PetDetailsCard petId={selectedId} />
-          
         </Box>
       )}
     </ProfileLayout>

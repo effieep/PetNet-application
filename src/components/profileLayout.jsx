@@ -1,95 +1,158 @@
 import React from 'react';
-import { 
-  Box, 
-  Container, 
-  Grid, 
-  List, 
-  ListItem, 
-  ListItemButton, 
-  ListItemIcon, 
-  ListItemText, 
-  Typography, 
+import {
+  Box,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Typography,
   Paper,
-  Divider
+  Divider,
 } from '@mui/material';
+
 import PersonIcon from '@mui/icons-material/Person';
 import PetsIcon from '@mui/icons-material/Pets';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import EventIcon from '@mui/icons-material/Event';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { Link } from 'react-router-dom';
 
-const ProfileLayout = ({ children, role }) => {
-  
-  // Ορίζουμε τα menu items ανάλογα με το ρόλο
-  const menuItems = role === 'vet' ? [
-    { text: 'Τα στοιχεία μου', icon: <PersonIcon />, path: '/vet/profile' },
-    { text: 'Δημόσιο Προφίλ', icon: <SettingsIcon />, path: '/vet/public-profile' },
-    { text: 'Διαχείριση Ραντεβού', icon: <EventIcon />, path: '/vet/appointments' },
-    { text: 'Διαχείριση Ζώων', icon: <PetsIcon />, path: '/vet/animals' },
-  ] : [
-    { text: 'Τα στοιχεία μου', icon: <PersonIcon />, path: '/owner/profile' },
-    { text: 'Τα κατοικίδιά μου', icon: <PetsIcon />, path: '/owner/pets' },
-    { text: 'Οι δηλώσεις μου', icon: <AssignmentIcon />, path: '/owner/declarations' },
-    { text: 'Τα ραντεβού μου', icon: <EventIcon />, path: '/owner/appointments' },
-  ];
+import { Link, useLocation } from 'react-router-dom';
+
+const SIDEBAR_WIDTH = 260;
+
+const ProfileLayout = ({ children, role = 'owner' }) => {
+  const location = useLocation();
+
+  const menuItems =
+    role === 'vet'
+      ? [
+          { text: 'Τα στοιχεία μου', icon: <PersonIcon />, path: '/vet/info' },
+          { text: 'Δημόσιο Προφίλ', icon: <SettingsIcon />, path: '/vet/public-profile' },
+          { text: 'Διαχείριση Ραντεβού', icon: <EventIcon />, path: '/vet/appointments' },
+          { text: 'Διαχείριση Ζώων', icon: <PetsIcon />, path: '/vet/animals' },
+        ]
+      : [
+          { text: 'Τα στοιχεία μου', icon: <PersonIcon />, path: '/owner/info' },
+          { text: 'Τα κατοικίδιά μου', icon: <PetsIcon />, path: '/owner/pets' },
+          { text: 'Οι δηλώσεις μου', icon: <AssignmentIcon />, path: '/owner/declarations' },
+          { text: 'Τα ραντεβού μου', icon: <EventIcon />, path: '/owner/appointments' },
+        ];
 
   return (
-    <Container sx={{ mt: 4, mb: 4 }}>
-      <Grid container spacing={3}>
-        
-        {/* Sidebar - Αριστερή Στήλη */}
-        <Grid item xs={12} md={3}>
-          <Paper elevation={0} sx={{ border: '1px solid #0f4b32ff', borderRadius: 2 }}>
+    <Box
+     sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        py: 4,
+      }}
+    >
+      <Box
+        sx={{
+          display: 'flex',
+          width: '100%',
+          maxWidth: 1400,   // 👈 ΤΟ ΚΛΕΙΔΙ
+          px: { xs: 2, md: 4 },
+          gap: 3,
+        }}
+      >
+         {/* SIDEBAR */}
+        <Box
+          sx={{
+            width: SIDEBAR_WIDTH,
+            flexShrink: 0,
+          }}
+        >
+          <Paper
+          elevation={0}
+            sx={{
+              height: '100%',
+              borderRadius: '18px',
+              backgroundColor: '#fbfbf7',
+              border: '1px solid rgba(58, 78, 27, 0.18)',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.06)',}}
+          >
             <Box sx={{ p: 2 }}>
-              <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
+              <Typography variant="h6" fontWeight="bold">
                 Το προφίλ μου
               </Typography>
             </Box>
+
             <Divider />
+
             <List>
-              {menuItems.map((item) => (
-                <ListItem key={item.text} disablePadding>
-                <ListItemButton 
-                component={Link}           // 2. Κάνει το κουμπί να συμπεριφέρεται σαν Link
-                to={item.path}              // 3. Στέλνει στο path (π.χ. /owner/pets)
-                selected={window.location.pathname === item.path} // 4. Φωτίζει το κουμπί αν είμαστε σε αυτή τη σελίδα
-                sx={{
-                    "&.Mui-selected": {
-                    backgroundColor: "rgba(154, 155, 106, 0.1)",
-                    borderRight: "4px solid #9a9b6a",
-                    },
-                    "&:hover": {
-                    backgroundColor: "rgba(154, 155, 106, 0.05)",
-                    }
-                }}
-                >
-                <ListItemIcon sx={{ minWidth: 40, color: '#9a9b6a' }}>
-                    {item.icon}
-                </ListItemIcon>
-                <ListItemText 
-                    primary={item.text} 
-                    primaryTypographyProps={{ 
-                    fontSize: '0.9rem',
-                    fontWeight: window.location.pathname === item.path ? 'bold' : 'normal'
-                    }} 
-                />
-                </ListItemButton>
-            </ListItem>
-              ))}
+              {menuItems.map((item) => {
+                const isActive = location.pathname === item.path;
+
+                return (
+                  <ListItem key={item.text} disablePadding>
+                    <ListItemButton
+                      component={Link}
+                      to={item.path}
+                      selected={isActive}
+                      sx={{
+                        px: 2.5,
+                        py: 1.5,
+                        '&.Mui-selected': {
+                          backgroundColor: 'rgba(154, 155, 106, 0.12)',
+                          borderRight: '4px solid #9a9b6a',
+                        },
+                        '&:hover': {
+                          backgroundColor: 'rgba(154, 155, 106, 0.08)',
+                        },
+                      }}
+                    >
+                      <ListItemIcon sx={{ minWidth: 40, color: '#9a9b6a' }}>
+                        {item.icon}
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={item.text}
+                        primaryTypographyProps={{
+                          fontSize: '0.95rem',
+                          fontWeight: isActive ? 'bold' : 'normal',
+                        }}
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                );
+              })}
             </List>
           </Paper>
-        </Grid>
+        </Box>
 
-        {/* Main Content - Δεξιά Στήλη */}
-        <Grid item xs={12} md={9}>
-          <Paper elevation={0} sx={{ p: 3, border: '1px solid #3a4e1bff', borderRadius: 2 , backgroundColor: '#ffffffff'}}>
-            {children}
+        {/* MAIN CONTENT */}
+       <Box
+          sx={{
+            flex: 1,
+            display: 'flex',
+            minHeight: 'calc(100vh - 120px)', // δίνει ύψος για κάθετο κέντρο
+          }}
+        >
+          <Paper
+            elevation={0}
+            sx={{
+              width: '100%',
+              p: { xs: 2, md: 4 },
+              borderRadius: '18px',
+              backgroundColor: '#fbfbf7',
+              border: '1px solid rgba(58, 78, 27, 0.18)',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.06)',
+
+              // ✅ ΚΕΝΤΡΑΡΙΣΜΑ
+              display: 'flex',
+              justifyContent: 'center', // οριζόντια
+              alignItems: 'center',     // κάθετα
+            }}
+          >
+            {/* Προαιρετικό: για να μην απλώνει σε τεράστιες οθόνες */}
+            <Box sx={{ width: '100%', maxWidth: 700 }}>
+              {children}
+            </Box>
           </Paper>
-        </Grid>
-
-      </Grid>
-    </Container>
+        </Box>
+      </Box>
+     
+    </Box>
   );
 };
 

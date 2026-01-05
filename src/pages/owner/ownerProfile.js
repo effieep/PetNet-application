@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, TextField, Button, Grid, CircularProgress, Alert } from "@mui/material";
+import { Box, Typography, CircularProgress, Alert } from "@mui/material";
 import { useAuth } from "../../auth/AuthContext";
 import ProfileLayout from "../../components/profileLayout"; // Σιγουρέψου για το σωστό path
+import UserInfoCard from "../../components/UserInfoCard";
+
+const ownerFields = [
+  { name: 'name', label: 'Όνομα', half: true },
+  { name: 'surname', label: 'Επώνυμο', half: true },
+  { name: 'afm', label: 'ΑΦΜ', disabled: true },
+  { name: 'email', label: 'Email' },
+  { name: 'phone', label: 'Τηλέφωνο επικοινωνίας' },
+];
 
 const OwnerProfile = () => {
   const { user, isLoggedIn } = useAuth(); // Παίρνουμε τον χρήστη από το Context
@@ -58,6 +67,7 @@ const OwnerProfile = () => {
     }
   };
 
+
   if (loading) return <Box sx={{ display: 'flex', justifyContent: 'center', mt: 10 }}><CircularProgress /></Box>;
   if (error) return <Alert severity="error">{error}</Alert>;
 
@@ -65,107 +75,30 @@ const OwnerProfile = () => {
     isLoggedIn ?
     (
     <ProfileLayout role={userData?.role || "owner"}>
-      <Typography variant="h5" sx={{ mb: 4, fontWeight: "bold", color: "#373721" }}>
-        Προσωπικά στοιχεία
-      </Typography>
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h5" sx={{ mb: 4, fontWeight: "bold", color: "#373721" }}>
+          Προσωπικά στοιχεία
+        </Typography>
 
-      <Box sx={{ maxWidth: '400px' }}>
-         <Grid container spacing={3}>
-          {/* Κάθε Grid item τώρα έχει xs={12}, άρα πιάνει όλο το πλάτος της δεξιάς στήλης */}
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Όνομα"
-              name="name"
-              value={userData?.name || ""}
-              onChange={handleChange}
-              disabled={!isEditing}
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Επώνυμο"
-              name="surname"
-              value={userData?.surname || ""}
-              onChange={handleChange}
-              disabled={!isEditing}
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="ΑΦΜ"
-              name="afm"
-              value={userData?.afm || ""}
-              disabled
-              variant="filled"
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Email"
-              name="email"
-              value={userData?.email || ""}
-              onChange={handleChange}
-              disabled={!isEditing}
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Τηλέφωνο επικοινωνίας"
-              name="phone"
-              value={userData?.phone || ""}
-              onChange={handleChange}
-              disabled={!isEditing}
-            />
-          </Grid>
-        </Grid>
-
-      </Box>
-    
-      <Box sx={{ mt: 5, display: "flex", gap: 2 }}>
-        {!isEditing ? (
-          <Button
-            variant="contained"
-            onClick={() => setIsEditing(true)}
-            sx={{
-              backgroundColor: "#9a9b6a",
-              px: 4,
-              py: 1.5,
-              borderRadius: "10px",
-              fontWeight: "bold",
-              "&:hover": { backgroundColor: "#8a8b5a" },
-            }}
-          >
-            ΕΠΕΞΕΡΓΑΣΙΑ ΣΤΟΙΧΕΙΩΝ
-          </Button>
-        ) : (
-          <>
-            <Button 
-                variant="contained" 
-                color="success" 
-                onClick={handleSave}
-                sx={{ borderRadius: "10px", px: 4 }}
+        <Box sx={{ position: 'relative', maxWidth: '400px' }}>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                minHeight: '60vh',
+              }}
             >
-              ΑΠΟΘΗΚΕΥΣΗ
-            </Button>
-            <Button 
-                variant="outlined" 
-                color="error" 
-                onClick={() => setIsEditing(false)}
-                sx={{ borderRadius: "10px", px: 4 }}
-            >
-              ΑΚΥΡΩΣΗ
-            </Button>
-          </>
-        )}
+              <UserInfoCard
+                fields={ownerFields}
+                data={userData}
+                isEditing={isEditing}
+                onChange={handleChange}
+                onEdit={() => setIsEditing(true)}
+                onSave={handleSave}
+              />
+            </Box>
+        </Box>
       </Box>
     </ProfileLayout>
   ) :

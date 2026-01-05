@@ -34,7 +34,7 @@ function App() {
           <Route path="/vet" element={<Vet />} />
           <Route path="/lost-found" element={<LostFound />} />
           <Route path="/help" element={<Help />} />
-          <Route path="/owner/profile" element={<OwnerProfile />} />
+          <Route path="/owner/info" element={<OwnerProfile />} />
           <Route path="/owner/pets" element={<OwnerPets />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="*" element={<Error404 />} />
