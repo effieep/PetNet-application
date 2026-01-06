@@ -23,7 +23,6 @@ const OwnerProfile = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        // Χρησιμοποιούμε το ID του χρήστη που έκανε login
         const response = await fetch(`http://localhost:3001/users/${user.id}`);
         if (!response.ok) throw new Error("Δεν βρέθηκαν τα στοιχεία του χρήστη.");
         const data = await response.json();
@@ -37,6 +36,8 @@ const OwnerProfile = () => {
 
     if (user?.id) {
       fetchUserData();
+    } else {
+      setLoading(false);
     }
   }, [user]);
 
