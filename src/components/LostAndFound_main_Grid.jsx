@@ -411,9 +411,6 @@ export default function LostAndFoundMainGrid({ mode }) {
                                 </Typography>
                             </Box>
 
-                            <Typography sx={{ fontWeight: 900, fontSize: { xs: 20, md: 28 } }}>
-                                32.1
-                            </Typography>
                         </Box>
 
                         <Box
