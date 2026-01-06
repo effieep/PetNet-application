@@ -125,29 +125,22 @@ const ProfileLayout = ({ children, role = 'owner' }) => {
           sx={{
             flex: 1,
             display: 'flex',
-            minHeight: 'calc(100vh - 120px)', // δίνει ύψος για κάθετο κέντρο
           }}
         >
           <Paper
-            elevation={0}
+            elevation={10}
             sx={{
               width: '100%',
               p: { xs: 2, md: 4 },
               borderRadius: '18px',
               backgroundColor: '#fbfbf7',
+              // backgroundImage: `url('/pet-pattern.jpg')`,
               border: '1px solid rgba(58, 78, 27, 0.18)',
               boxShadow: '0 10px 30px rgba(0,0,0,0.06)',
 
-              // ✅ ΚΕΝΤΡΑΡΙΣΜΑ
-              display: 'flex',
-              justifyContent: 'center', // οριζόντια
-              alignItems: 'center',     // κάθετα
             }}
           >
-            {/* Προαιρετικό: για να μην απλώνει σε τεράστιες οθόνες */}
-            <Box sx={{ width: '100%', maxWidth: 700 }}>
-              {children}
-            </Box>
+            {children}
           </Paper>
         </Box>
       </Box>

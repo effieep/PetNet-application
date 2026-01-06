@@ -13,7 +13,7 @@
       "surname": "Papafili",
       "afm": "154789635",
       "email": "epapafili2003@gmail.com",
-      "phone": "6985595009",
+      "phone": "6985595001",
       "password": "blablabla",
       "role": "owner",
       "street": "Δημοσθένους 12",
@@ -90,15 +90,95 @@
       "documentUrl": ""
     }
   ],
-  "lostFound": [
+  "declarations": [
+    
     {
-      "id": "lf1",
-      "type": "lost",
-      "petName": "Μαξ",
-      "area": "Καλλιθέα",
-      "contactPhone": "69...",
-      "photo": "base64_string_or_url",
-      "description": "Φοράει κόκκινο περιλαίμιο"
+      "id": 12,
+      "type": "LOSS",
+      "status": "SUBMITTED",
+      "createdAt": "2024-11-20",
+
+      "petId": "p3",
+      "ownerId": "u1",
+
+      "location": {
+        "address": "Γλυφάδα, Αθήνα"
+      },
+
+      "description": "Χάθηκε κοντά στην πλατεία",
+      "contact": {
+        "phone": "6985595001"
+      }
+    },
+        {
+      "id": 12,
+      "type": "LOSS",
+      "status": "PENDING",
+      "createdAt": "2024-11-20",
+
+      "petId": "p2",
+      "ownerId": "u1",
+
+      "location": {
+        "address": "Γλυφάδα, Αθήνα"
+      },
+
+      "description": "Χάθηκε κοντά στην πλατεία",
+      "contact": {
+        "phone": "6985595001"
+      }
+    },    {
+      "id": 12,
+      "type": "LOSS",
+      "status": "PENDING",
+      "createdAt": "2023-11-20",
+
+      "petId": "p1",
+      "ownerId": "u1",
+
+      "location": {
+        "address": "Γλυφάδα, Αθήνα"
+      },
+
+      "description": "Χάθηκε κοντά στην πλατεία",
+      "contact": {
+        "phone": "6985595001"
+      }
+    },    {
+      "id": 12,
+      "type": "LOSS",
+      "status": "PENDING",
+      "createdAt": "2025-11-20",
+
+      "petId": "p3",
+      "ownerId": "u1",
+
+      "location": {
+        "address": "Γλυφάδα, Αθήνα"
+      },
+
+      "description": "Χάθηκε κοντά στην πλατεία",
+      "contact": {
+        "phone": "6985595001"
+      }
+    },
+    {
+      "id": 14,
+      "type": "FOUND",
+      "status": "PENDING",
+      "createdAt": "2024-12-01",
+
+      "petId": "p2",
+      "ownerId": "u1",
+
+      "location": {
+        "address": "Κυψέλη, Αθήνα"
+      },
+
+      "description": "Χάθηκε κοντά στον σταθμό Βικτώρια",
+      "contact": {
+        "phone": "6985595001"
+      }
     }
   ]
 }
