@@ -39,7 +39,7 @@ export default function LostFoundSection() {
                 <ActionBox
                     title="Έχασα κατοικίδιο"
                     description="Δήλωσε την απώλεια του κατοικιδίου σου και ανέβασε φωτογραφία, περιγραφή και περιοχή."
-                    button = {<UniversalButton text="Δήλωση Απώλειας" path="/report-lost-pet" bgColor="#4c4c2d" textColor='#ffffff'/>}
+                    button = {<UniversalButton text="Δήλωση Απώλειας" path="/lost-found/lost_pet" bgColor="#4c4c2d" textColor='#ffffff'/>}
                 />
             </Grid>
 
@@ -64,7 +64,7 @@ export default function LostFoundSection() {
                 <ActionBox
                     title="Βρήκα κατοικίδιο"
                     description="Δήλωσε την εύρεση ενός ζώου και δες αν το microchip ταιριάζει με κάποια ενεργή απώλεια."
-                    button = {<UniversalButton text="Δήλωση Εύρεσης" path="/report-found-pet" bgColor="#4c4c2d" textColor='#ffffff'/>}
+                    button = {<UniversalButton text="Δήλωση Εύρεσης" path="/lost-found/found_pet" bgColor="#4c4c2d" textColor='#ffffff'/>}
                 />
             </Grid>
         </Grid>

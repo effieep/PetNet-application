@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useAuth } from "../auth/AuthContext";
 import { Collapse, Divider } from "@mui/material";
 import { SwitchTransition } from "react-transition-group";
 import UniversalButton from "../components/UniversalButton";
@@ -298,6 +299,7 @@ export default function ReportLostStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
 
   const [formData, setFormData] = useState({
     pet: {
@@ -396,10 +398,22 @@ export default function ReportLostStepper() {
   const isDone = activeStep >= steps.length - 1;
   const isConfirmStep = activeStep === steps.length - 2;
 
+  if (!isLoggedIn)
+  {
+    return (
+      <>
+          <Typography variant="h6" color= "error" textAlign="center" sx={{ mt: "15%", fontWeight: "bold" }}>
+            Απαιτείται σύνδεση για να κάνετε δήλωση απώλειας κατοικιδίου.
+          </Typography>
+      </>
+    );
+  }
+
   return (
+    
     <Box
       sx={{
-        minHeight: "100vh",
+        // minHeight: "100vh",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -407,35 +421,6 @@ export default function ReportLostStepper() {
         px: 2,
       }}
     >
-      <Box sx={{ position: "absolute", top: 16, left: 16 }}>
-        <UniversalButton text="Αρχική" path="/" bgColor="#aac95cff" textColor="#000000ff" />
-      </Box>
-
-      <Box sx={{ position: "absolute", top: 16, right: 16 }}>
-        <Button
-          onClick={() => navigate("/?login=true")}
-          sx={{
-            backgroundColor: "#5893caff",
-            color: "#000000ff",
-            textTransform: "none",
-            textShadow: "none",
-            fontWeight: 700,
-            borderRadius: 15,
-            boxShadow: "none",
-            px: { xs: 3, sm: 4, md: 6 },
-            py: { xs: 0.5, sm: 1 },
-            fontSize: { xs: "0.85rem", sm: "0.9rem", md: "1rem" },
-            marginRight: 2,
-            whiteSpace: "nowrap",
-            "&:hover": {
-              backgroundColor: "#7cb1f7ff",
-              boxShadow: "grey 0px 2px 5px",
-            },
-          }}
-        >
-          Σύνδεση
-        </Button>
-      </Box>
 
       <Paper
         sx={{
