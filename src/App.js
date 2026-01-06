@@ -10,13 +10,16 @@ import OwnerProfile from './pages/owner/ownerProfile.js';
 import OwnerPets from './pages/owner/ownerPets.js';
 import OwnerDeclarations from './pages/owner/ownerDeclarations.js';
 import SignUp from './pages/signup.js';
+import ReportLost from './pages/report_lost.js';
 import Error404 from './pages/404.js';
 import Footer from './components/footer.jsx';
 import { Box } from "@mui/material";
 
 function App() {
   const location = useLocation();
-  const hideNav = location.pathname === "/signup";
+  const hideNav =
+    location.pathname === "/signup" ||
+    location.pathname === "/lost-found/lost_pet";
 
   return (
     <Box
@@ -34,6 +37,7 @@ function App() {
           <Route path="/owner" element={<Owner />} />
           <Route path="/vet" element={<Vet />} />
           <Route path="/lost-found" element={<LostFound />} />
+          <Route path="/lost-found/lost_pet" element={<ReportLost />} />
           <Route path="/help" element={<Help />} />
           <Route path="/owner/info" element={<OwnerProfile />} />
           <Route path="/owner/pets" element={<OwnerPets />} />
