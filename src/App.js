@@ -13,7 +13,7 @@ import SignUp from './pages/signup.js';
 import ReportLost from './pages/report_lost.js';
 import Error404 from './pages/404.js';
 import Footer from './components/footer.jsx';
-import SearchVet from './pages/owner/searchVet.js';
+import SearchVet from './pages/owner/search-vet.js';
 import { Box } from "@mui/material";
 
 function App() {

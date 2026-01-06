@@ -1,5 +1,4 @@
 import { Box, Typography } from "@mui/material";
-import { Link } from "react-router-dom";
 import Button from "./UniversalButton";
 
 export default function LostPetRequirements({
