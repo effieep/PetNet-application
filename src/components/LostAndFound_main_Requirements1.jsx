@@ -1,13 +1,14 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
+import UButton from "./UniversalButton";
 
 export default function FoundPetRequirements({
-  foundPath = "/report-found-pet",
+  foundPath = "/lost-found/found_pet",
 }) {
   return (
     <Box
       sx={{
-        backgroundColor: "#efe092",
+        // backgroundColor: "#efe092",
         px: { xs: 2.5, md: 3 },
         py: { xs: 4, md: 3 },
         display: "flex",
@@ -72,7 +73,7 @@ export default function FoundPetRequirements({
         </Typography>
 
         <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 2 }}>
-          <Button
+          {/* <Button
             component={Link}
             to={foundPath}
             sx={{
@@ -94,7 +95,9 @@ export default function FoundPetRequirements({
             }}
           >
             Δήλωση εύρεσης
-          </Button>
+          </Button> */}
+          <UButton text="Δήλωση εύρεσης" path={foundPath} bgColor="#7a7a5a" textColor="white"/>
+
         </Box>
       </Box>
     </Box>

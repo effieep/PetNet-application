@@ -4,6 +4,7 @@ import { Box, Button } from "@mui/material";
 import LostAndFoundHeader from "../components/lostandfound_main_header.jsx";
 import FoundPetRequirements from "../components/LostAndFound_main_Requirements1.jsx";
 import LostPetRequirements from "../components/LostAndFound_main_Requirements2.jsx";
+import LostAndFoundMainGrid from "../components/LostAndFound_main_Grid.jsx";
 
 const LostFound = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -30,7 +31,7 @@ const LostFound = () => {
 
       <Box
         sx={{
-          backgroundColor: "#efe092",
+          // backgroundColor: "#efe092",
           display: "flex",
           justifyContent: "center",
           py: 2,
@@ -82,13 +83,13 @@ const LostFound = () => {
                 borderColor: "#444732",
               },
             }}
-          >
-            Απώλεια
+          > Απώλεια
           </Button>
         </Box>
       </Box>
 
       <RequirementsComponent />
+      <LostAndFoundMainGrid mode={mode} />
     </>
   );
 };

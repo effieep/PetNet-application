@@ -5,19 +5,19 @@ import { Link } from "react-router-dom";
 import UniversalButton from "./UniversalButton";
 
 export default function LostAndFoundHeader({
-  lostPath = "/report-lost-pet",
-  foundPath = "/report-found-pet",
+  lostPath = "/lost-found/lost_pet",
+  foundPath = "/lost-found/found_pet",
 }) {
   return (
     <Box
       sx={{
-        backgroundColor: "#efe092",
+        // backgroundColor: "#efe092",
         color: "#1a1a1a",
         px: { xs: 3, md: 8 },
         py: { xs: 3, md: 3 },
       }}
     >
-      <Box component="nav" sx={{ fontSize: 14, fontWeight: 700, mb: { xs: 4, md: 0 } }}>
+      {/* <Box component="nav" sx={{ fontSize: 14, fontWeight: 700, mb: { xs: 4, md: 0 } }}>
         <Typography
           component={Link}
           to="/"
@@ -35,7 +35,7 @@ export default function LostAndFoundHeader({
         >
           Χάθηκε/Βρέθηκε_Ζώο
         </Typography>
-      </Box>
+      </Box> */}
 
       <Box
         sx={{

@@ -1,13 +1,14 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
+import Button from "./UniversalButton";
 
 export default function LostPetRequirements({
-  foundPath = "/report-found-pet",
+  lostPath = "/lost-found/lost_pet",
 }) {
   return (
     <Box
       sx={{
-        backgroundColor: "#efe092",
+        // backgroundColor: "#efe092",
         px: { xs: 2.5, md: 3 },
         py: { xs: 4, md: 3 },
         display: "flex",
@@ -59,44 +60,8 @@ export default function LostPetRequirements({
           </Box>
         </Box>
 
-        {/* <Typography
-          sx={{
-            fontSize: 18,
-            lineHeight: 1.6,
-            mt: 3.75,
-            mb: 5,
-            maxWidth: 800,
-            mx: "auto",
-          }}
-        >
-          Με τον αριθμό microchip του ζώου το σύστημα μπορεί να αναγνωρίσει αν υπάρχει ενεργή δήλωση
-          απώλειας ζώου με τον ίδιο αριθμό
-        </Typography> */}
-
         <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 2 }}>
-          <Button
-            component={Link}
-            to={foundPath}
-            sx={{
-              backgroundColor: "#7a7a5a",
-              color: "white",
-              px: { xs: 4, md: 6 },
-              py: { xs: 1.5, md: 2 },
-              borderRadius: "30px",
-              fontSize: { xs: 16, md: 20 },
-              fontWeight: 700,
-              textTransform: "none",
-              boxShadow: "0 8px 15px rgba(0,0,0,0.2)",
-              transition: "transform 0.2s, filter 0.2s",
-              "&:hover": {
-                backgroundColor: "#7a7a5a",
-                filter: "brightness(0.92)",
-                transform: "scale(1.05)",
-              },
-            }}
-          >
-            Δήλωση απώλειας
-          </Button>
+          <Button text="Δήλωση απώλειας" path={lostPath} bgColor="#7a7a5a" textColor="white"/>
         </Box>
       </Box>
     </Box>
