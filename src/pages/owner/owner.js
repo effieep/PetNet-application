@@ -74,7 +74,7 @@ const Owner = () => {
           />
           <UButton 
             text="Έχασα το Ζώο μου"
-            path="/owner/lost-found"
+            path="/lost-found"
             bgColor="#0c0c0868"
             textColor="#ffffffff"
           />
