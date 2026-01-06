@@ -13,7 +13,7 @@ import SignUp from './pages/signup.js';
 import ReportLost from './pages/report_lost.js';
 import Error404 from './pages/404.js';
 import Footer from './components/footer.jsx';
-import searchVet from './pages/owner/searchVet.js';
+import SearchVet from './pages/owner/searchVet.js';
 import { Box } from "@mui/material";
 
 function App() {
@@ -37,7 +37,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/owner" element={<Owner />} />
           <Route path="/vet" element={<Vet />} />
-          <Route path="/owner/search-vet" element={<searchVet />} />
+          <Route path="/owner/search-vet" element={<SearchVet />} />
           <Route path="/lost-found" element={<LostFound />} />
           <Route path="/lost-found/lost_pet" element={<ReportLost />} />
           <Route path="/help" element={<Help />} />
