@@ -8,6 +8,7 @@ import LostFound from './pages/lost_found.js';
 import Help from './pages/help.js';
 import OwnerProfile from './pages/owner/ownerProfile.js';
 import OwnerPets from './pages/owner/ownerPets.js';
+import OwnerDeclarations from './pages/owner/ownerDeclarations.js';
 import SignUp from './pages/signup.js';
 import Error404 from './pages/404.js';
 import Footer from './components/footer.jsx';
@@ -36,6 +37,7 @@ function App() {
           <Route path="/help" element={<Help />} />
           <Route path="/owner/info" element={<OwnerProfile />} />
           <Route path="/owner/pets" element={<OwnerPets />} />
+          <Route path="/owner/declarations" element={<OwnerDeclarations />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="*" element={<Error404 />} />
         </Routes>
