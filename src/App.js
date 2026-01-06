@@ -19,8 +19,9 @@ import { Box } from "@mui/material";
 function App() {
   const location = useLocation();
   const hideNav =
-    location.pathname === "/signup" ||
-    location.pathname === "/lost-found/lost_pet";
+    location.pathname === "/signup";
+    // ||
+    // location.pathname === "/lost-found/lost_pet";
 
   return (
     <Box
