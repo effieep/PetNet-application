@@ -13,7 +13,7 @@
       "surname": "Papafili",
       "afm": "154789635",
       "email": "epapafili2003@gmail.com",
-      "phone": "6985595001",
+      "phone": "6985595009",
       "password": "blablabla",
       "role": "owner",
       "street": "Δημοσθένους 12",
@@ -32,6 +32,28 @@
       "city": "Τεστανδρι",
       "postalCode": "15111",
       "role": "owner"
+    },
+    {
+      "id": "v1",
+      "name": "Γιώργος",
+      "surname": "Παπαδόπουλος",
+      "afm": "452136987",
+      "email": "gerpapa@gmail.com",
+      "phone": "6958471236",
+      "street": "Kungshamra 31",
+      "city": "SOLNA",
+      "postalCode": "17070",
+      "password": "123456789",
+      "degreeInst": "Εθνικό και Καποδοστριακό",
+      "masterInst": "",
+      "phdInst": "",
+      "specialization": "",
+      "registryNum": "547893",
+      "practiceYears": 7,
+      "clinicAddress": "Sapfous 42",
+      "clinicZip": "17676",
+      "clinicCity": "Kallithea,Athens",
+      "role": "vet"
     }
   ],
   "pets": [
@@ -43,7 +65,8 @@
       "breed": "Siam",
       "microchip": "9585764839",
       "birthDate": "2020-05-12",
-      "gender": "Θηλυκό"
+      "gender": "Θηλυκό",
+      "color": "Γκρι"
     },
     {
       "id": "p2",
@@ -68,14 +91,42 @@
   ],
   "appointments": [
     {
-      "id": "a1",
+      "id": 1,
       "ownerId": "u1",
+      "petId": "p2",
       "vetId": "v1",
+      "date": "2025-12-15",
+      "time": "14:30",
+      "status": "CONFIRMED",
+      "notes": "Ετήσιος εμβολιασμός"
+    },
+    {
+      "id": 2,
+      "ownerId": "u1",
       "petId": "p1",
-      "date": "2024-02-15",
-      "time": "10:30",
-      "service": "Εμβολιασμός",
-      "status": "pending"
+      "vetId": "v2",
+      "date": "2025-11-27",
+      "time": "18:00",
+      "status": "PENDING",
+      "notes": ""
+    },
+    {
+      "id": 3,
+      "ownerId": "u1",
+      "petId": "p3",
+      "vetId": "v3",
+      "date": "2024-01-10",
+      "time": "10:00",
+      "status": "COMPLETED"
+    },
+    {
+      "id": 4,
+      "ownerId": "u1",
+      "petId": "p2",
+      "vetId": "v1",
+      "date": "2024-01-10",
+      "time": "13:00",
+      "status": "CANCELLED"
     }
   ],
   "medicalRecords": [
@@ -98,6 +149,7 @@
       "createdAt": "2024-11-20",
       "petId": "p3",
       "ownerId": "u1",
+
       "location": {
         "address": "Γλυφάδα, Αθήνα"
       },
@@ -113,6 +165,7 @@
       "createdAt": "2024-11-20",
       "petId": "p2",
       "ownerId": "u1",
+
       "location": {
         "address": "Γλυφάδα, Αθήνα"
       },
@@ -128,6 +181,7 @@
       "createdAt": "2023-11-20",
       "petId": "p1",
       "ownerId": "u1",
+
       "location": {
         "address": "Γλυφάδα, Αθήνα"
       },
@@ -143,6 +197,7 @@
       "createdAt": "2025-11-20",
       "petId": "p3",
       "ownerId": "u1",
+
       "location": {
         "address": "Γλυφάδα, Αθήνα"
       },
@@ -156,6 +211,7 @@
       "type": "FOUND",
       "status": "PENDING",
       "createdAt": "2024-12-01",
+
       "petId": "p2",
       "ownerId": "u1",
       "location": {

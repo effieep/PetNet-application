@@ -44,19 +44,21 @@ const OwnerDeclarations = () => {
     fetchAll();
   }, [isLoggedIn, user?.id]);
 
-
   const petById = useMemo(() => {
     const map = {};
     for (const p of pets) map[String(p.id)] = p;
     return map;
   }, [pets]);
 
-  const declarationsWithPet = useMemo(() => {
-    return declarations.map((d) => ({
-      ...d,
-      pet: petById[String(d.petId)] || null,
-    }));
+  const lossDeclarationsWithPet = useMemo(() => {
+    return declarations
+      .filter((d) => d.type === "LOSS") // Κρατάμε μόνο τις δηλώσεις απώλειας
+      .map((d) => ({
+        ...d,
+        pet: petById[String(d.petId)] || null,
+      }));
   }, [declarations, petById]);
+
 
   const sortDeclarations = (arr, sortKey) => {
     const copy = [...arr];
@@ -77,8 +79,8 @@ const OwnerDeclarations = () => {
     return copy;
   };
 
-  const lossDeclarations = declarationsWithPet.filter((d) => d.type === "LOSS");
-  const foundDeclarations = declarationsWithPet.filter((d) => d.type === "FOUND");
+  const lossDeclarations = lossDeclarationsWithPet.filter((d) => d.type === "LOSS");
+  const foundDeclarations = declarations.filter((d) => d.type === "FOUND");
   
   const sortedLoss = useMemo(
     () => sortDeclarations(lossDeclarations, lossSort),
