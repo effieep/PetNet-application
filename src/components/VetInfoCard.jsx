@@ -3,12 +3,14 @@ import {
   Paper,
   Typography,
   Box,
-  IconButton
+  IconButton,
+  MenuItem,
 } from '@mui/material';
-import { useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
+import dayjs from 'dayjs';
 
-const UserInfoCard = ({
+const VetInfoCard = ({
   data,
   isEditing,
   onChange,
@@ -16,21 +18,10 @@ const UserInfoCard = ({
   
 }) => {
 
+  const jobs = (data?.jobs || {});
 
 
 
-  const [rows, setRows] = useState(() => data?.length ? data : [{ role: '', company: '', startYear: '', endYear: '' }, { role: '', company: '', startYear: '', endYear: '' }, { role: '', company: '', startYear: '', endYear: '' }]);
-
-  const handleAddRow = () => {
-    setRows([...rows, { role: '', company: '', startYear: '', endYear: '' }]);
-  };
-
-  const handleChangeAdd = (index, field, value) => {
-    const newRows = [...rows];
-    newRows[index][field] = value;
-    setRows(newRows);
-    if (onChange) onChange(newRows); // lift state up
-  };
 
   return (
     <Paper
@@ -56,13 +47,13 @@ const UserInfoCard = ({
         value={data?.description || ''}
         onChange={onChange}
         disabled={!isEditing}
-        multiline           // ← makes it multi-line
-        minRows={4}         // ← sets default height
-        maxRows={8}         // ← optional, limits max height
+        multiline    
+        minRows={4}   
+        maxRows={8}     
         InputLabelProps={{
           sx: {
-            whiteSpace: 'normal',   // allow wrapping
-            wordWrap: 'break-word', // break long words if needed
+            whiteSpace: 'normal', 
+            wordWrap: 'break-word',
           },
         }}
       />
@@ -79,18 +70,35 @@ const UserInfoCard = ({
             value={data?.degreeInst || ''}
             onChange={onChange}
             disabled={!isEditing}
-            sx={{ flex: 1, minWidth: '250px' }} // takes remaining space
+            sx={{ flex: 1, minWidth: '250px' }}
           />
           <TextField
+            select
             label="Έτος Αποφοίτησης"
             name="DgraduationYear"
             value={data?.DgraduationYear || ''}
             onChange={onChange}
             disabled={!isEditing}
             type="number"
-            inputProps={{ min: 1900, max: new Date().getFullYear() }}
-            sx={{ width: '150px' }} // fixed width for year
-          />
+            sx={{ width: '150px' }}
+            SelectProps={{
+                MenuProps: {
+                  PaperProps: {
+                    style: {
+                      maxHeight: 6 * 48, // show 6 items, then scroll
+                      width: 120,
+                    },
+                  },
+                },
+              }}
+          >
+            <MenuItem value="">--</MenuItem>
+            {Array.from({ length: dayjs().year() - 1900 + 1 }, (_, i) => dayjs().year() - i).map((year) => (
+              <MenuItem key={year} value={year}>
+                {year}
+              </MenuItem>
+            ))}
+          </TextField>
         </Box>
 
         <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
@@ -103,15 +111,32 @@ const UserInfoCard = ({
             sx={{ flex: 1, minWidth: '250px' }}
           />
           <TextField
+            select
             label="Έτος Αποφοίτησης"
             name="MgraduationYear"
             value={data?.MgraduationYear || ''}
             onChange={onChange}
             disabled={!isEditing}
             type="number"
-            inputProps={{ min: 1900, max: new Date().getFullYear() }}
             sx={{ width: '150px' }}
-          />
+            SelectProps={{
+                MenuProps: {
+                  PaperProps: {
+                    style: {
+                      maxHeight: 6 * 48, // show 6 items, then scroll
+                      width: 120,
+                    },
+                  },
+                },
+              }}
+          >
+            <MenuItem value="">--</MenuItem>
+            {Array.from({ length: dayjs().year() - 1900 + 1 }, (_, i) => dayjs().year() - i).map((year) => (
+              <MenuItem key={year} value={year}>
+                {year}
+              </MenuItem>
+            ))}
+          </TextField>
         </Box>
         <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
           <TextField
@@ -123,77 +148,169 @@ const UserInfoCard = ({
             sx={{ flex: 1, minWidth: '250px' }}
           />
           <TextField
+            select
             label="Έτος Αποφοίτησης"
             name="PgraduationYear"
             value={data?.PgraduationYear || ''}
             onChange={onChange}
             disabled={!isEditing}
             type="number"
-            inputProps={{ min: 1900, max: new Date().getFullYear() }}
             sx={{ width: '150px' }}
-          />
+            SelectProps={{
+                MenuProps: {
+                  PaperProps: {
+                    style: {
+                      maxHeight: 6 * 48, // show 6 items, then scroll
+                      width: 120,
+                    },
+                  },
+                },
+              }}
+          >
+            <MenuItem value="">--</MenuItem>
+            {Array.from({ length: dayjs().year() - 1900 + 1 }, (_, i) => dayjs().year() - i).map((year) => (
+              <MenuItem key={year} value={year}>
+                {year}
+              </MenuItem>
+            ))}
+          </TextField>
         </Box>
       </Box>
       <Typography sx={{ my: 2, fontWeight: 'bold' }}>
         Επαγγελματική Εμπειρία
       </Typography>
+      <TextField
+        label="Χρόνια Εμπειρίας"
+        name="practiceYears"
+        value={data?.practiceYears ?? ''}
+        onChange={onChange}
+        disabled={!isEditing}
+        type="number"
+        inputProps={{ min: 0, max: 100 }}
+        sx={{ width: '150px', mb: 2 }}
+      />
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-      <Typography sx={{ fontWeight: 'bold' }}>Επαγγελματική Εμπειρία</Typography>
 
-      {rows.map((row, index) => (
-        <Box key={index} sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-          <TextField
-            name={[`job-${index}`]?.role}
-            value={data?.jobs?.[`job-${index}`]?.role || ''}
-            label="Ρόλος"
-            onChange={(e) => handleChangeAdd(index, 'role', e.target.value)}
-            disabled={!isEditing}
-            sx={{ flex: 1, minWidth: '150px' }}
-            InputLabelProps={{ shrink: true }}
-          />
-          <TextField
-            label="Εταιρεία"
-            name={[`job-${index}`]?.company}
-            value={data?.jobs?.[`job-${index}`]?.company || ''}
-            onChange={(e) => handleChangeAdd(index, 'company', e.target.value)}
-            disabled={!isEditing}
-            sx={{ flex: 1, minWidth: '150px' }}
-            InputLabelProps={{ shrink: true }}
-          />
-          <TextField
-            label="Έτος Έναρξης"
-            name={[`job-${index}`]?.startYear}
-            value={data?.jobs?.[`job-${index}`]?.startYear || ''}
-            onChange={(e) => handleChangeAdd(index, 'startYear', e.target.value)}
-            disabled={!isEditing}
-            type="number"
-            inputProps={{ min: 1900, max: new Date().getFullYear() }}
-            sx={{ width: '120px' }}
-            InputLabelProps={{ shrink: true }}
-          />
-          <TextField
-            label="Έτος Λήξης"
-            name={[`job-${index}`]?.endYear}
-            value={data?.jobs?.[`job-${index}`]?.endYear || ''}
-            onChange={(e) => handleChangeAdd(index, 'endYear', e.target.value)}
-            disabled={!isEditing}
-            type="number"
-            inputProps={{ min: 1900, max: new Date().getFullYear() }}
-            sx={{ width: '120px' }}
-            InputLabelProps={{ shrink: true }}
-          />
-        </Box>
-      ))}
+        {Object.entries(jobs).map(([jobKey, job]) => (
+          <Box key={jobKey} sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+            <TextField
+              label="Ρόλος"
+              name={`${jobKey}.role`}      
+              value={job.role || ''}       
+              onChange={onChange}          
+              disabled={!isEditing}
+              sx={{ flex: 1, minWidth: '150px' }}
+              InputLabelProps={{ shrink: true }}
+            />
+            <TextField
+              label="Εταιρεία"
+              name={`${jobKey}.company`}
+              value={job.company || ''}
+              onChange={onChange}
+              disabled={!isEditing}
+              sx={{ flex: 1, minWidth: '150px' }}
+              InputLabelProps={{ shrink: true }}
+            />
+            <TextField
+              select
+              label="Έτος Έναρξης"
+              value={job.startYear || ''}
+              onChange={(e) => {
+                onChange({
+                  target: { name: `${jobKey}.startYear`, value: e.target.value },
+                });
+              }}
+              sx={{ width: '120px' }}
+              InputLabelProps={{ shrink: true }}
+              disabled={!isEditing}
+              SelectProps={{
+                MenuProps: {
+                  PaperProps: {
+                    style: {
+                      maxHeight: 6 * 48, // show 6 items, then scroll
+                      width: 120,
+                    },
+                  },
+                },
+              }}
+              >
+              <MenuItem value="">--</MenuItem>
+              {Array.from({ length: dayjs().year() - 1900 + 1 }, (_, i) => dayjs().year() - i).map((year) => (
+                <MenuItem key={year} value={year}>
+                  {year}
+                </MenuItem>
+              ))}
+              </TextField>
+              <Typography sx={{ alignSelf: 'center' }}>-</Typography>
+              <TextField
+                select
+                label="Έτος Λήξης"
+                value={job.endYear || ''}
+                onChange={(e) => {
+                  onChange({
+                    target: { name: `${jobKey}.endYear`, value: e.target.value },
+                  });
+                }}
+                sx={{ width: '120px' }}
+                InputLabelProps={{ shrink: true }}
+                disabled={!isEditing}
+                SelectProps={{
+                  MenuProps: {
+                    PaperProps: {
+                      style: {
+                        maxHeight: 6 * 48, // show 6 items, then scroll
+                        width: 120,
+                      },
+                    },
+                  },
+                }}
+                >
+                <MenuItem value="">--</MenuItem>
+                <MenuItem value="Σήμερα">Σήμερα</MenuItem>
 
-      <Box>
-        <IconButton onClick={handleAddRow} disabled={!isEditing}>
-          <AddIcon />
-        </IconButton>
+                {Array.from({ length: dayjs().year() - 1900 + 1 }, (_, i) => dayjs().year() - i).map((year) => (
+                  <MenuItem key={year} value={year}>
+                    {year}
+                  </MenuItem>
+                ))}
+            </TextField>
+          </Box>
+        ))}
+          <Box
+            sx={{
+              mt: 2,
+              display: 'flex',
+              justifyContent: 'center',
+              gap: 2,
+            }}
+          >
+            <IconButton
+              onClick={() =>
+                onChange({
+                  target: { name: '__REMOVE_JOB__' }
+                })
+              }
+              disabled={!isEditing}
+            >
+              <RemoveIcon sx={{ fontSize: 30 }} />
+            </IconButton>
+
+            <IconButton
+              onClick={() =>
+                onChange({
+                  target: { name: '__ADD_JOB__' }
+                })
+              }
+              disabled={!isEditing}
+            >
+              <AddIcon sx={{ fontSize: 30 }} />
+            </IconButton>
+          </Box>
+
       </Box>
-    </Box>
 
     </Paper>
   );
 };
 
-export default UserInfoCard;
+export default VetInfoCard;

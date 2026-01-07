@@ -12,6 +12,30 @@ const VetProfile = () => {
     severity: 'success', // 'success' | 'error'
   });
 
+  const normalizeJobs = (jobs) => {
+    if (!jobs) return {};
+
+    // Remove completely empty jobs
+    const filtered = Object.entries(jobs).reduce((acc, [key, job]) => {
+      const hasValue = Object.values(job).some(
+        v => v !== "" && v !== null && v !== undefined
+      );
+
+      if (hasValue) {
+        acc[key] = job;
+      }
+
+      return acc;
+    }, {});
+
+    // If user filled at least one job → save only those
+    if (Object.keys(filtered).length > 0) {
+      return filtered;
+    }
+
+    return null;
+  };
+  
   const [errors, setErrors] = useState({});
   const { user, isLoggedIn } = useAuth(); // Παίρνουμε τον χρήστη από το Context
   const [userData, setUserData] = useState(null);
@@ -32,9 +56,14 @@ const VetProfile = () => {
     const fetchUserData = async () => {
       try {
         const response = await fetch(`http://localhost:3001/users/${user.id}`);
-        if (!response.ok) throw new Error("Δεν βρέθηκαν τα στοιχεία του χρήστη.");
         const data = await response.json();
-        setUserData(data);
+
+        setUserData({
+          ...data,
+          jobs: data.jobs || {
+            "job-0": { role: "", company: "", startYear: "", endYear: "" },
+          }
+        });
       } catch (err) {
         setError(err.message);
       } finally {
@@ -42,19 +71,67 @@ const VetProfile = () => {
       }
     };
 
-    if (user?.id) {
-      fetchUserData();
-    } else {
-      setLoading(false);
-    }
+    if (user?.id) fetchUserData();
   }, [user]);
 
   // 2. Ενημέρωση του τοπικού state όταν γράφουμε στα inputs
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setUserData((prev) => ({
+
+    // ADD JOB
+    if (name === '__ADD_JOB__') {
+      setUserData(prev => {
+        const keys = Object.keys(prev.jobs || {});
+        const newKey = `job-${keys.length}`;
+
+        return {
+          ...prev,
+          jobs: {
+            ...prev.jobs,
+            [newKey]: { role: "", company: "", startYear: "", endYear: "" }
+          }
+        };
+      });
+      return;
+    }
+
+    // REMOVE LAST JOB (keep at least 1)
+    if (name === '__REMOVE_JOB__') {
+      setUserData(prev => {
+        const keys = Object.keys(prev.jobs || {});
+        if (keys.length <= 1) return prev;
+
+        const lastKey = keys[keys.length - 1];
+        const { [lastKey]: _, ...rest } = prev.jobs;
+
+        return {
+          ...prev,
+          jobs: rest
+        };
+      });
+      return;
+    }
+
+    // JOB FIELD CHANGE
+    if (name.includes('.')) {
+      const [jobKey, field] = name.split('.');
+      setUserData(prev => ({
+        ...prev,
+        jobs: {
+          ...prev.jobs,
+          [jobKey]: {
+            ...prev.jobs[jobKey],
+            [field]: value
+          }
+        }
+      }));
+      return;
+    }
+
+    // NORMAL FIELD
+    setUserData(prev => ({
       ...prev,
-      [name]: value,
+      [name]: value
     }));
   };
 
@@ -81,14 +158,19 @@ const VetProfile = () => {
 
   // 3. Αποστολή των αλλαγών στη βάση (PATCH)
   const handleSave = async () => {
+    if (!validateFields()) return;
 
-    if (!validateFields()) return
+    // Prepare data for saving
+    const dataToSave = {
+      ...userData,
+      jobs: normalizeJobs(userData.jobs),
+    };
 
     try {
       const response = await fetch(`http://localhost:3001/users/${user.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userData),
+        body: JSON.stringify(dataToSave),
       });
 
       if (response.ok) {
@@ -101,9 +183,7 @@ const VetProfile = () => {
     } catch (err) {
       showSnackbar("Σφάλμα κατά την αποθήκευση.", "error");
     }
-    
   };
-
 
   if (loading) return <Box sx={{ display: 'flex', justifyContent: 'center', mt: 10 }}><CircularProgress /></Box>;
   if (error) return <Alert severity="error">{error}</Alert>;
