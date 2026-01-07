@@ -323,8 +323,8 @@ function NavBar() {
               }}  
             >
               <MenuItem onClick={handleOwnerClose} component={Link} to = "/owner">Δυνατότητες</MenuItem>
-              <MenuItem onClick={handleOwnerClose}>Αναζήτηση Κτηνιάτρου</MenuItem>
-              <MenuItem onClick={handleOwnerClose}>Χάθηκε/Βρέθηκε Ζώο</MenuItem>
+              <MenuItem onClick={handleOwnerClose} component={Link} to = "/owner/search-vet">Αναζήτηση Κτηνιάτρου</MenuItem>
+              <MenuItem onClick={handleOwnerClose} component={Link} to = "/lost-found">Χάθηκε/Βρέθηκε Ζώο</MenuItem>
               <MenuItem onClick={handleOwnerClose} component={Link} to = "/owner/info">Το προφίλ μου</MenuItem>
             </Menu>
           <Button

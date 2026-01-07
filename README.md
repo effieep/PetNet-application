@@ -1,5 +1,26 @@
 # Getting Started with Create React App
 
+## API (Required for Login)
+
+This app expects a JSON API running at `http://localhost:3001` (see `src/api.js`).
+If the API is not running, login will fail with "Failed to fetch".
+
+Run both the React app and API together:
+
+- `npm run dev`
+
+Or run them in separate terminals:
+
+- `npm start`
+- `npm run server`
+
+Docker alternative (runs both services):
+
+- `docker compose up --build`
+
+If you use Docker Desktop UI: make sure you start the **Compose application/project** (the group that contains both `app` and `api`).
+Starting only the `app` container will only publish `localhost:3000` and the API on `localhost:3001` will not be running.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
