@@ -143,7 +143,7 @@ const UserInfoCard = ({
       {rows.map((row, index) => (
         <Box key={index} sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
           <TextField
-            name={jobs?.[`job-${index}`]?.role}
+            name={[`job-${index}`]?.role}
             value={data?.jobs?.[`job-${index}`]?.role || ''}
             label="Ρόλος"
             onChange={(e) => handleChangeAdd(index, 'role', e.target.value)}
@@ -153,7 +153,7 @@ const UserInfoCard = ({
           />
           <TextField
             label="Εταιρεία"
-            name={jobs?.[`job-${index}`]?.company}
+            name={[`job-${index}`]?.company}
             value={data?.jobs?.[`job-${index}`]?.company || ''}
             onChange={(e) => handleChangeAdd(index, 'company', e.target.value)}
             disabled={!isEditing}
@@ -162,7 +162,7 @@ const UserInfoCard = ({
           />
           <TextField
             label="Έτος Έναρξης"
-            name={jobs?.[`job-${index}`]?.startYear}
+            name={[`job-${index}`]?.startYear}
             value={data?.jobs?.[`job-${index}`]?.startYear || ''}
             onChange={(e) => handleChangeAdd(index, 'startYear', e.target.value)}
             disabled={!isEditing}
@@ -173,7 +173,7 @@ const UserInfoCard = ({
           />
           <TextField
             label="Έτος Λήξης"
-            name={jobs?.[`job-${index}`]?.endYear}
+            name={[`job-${index}`]?.endYear}
             value={data?.jobs?.[`job-${index}`]?.endYear || ''}
             onChange={(e) => handleChangeAdd(index, 'endYear', e.target.value)}
             disabled={!isEditing}
