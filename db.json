@@ -149,7 +149,7 @@
       "createdAt": "2024-11-20",
       "petId": "p3",
       "ownerId": "u1",
-
+      "lostDate": "2024-11-18",
       "location": {
         "address": "Γλυφάδα, Αθήνα"
       },
@@ -165,7 +165,7 @@
       "createdAt": "2024-11-20",
       "petId": "p2",
       "ownerId": "u1",
-
+      "lostDate": "2024-11-18",
       "location": {
         "address": "Γλυφάδα, Αθήνα"
       },
@@ -181,7 +181,7 @@
       "createdAt": "2023-11-20",
       "petId": "p1",
       "ownerId": "u1",
-
+      "lostDate": "2023-11-18",
       "location": {
         "address": "Γλυφάδα, Αθήνα"
       },
@@ -197,7 +197,7 @@
       "createdAt": "2025-11-20",
       "petId": "p3",
       "ownerId": "u1",
-
+      "lostDate": "2025-11-18",
       "location": {
         "address": "Γλυφάδα, Αθήνα"
       },
@@ -211,8 +211,8 @@
       "type": "FOUND",
       "status": "PENDING",
       "createdAt": "2024-12-01",
-
-      "petId": "p2",
+      "petType": "Σκύλος",
+      "microchip": "1234567890",
       "ownerId": "u1",
       "location": {
         "address": "Κυψέλη, Αθήνα"
