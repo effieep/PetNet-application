@@ -34,28 +34,6 @@
       "role": "owner"
     },
     {
-      "id": "v1",
-      "name": "Γιώργος",
-      "surname": "Παπαδόπουλος",
-      "afm": "452136987",
-      "email": "gerpapa@gmail.com",
-      "phone": "6958471236",
-      "street": "Kungshamra 31",
-      "city": "SOLNA",
-      "postalCode": "17070",
-      "password": "123456789",
-      "degreeInst": "Εθνικό και Καποδοστριακό",
-      "masterInst": "",
-      "phdInst": "",
-      "specialization": "",
-      "registryNum": "547893",
-      "practiceYears": 7,
-      "clinicAddress": "Sapfous 42",
-      "clinicZip": "17676",
-      "clinicCity": "Kallithea,Athens",
-      "role": "vet"
-    },
-    {
       "id": "v2",
       "name": "Αποστόλης",
       "surname": "Χριστοδουλόπουλος",
@@ -75,6 +53,28 @@
       "clinicAddress": "Sapfous 42",
       "clinicZip": "17676",
       "clinicCity": "Kallithea,Athens",
+      "role": "vet"
+    },
+    {
+      "id": "v1",
+      "name": "Άγγελος",
+      "surname": "Ζωάκης",
+      "afm": "171111111",
+      "email": "vet1@example.com",
+      "phone": "6911111111",
+      "street": "Αριστοτέλους 13",
+      "city": "Θεσσαλονίκη",
+      "postalCode": "15111",
+      "password": "12345678",
+      "degreeInst": "Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης",
+      "masterInst": "",
+      "phdInst": "",
+      "specialization": "",
+      "registryNum": "111111",
+      "practiceYears": 2,
+      "clinicAddress": "Αριστομένους ",
+      "clinicZip": "15111",
+      "clinicCity": "27",
       "role": "vet"
     }
   ],
@@ -150,14 +150,14 @@
       "time": "13:00",
       "status": "CANCELLED"
     },
-       {
-        "id": "4",
-        "ownerId": "u1",
-        "vetId": "v1",
-        "date": "10-01-2024",
-        "time": "13:00",
-        "status": "CANCELLED"
-      }
+    {
+      "id": "4",
+      "ownerId": "u1",
+      "vetId": "v1",
+      "date": "10-01-2024",
+      "time": "13:00",
+      "status": "CANCELLED"
+    }
   ],
   "medicalRecords": [
     {
