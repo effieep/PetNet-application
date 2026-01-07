@@ -9,6 +9,7 @@ const OwnerAppointments = () => {
   const { user, isLoggedIn } = useAuth();
 
   const [appointments, setAppointments] = useState([]);
+  const [openAppointmentId, setOpenAppointmentId] = useState(null);
   const [pets, setPets] = useState([]);
   const [vets, setVets] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -47,6 +48,17 @@ const OwnerAppointments = () => {
 
     fetchAll();
   }, [isLoggedIn, user?.id]);
+
+
+  const toggleOpen = (id) => {
+    setOpenAppointmentId(prev => (prev === id ? null : id));
+  };
+
+  const handleRemoveFromUI = (idToDelete) => {
+    // Ενημερώνουμε το state αφαιρώντας το συγκεκριμένο ID
+    setAppointments(prev => prev.filter(app => app.id !== idToDelete));
+  };
+
 
   const petById = useMemo(() => {
     const map = {};
@@ -109,23 +121,36 @@ const OwnerAppointments = () => {
         </Typography>
       ) : (
         upcoming.map(a => (
-          <AppointmentCard key={a.id} appointment={a} />
-        ))
+          <AppointmentCard  
+            key={a.id}
+            appointment={a}
+            open={openAppointmentId === a.id}
+            onToggle={() => toggleOpen(a.id)} />
+            ))
       )}
 
       <Typography variant="h6" sx={{ mt: 4, mb: 2 }}>
         Ολοκληρωμένα
       </Typography>
       {completed.map(a => (
-        <AppointmentCard key={a.id} appointment={a} />
-      ))}
+        <AppointmentCard  
+          key={a.id}
+          appointment={a}
+          open={openAppointmentId === a.id}
+          onToggle={() => toggleOpen(a.id)} />
+            ))}
 
       <Typography variant="h6" sx={{ mt: 4, mb: 2 }}>
         Ακυρωμένα
       </Typography>
       {cancelled.map(a => (
-        <AppointmentCard key={a.id} appointment={a} />
-      ))}
+        <AppointmentCard  
+          key={a.id}
+          appointment={a}
+          onDeleteSuccess={handleRemoveFromUI}
+          open={openAppointmentId === a.id}
+          onToggle={() => toggleOpen(a.id)} />
+            ))}
 
     </ProfileLayout>
   );

@@ -1,51 +1,93 @@
-import { Box, Card, CardContent, Chip, Typography } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardContent,
+  Chip,
+  Typography,
+  Collapse,
+  IconButton,
+} from "@mui/material";
 import EventIcon from "@mui/icons-material/Event";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandedAppointmentDetails from "./ExpandAppointmentDetails";
 
+const statusBg = {
+  PENDING: "rgba(255, 193, 7, 0.18)",
+  CONFIRMED: "rgba(76, 175, 80, 0.18)",
+  COMPLETED: "rgba(76, 175, 80, 0.18)",
+  CANCELLED: "rgba(244, 67, 54, 0.18)",
+};
 
-const AppointmentCard = ({ appointment }) => {
+const AppointmentCard = ({ appointment, open, onToggle, onDeleteSuccess }) => {
   if (!appointment) return null;
 
   const { pet, vet, date, time, status, reason } = appointment;
-
+  
   return (
-    <Card sx={{ mb: 2, borderRadius: 3 }}>
-      <CardContent sx={{ 
-        display: "flex",
-        alignItems: "center", 
-        gap: 2,
-       backgroundColor:
-        status === "PENDING"
-            ? "rgba(255, 193, 7, 0.18)"     // κίτρινο
-            : status === "CONFIRMED" || status === "COMPLETED"
-            ? "rgba(76, 175, 80, 0.18)"   // πράσινο
-            : "rgba(244, 67, 54, 0.18)",  // κόκκινο (π.χ. cancelled)
-        }} >
-        
-        <EventIcon sx={{ fontSize: 32 }} />
+    <>
+      {/* 🔹 MAIN CARD */}
+      <Card
+        sx={{ mb: 1, borderRadius: 3, cursor: "pointer" }}
+        onClick={onToggle}
+      >
+        <CardContent
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 2,
+            backgroundColor: statusBg[status] || "rgba(0,0,0,0.04)",
+          }}
+        >
+          <EventIcon sx={{ fontSize: 32 }} />
 
-        <Box sx={{ flex: 1 }}>
-          <Typography fontWeight="bold">
-            {date} και ώρα : {time}
-          </Typography>
-
-          <Typography variant="body2">
-            Κατοικίδιο: {pet ? pet.name : "—"}
-          </Typography>
-
-          <Typography variant="body2">
-            Κτηνίατρος: {vet ? `${vet.name} ${vet.surname}` : "-"}
-          </Typography>
-
-          {reason && (
-            <Typography variant="body2" color="text.secondary">
-              {reason}
+          <Box sx={{ flex: 1 }}>
+            <Typography fontWeight="bold">
+              {date} · {time}
             </Typography>
-          )}
-        </Box>
 
-        <Chip label={status} />
-      </CardContent>
-    </Card>
+            <Typography variant="body2">
+              Κατοικίδιο: {pet ? pet.name : "—"}
+            </Typography>
+
+            <Typography variant="body2">
+              Κτηνίατρος: {vet ? `${vet.name} ${vet.surname}` : "-"}
+            </Typography>
+
+            {reason && (
+              <Typography variant="body2" color="text.secondary">
+                {reason}
+              </Typography>
+            )}
+          </Box>
+
+          <Chip label={status} />
+
+          {/* 🔽 ΒΕΛΟΣ */}
+          <IconButton
+            onClick={(e) => {
+              e.stopPropagation(); // 👈 για να μη διπλο-κάνει toggle
+              onToggle();
+            }}
+          >
+            <ExpandMoreIcon
+              sx={{
+                transform: open ? "rotate(180deg)" : "rotate(0deg)",
+                transition: "0.3s",
+              }}
+            />
+          </IconButton>
+        </CardContent>
+      </Card>
+
+      {/* 🔽 EXPANDED SECTION */}
+      {/* Στο return του AppointmentCard */}
+    <Collapse in={open} timeout="auto" unmountOnExit>
+        <ExpandedAppointmentDetails 
+            appointment={appointment} 
+            onDeleteSuccess={onDeleteSuccess}
+        />
+    </Collapse>
+    </>
   );
 };
 
