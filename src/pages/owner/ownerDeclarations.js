@@ -62,12 +62,19 @@ const OwnerDeclarations = () => {
 
   const sortDeclarations = (arr, sortKey) => {
     const copy = [...arr];
-
     if (sortKey === "newest") {
-      return copy.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      return copy.sort((a, b) => {
+        const [da, ma, ya] = (a.createdAt || "").split("-").map(Number);
+        const [db, mb, yb] = (b.createdAt || "").split("-").map(Number);
+        return Date.UTC(yb, mb - 1, db) - Date.UTC(ya, ma - 1, da);
+      });
     }
     if (sortKey === "oldest") {
-      return copy.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      return copy.sort((a, b) => {
+        const [da, ma, ya] = (a.createdAt || "").split("-").map(Number);
+        const [db, mb, yb] = (b.createdAt || "").split("-").map(Number);
+        return Date.UTC(ya, ma - 1, da) - Date.UTC(yb, mb - 1, db);
+      });
     }
     if (sortKey === "status") {
       const order = { PENDING: 0, SUBMITTED: 1 };
