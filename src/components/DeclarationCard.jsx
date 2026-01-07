@@ -9,10 +9,14 @@ const statusMap = {
   SUBMITTED: { label: "Υποβλήθηκε", color: "info" },
 };
 
-const DeclarationCard = ({ declaration }) => {
+const DeclarationCard = ({ declaration,  }) => {
   if (!declaration) return null;
-
-  const { pet, type, status, createdAt, location } = declaration;
+  if (declaration.type == "LOSS"){
+    const { pet, type, status, createdAt, location } = declaration;
+  }else{
+    const { petType, microchip, type, status, createdAt, location } = declaration;
+  }
+  
 
   const st = statusMap[status] || { label: status || "Άγνωστο", color: "default" };
 
@@ -30,10 +34,11 @@ const DeclarationCard = ({ declaration }) => {
         <PetsIcon sx={{ fontSize: 32 }} />
 
         <Box sx={{ flex: 1 }}>
-          <Typography fontWeight="bold">{pet?.name || "-"} · Microchip: {pet?.microchip || "-"}</Typography>
+          {type === "LOSS" && <Typography fontWeight="bold">{pet?.name || "-"} · Microchip: {pet?.microchip || "-"}</Typography>}
+          {type === "FOUND" && <Typography fontWeight="bold">Βρέθηκε {petType || "-"} · Microchip: {pet?.microchip || "-"}</Typography>}
 
           <Typography variant="body2">
-            Ημερομηνία: {createdAt || "-"}
+            Ημερομηνία Δημιoυργίας: {createdAt || "-"}
           </Typography>
 
           <Typography variant="body2" color="text.secondary">
