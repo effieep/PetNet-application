@@ -92,7 +92,7 @@ const Home = () => {
           <div className="line" />
         </div>
 
-        <OurButton text="Αναζήτηση Κτηνιάτρου" path="/search" bgColor="#b0c679ff" textColor='#ffffff' />
+        <OurButton text="Αναζήτηση Κτηνιάτρου" path="/owner/search-vet" bgColor="#b0c679ff" textColor='#ffffff' />
       </section>
       <LostFoundSection />
       </>

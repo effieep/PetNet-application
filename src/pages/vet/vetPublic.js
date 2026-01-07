@@ -2,11 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Box, Typography, CircularProgress, Alert, Button, Snackbar } from "@mui/material";
 import { useAuth } from "../../auth/AuthContext";
 import ProfileLayout from "../../components/profileLayout"; // Σιγουρέψου για το σωστό path
-import UserInfoCard from "../../components/UserInfoCard";
+import VetInfoCard from "../../components/VetInfoCard";
 
-
-
-const OwnerProfile = () => {
+const VetProfile = () => {
   
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -76,22 +74,7 @@ const OwnerProfile = () => {
 
   const validateFields = () => {
     const newErrors = {};
-
-    // Phone: exactly 10 digits
-    if (!/^\d{10}$/.test(userData?.phone || '')) {
-      newErrors.phone = "Το τηλέφωνο πρέπει να έχει 10 αριθμούς";
-    }
-
-    // Postal code: exactly 5 digits
-    if (!/^\d{5}$/.test(userData?.postalCode || '')) {
-      newErrors.postalCode = "Ο ταχυδρομικός κώδικας πρέπει να έχει 5 αριθμούς";
-    }
-
-    // Email: simple email regex
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userData?.email || '')) {
-      newErrors.email = "Το email δεν είναι έγκυρο";
-    }
-
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0; // true if no errors
   };
@@ -126,16 +109,16 @@ const OwnerProfile = () => {
   if (error) return <Alert severity="error">{error}</Alert>;
 
   return ( 
-    (isLoggedIn && userData?.role === "owner") ?
+    (isLoggedIn && userData?.role === "vet") ?
     (
     <>
-    <ProfileLayout role={userData?.role || "owner"}>
+    <ProfileLayout role={userData?.role || "vet"}>
       <Box sx={{ mb: 4 }}>
         <Typography
           variant="h5"
           sx={{ mb: 4, fontWeight: "bold", color: "#373721" }}
         >
-          Στοιχεία Προφίλ Ιδιοκτήτη
+          Στοιχεία Προφίλ Κτηνίατρου
         </Typography>
 
         <Box
@@ -145,7 +128,7 @@ const OwnerProfile = () => {
             width: '100%',
           }}
         >
-          <UserInfoCard
+          <VetInfoCard
             data={userData}
             isEditing={isEditing}
             onChange={handleChange}
@@ -208,10 +191,10 @@ const OwnerProfile = () => {
   ) :
   (
     <Typography variant="h6" color="error" textAlign="center" sx={{ mt: 10 }}>
-      Παρακαλώ συνδεθείτε ως Ιδιοκτήτης για να δείτε το προφίλ σας.
+      Παρακαλώ συνδεθείτε ως Κτηνίατρος για να δείτε το προφίλ σας.
     </Typography>
   )
   );
 };
 
-export default OwnerProfile;
+export default VetProfile;

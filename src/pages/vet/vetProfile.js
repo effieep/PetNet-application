@@ -5,8 +5,7 @@ import ProfileLayout from "../../components/profileLayout"; // Σιγουρέψ�
 import UserInfoCard from "../../components/UserInfoCard";
 
 
-
-const OwnerProfile = () => {
+const VetProfile = () => {
   
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -126,16 +125,16 @@ const OwnerProfile = () => {
   if (error) return <Alert severity="error">{error}</Alert>;
 
   return ( 
-    (isLoggedIn && userData?.role === "owner") ?
+    (isLoggedIn && userData?.role === "vet") ?
     (
     <>
-    <ProfileLayout role={userData?.role || "owner"}>
+    <ProfileLayout role={userData?.role || "vet"}>
       <Box sx={{ mb: 4 }}>
         <Typography
           variant="h5"
           sx={{ mb: 4, fontWeight: "bold", color: "#373721" }}
         >
-          Στοιχεία Προφίλ Ιδιοκτήτη
+          Στοιχεία Προφίλ Κτηνίατρου
         </Typography>
 
         <Box
@@ -208,10 +207,10 @@ const OwnerProfile = () => {
   ) :
   (
     <Typography variant="h6" color="error" textAlign="center" sx={{ mt: 10 }}>
-      Παρακαλώ συνδεθείτε ως Ιδιοκτήτης για να δείτε το προφίλ σας.
+      Παρακαλώ συνδεθείτε ως Κτηνίατρος για να δείτε το προφίλ σας.
     </Typography>
   )
   );
 };
 
-export default OwnerProfile;
+export default VetProfile;

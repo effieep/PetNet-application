@@ -15,6 +15,9 @@ const breadcrumbMap = {
   lost_pet: 'Δήλωση Απώλειας',
   found_pet: 'Δήλωση Εύρεσης',
   'lost-found': 'Χάθηκε/Βρέθηκε Ζώο',
+  'public-profile': 'Δημόσιο Προφίλ Κτηνιάτρου',
+  'randezvous-history': 'Ιστορικό Ραντεβού',
+  reviews: 'Αξιολογήσεις Κτηνιάτρου',
 };
 
 function AppBreadcrumbs() {

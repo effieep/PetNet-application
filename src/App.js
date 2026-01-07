@@ -14,6 +14,10 @@ import ReportLost from './pages/report_lost.js';
 import Error404 from './pages/404.js';
 import Footer from './components/footer.jsx';
 import SearchVet from './pages/owner/search-vet.js';
+import VetProfile from './pages/vet/vetProfile.js';
+import VetRandezvousHistory from './pages/vet/vetHistory.js';
+import VetReviews from './pages/vet/vetReviews.js';
+import VetPublic from './pages/vet/vetPublic.js';
 import { Box } from "@mui/material";
 
 function App() {
@@ -38,6 +42,10 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/owner" element={<Owner />} />
           <Route path="/vet" element={<Vet />} />
+          <Route path="/vet/info" element={<VetProfile />} />
+          <Route path="/vet/public-profile" element={<VetPublic />} />
+          <Route path="/vet/randezvous-history" element={<VetRandezvousHistory />} />
+          <Route path="/vet/reviews" element={<VetReviews />} />
           <Route path="/owner/search-vet" element={<SearchVet />} />
           <Route path="/lost-found" element={<LostFound />} />
           <Route path="/lost-found/lost_pet" element={<ReportLost />} />
