@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Box, Typography, CircularProgress, Alert, Button, Snackbar } from "@mui/material";
 import { useAuth } from "../../auth/AuthContext";
 import ProfileLayout from "../../components/profileLayout"; // Σιγουρέψου για το σωστό path
-import UserInfoCard from "../../components/UserInfoCard";
+import VetInfoCard from "../../components/VetInfoCard";
 
 
 const VetProfile = () => {
@@ -144,7 +144,7 @@ const VetProfile = () => {
             width: '100%',
           }}
         >
-          <UserInfoCard
+          <VetInfoCard
             data={userData}
             isEditing={isEditing}
             onChange={handleChange}

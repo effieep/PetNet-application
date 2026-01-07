@@ -72,10 +72,11 @@
       "specialization": "",
       "registryNum": "111111",
       "practiceYears": 2,
-      "clinicAddress": "Αριστομένους ",
+      "clinicAddress": "Αριστομένους 23",
       "clinicZip": "15111",
-      "clinicCity": "27",
-      "role": "vet"
+      "clinicCity": "Θεσσαλονίκη",
+      "role": "vet",
+      "jobs": null
     }
   ],
   "pets": [

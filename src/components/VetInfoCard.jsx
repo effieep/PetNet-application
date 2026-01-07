@@ -1,14 +1,9 @@
 import {
+  Grid,
   TextField,
   Paper,
   Typography,
-  Box,
-  IconButton,
-  MenuItem,
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
-import dayjs from 'dayjs';
 
 const VetInfoCard = ({
   data,
@@ -17,12 +12,6 @@ const VetInfoCard = ({
   errors,
   
 }) => {
-
-  const jobs = (data?.jobs || {});
-
-
-
-
   return (
     <Paper
       elevation={0}
@@ -36,279 +25,161 @@ const VetInfoCard = ({
     >
       {/* ===== ΠΡΟΣΩΠΙΚΑ ΣΤΟΙΧΕΙΑ ===== */}
       <Typography sx={{ mb: 2, fontWeight: 'bold' }}>
-        Μερικά λόγια για εσάς
+        Προσωπικά στοιχεία
       </Typography>
 
-        <TextField
-        fullWidth
-        label="Γράψτε μία περίληψη για εσάς, την εμπειρία σας στο χώρο και έμμεσα λόγους για τους οποίους κανείς 
-               θα επέλεγε εσάς ως κτηνίατρο."
-        name="description"
-        value={data?.description || ''}
-        onChange={onChange}
-        disabled={!isEditing}
-        multiline    
-        minRows={4}   
-        maxRows={8}     
-        InputLabelProps={{
-          sx: {
-            whiteSpace: 'normal', 
-            wordWrap: 'break-word',
-          },
-        }}
-      />
+      <Grid container spacing={2}>
+        <Grid item xs={4}>
+          <TextField
+            fullWidth
+            label="Όνομα"
+            name="name"
+            value={data?.name || ''}
+            onChange={onChange}
+            disabled={!isEditing}
+          />
+        </Grid>
 
-      <Typography sx={{ my: 2, fontWeight: 'bold' }}>
-        Oί σπουδές σας
+        <Grid item xs={4}>
+          <TextField
+            fullWidth
+            label="Επώνυμο"
+            name="surname"
+            value={data?.surname || ''}
+            onChange={onChange}
+            disabled={!isEditing}
+          />
+        </Grid>
+
+        <Grid item xs={4}>
+          <TextField
+            fullWidth
+            label="ΑΦΜ"
+            name="afm"
+            value={data?.afm || ''}
+            disabled
+            variant="filled"
+            sx={{ backgroundColor: '#f2f3ed', borderRadius: '8px' }}
+          />
+        </Grid>
+      </Grid>
+
+      {/* ===== ΣΤΟΙΧΕΙΑ ΕΠΙΚΟΙΝΩΝΙΑΣ ===== */}
+      <Typography sx={{ mt: 4, mb: 2, fontWeight: 'bold' }}>
+        Στοιχεία επικοινωνίας
       </Typography>
 
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+      <Grid container spacing={2}>
+        <Grid item xs={6}>
           <TextField
-            label="Ίδρυμα Απόκτησης Πτυχίου"
-            name="degreeInst"
-            value={data?.degreeInst || ''}
+            fullWidth
+            label="Email"
+            name="email"
+            value={data?.email || ''}
             onChange={onChange}
             disabled={!isEditing}
-            sx={{ flex: 1, minWidth: '250px' }}
+            helperText={errors?.email || ''}
+            error={Boolean(errors?.email)}
           />
-          <TextField
-            select
-            label="Έτος Αποφοίτησης"
-            name="DgraduationYear"
-            value={data?.DgraduationYear || ''}
-            onChange={onChange}
-            disabled={!isEditing}
-            type="number"
-            sx={{ width: '150px' }}
-            SelectProps={{
-                MenuProps: {
-                  PaperProps: {
-                    style: {
-                      maxHeight: 6 * 48, // show 6 items, then scroll
-                      width: 120,
-                    },
-                  },
-                },
-              }}
-          >
-            <MenuItem value="">--</MenuItem>
-            {Array.from({ length: dayjs().year() - 1900 + 1 }, (_, i) => dayjs().year() - i).map((year) => (
-              <MenuItem key={year} value={year}>
-                {year}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Box>
+        </Grid>
 
-        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+        <Grid item xs={6}>
           <TextField
-            label="Ίδρυμα Απόκτησης Μεταπτυχιακού"
-            name="masterInst"
-            value={data?.masterInst || ''}
+            fullWidth
+            label="Τηλέφωνο"
+            name="phone"
+            value={data?.phone || ''}
             onChange={onChange}
             disabled={!isEditing}
-            sx={{ flex: 1, minWidth: '250px' }}
+            helperText={errors?.phone || ''}
+            error={Boolean(errors?.phone)}
           />
-          <TextField
-            select
-            label="Έτος Αποφοίτησης"
-            name="MgraduationYear"
-            value={data?.MgraduationYear || ''}
-            onChange={onChange}
-            disabled={!isEditing}
-            type="number"
-            sx={{ width: '150px' }}
-            SelectProps={{
-                MenuProps: {
-                  PaperProps: {
-                    style: {
-                      maxHeight: 6 * 48, // show 6 items, then scroll
-                      width: 120,
-                    },
-                  },
-                },
-              }}
-          >
-            <MenuItem value="">--</MenuItem>
-            {Array.from({ length: dayjs().year() - 1900 + 1 }, (_, i) => dayjs().year() - i).map((year) => (
-              <MenuItem key={year} value={year}>
-                {year}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Box>
-        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-          <TextField
-            label="Ίδρυμα Απόκτησης Διδακτορικού"
-            name="phdInst"
-            value={data?.phdInst || ''}
-            onChange={onChange}
-            disabled={!isEditing}
-            sx={{ flex: 1, minWidth: '250px' }}
-          />
-          <TextField
-            select
-            label="Έτος Αποφοίτησης"
-            name="PgraduationYear"
-            value={data?.PgraduationYear || ''}
-            onChange={onChange}
-            disabled={!isEditing}
-            type="number"
-            sx={{ width: '150px' }}
-            SelectProps={{
-                MenuProps: {
-                  PaperProps: {
-                    style: {
-                      maxHeight: 6 * 48, // show 6 items, then scroll
-                      width: 120,
-                    },
-                  },
-                },
-              }}
-          >
-            <MenuItem value="">--</MenuItem>
-            {Array.from({ length: dayjs().year() - 1900 + 1 }, (_, i) => dayjs().year() - i).map((year) => (
-              <MenuItem key={year} value={year}>
-                {year}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Box>
-      </Box>
-      <Typography sx={{ my: 2, fontWeight: 'bold' }}>
-        Επαγγελματική Εμπειρία
+        </Grid>
+      </Grid>
+
+      {/* ===== ΔΙΕΥΘΥΝΣΗ ===== */}
+      <Typography sx={{ mt: 4, mb: 2, fontWeight: 'bold' }}>
+        Διεύθυνση
       </Typography>
-      <TextField
-        label="Χρόνια Εμπειρίας"
-        name="practiceYears"
-        value={data?.practiceYears ?? ''}
-        onChange={onChange}
-        disabled={!isEditing}
-        type="number"
-        inputProps={{ min: 0, max: 100 }}
-        sx={{ width: '150px', mb: 2 }}
-      />
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
 
-        {Object.entries(jobs).map(([jobKey, job]) => (
-          <Box key={jobKey} sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-            <TextField
-              label="Ρόλος"
-              name={`${jobKey}.role`}      
-              value={job.role || ''}       
-              onChange={onChange}          
-              disabled={!isEditing}
-              sx={{ flex: 1, minWidth: '150px' }}
-              InputLabelProps={{ shrink: true }}
-            />
-            <TextField
-              label="Εταιρεία"
-              name={`${jobKey}.company`}
-              value={job.company || ''}
-              onChange={onChange}
-              disabled={!isEditing}
-              sx={{ flex: 1, minWidth: '150px' }}
-              InputLabelProps={{ shrink: true }}
-            />
-            <TextField
-              select
-              label="Έτος Έναρξης"
-              value={job.startYear || ''}
-              onChange={(e) => {
-                onChange({
-                  target: { name: `${jobKey}.startYear`, value: e.target.value },
-                });
-              }}
-              sx={{ width: '120px' }}
-              InputLabelProps={{ shrink: true }}
-              disabled={!isEditing}
-              SelectProps={{
-                MenuProps: {
-                  PaperProps: {
-                    style: {
-                      maxHeight: 6 * 48, // show 6 items, then scroll
-                      width: 120,
-                    },
-                  },
-                },
-              }}
-              >
-              <MenuItem value="">--</MenuItem>
-              {Array.from({ length: dayjs().year() - 1900 + 1 }, (_, i) => dayjs().year() - i).map((year) => (
-                <MenuItem key={year} value={year}>
-                  {year}
-                </MenuItem>
-              ))}
-              </TextField>
-              <Typography sx={{ alignSelf: 'center' }}>-</Typography>
-              <TextField
-                select
-                label="Έτος Λήξης"
-                value={job.endYear || ''}
-                onChange={(e) => {
-                  onChange({
-                    target: { name: `${jobKey}.endYear`, value: e.target.value },
-                  });
-                }}
-                sx={{ width: '120px' }}
-                InputLabelProps={{ shrink: true }}
-                disabled={!isEditing}
-                SelectProps={{
-                  MenuProps: {
-                    PaperProps: {
-                      style: {
-                        maxHeight: 6 * 48, // show 6 items, then scroll
-                        width: 120,
-                      },
-                    },
-                  },
-                }}
-                >
-                <MenuItem value="">--</MenuItem>
-                <MenuItem value="Σήμερα">Σήμερα</MenuItem>
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            fullWidth
+            label="Οδός και αριθμός"
+            name="street"
+            value={data?.street || ''}
+            onChange={onChange}
+            disabled={!isEditing}
+          />
+        </Grid>
 
-                {Array.from({ length: dayjs().year() - 1900 + 1 }, (_, i) => dayjs().year() - i).map((year) => (
-                  <MenuItem key={year} value={year}>
-                    {year}
-                  </MenuItem>
-                ))}
-            </TextField>
-          </Box>
-        ))}
-          <Box
-            sx={{
-              mt: 2,
-              display: 'flex',
-              justifyContent: 'center',
-              gap: 2,
-            }}
-          >
-            <IconButton
-              onClick={() =>
-                onChange({
-                  target: { name: '__REMOVE_JOB__' }
-                })
-              }
-              disabled={!isEditing}
-            >
-              <RemoveIcon sx={{ fontSize: 30 }} />
-            </IconButton>
+        <Grid item xs={12} sm={3}>
+          <TextField
+            fullWidth
+            label="Πόλη"
+            name="city"
+            value={data?.city || ''}
+            onChange={onChange}
+            disabled={!isEditing}
+          />
+        </Grid>
 
-            <IconButton
-              onClick={() =>
-                onChange({
-                  target: { name: '__ADD_JOB__' }
-                })
-              }
-              disabled={!isEditing}
-            >
-              <AddIcon sx={{ fontSize: 30 }} />
-            </IconButton>
-          </Box>
+        <Grid item xs={12} sm={3}>
+          <TextField
+            fullWidth
+            label="Ταχυδρομικός Κώδικας"
+            name="postalCode"
+            value={data?.postalCode || ''}
+            onChange={onChange}
+            disabled={!isEditing}
+            helperText={errors?.postalCode || ''}
+            error={Boolean(errors?.postalCode)}
+          />
+        </Grid>
+      </Grid>
 
-      </Box>
+      {/* ===== ΔΙΕΥΘΥΝΣΗ ===== */}
+      <Typography sx={{ mt: 4, mb: 2, fontWeight: 'bold' }}>
+        Διεύθυνση Ιατρείου
+      </Typography>
 
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            fullWidth
+            label="Οδός και αριθμός"
+            name="clinicAddress"
+            value={data?.clinicAddress || ''}
+            onChange={onChange}
+            disabled={!isEditing}
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={3}>
+          <TextField
+            fullWidth
+            label="Πόλη"
+            name="clinicCity"
+            value={data?.clinicCity || ''}
+            onChange={onChange}
+            disabled={!isEditing}
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={3}>
+          <TextField
+            fullWidth
+            label="Ταχυδρομικός Κώδικας"
+            name="clinicZip"
+            value={data?.clinicZip || ''}
+            onChange={onChange}
+            disabled={!isEditing}
+            helperText={errors?.clinicZip || ''}
+            error={Boolean(errors?.clinicZip)}
+          />
+        </Grid>
+      </Grid>
     </Paper>
   );
 };
