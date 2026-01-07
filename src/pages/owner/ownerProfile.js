@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, CircularProgress, Alert } from "@mui/material";
+import { Box, Typography, CircularProgress, Alert, Button, Snackbar } from "@mui/material";
 import { useAuth } from "../../auth/AuthContext";
 import ProfileLayout from "../../components/profileLayout"; // Σιγουρέψου για το σωστό path
 import UserInfoCard from "../../components/UserInfoCard";
@@ -10,14 +10,35 @@ const ownerFields = [
   { name: 'afm', label: 'ΑΦΜ', disabled: true },
   { name: 'email', label: 'Email' },
   { name: 'phone', label: 'Τηλέφωνο επικοινωνίας' },
+  { name: 'street', label: 'Οδός & Αριθμός' },
+  { name: 'city', label: 'Πόλη' },
+  { name: 'postalCode', label: 'Ταχυδρομικός Κώδικας' },
 ];
 
+
+
 const OwnerProfile = () => {
+  
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success', // 'success' | 'error'
+  });
+
+  const [errors, setErrors] = useState({});
   const { user, isLoggedIn } = useAuth(); // Παίρνουμε τον χρήστη από το Context
   const [userData, setUserData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const showSnackbar = (message, severity = 'success') => {
+  setSnackbar({
+    open: true,
+    message,
+    severity,
+  });
+};
 
   // 1. Φόρτωση δεδομένων από το db.json
   useEffect(() => {
@@ -50,8 +71,47 @@ const OwnerProfile = () => {
     }));
   };
 
+  const handleCancel = () => {
+    // Επαναφορά των δεδομένων από το db.json
+    setIsEditing(false);
+    setErrors({});
+    fetch(`http://localhost:3001/users/${user.id}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setUserData(data);
+      })
+      .catch((err) => {
+        setError(err.message);
+      });
+  };
+
+  const validateFields = () => {
+    const newErrors = {};
+
+    // Phone: exactly 10 digits
+    if (!/^\d{10}$/.test(userData?.phone || '')) {
+      newErrors.phone = "Το τηλέφωνο πρέπει να έχει 10 αριθμούς";
+    }
+
+    // Postal code: exactly 5 digits
+    if (!/^\d{5}$/.test(userData?.postalCode || '')) {
+      newErrors.postalCode = "Ο ταχυδρομικός κώδικας πρέπει να έχει 5 αριθμούς";
+    }
+
+    // Email: simple email regex
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userData?.email || '')) {
+      newErrors.email = "Το email δεν είναι έγκυρο";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; // true if no errors
+  };
+
   // 3. Αποστολή των αλλαγών στη βάση (PATCH)
   const handleSave = async () => {
+
+    if (!validateFields()) return
+
     try {
       const response = await fetch(`http://localhost:3001/users/${user.id}`, {
         method: "PATCH",
@@ -61,11 +121,15 @@ const OwnerProfile = () => {
 
       if (response.ok) {
         setIsEditing(false);
-        alert("Τα στοιχεία αποθηκεύτηκαν!");
+        setErrors({});
+        showSnackbar("Τα στοιχεία αποθηκεύτηκαν!", "success");
+      } else {
+        showSnackbar("Σφάλμα κατά την αποθήκευση.", "error");
       }
     } catch (err) {
-      alert("Σφάλμα κατά την αποθήκευση.");
+      showSnackbar("Σφάλμα κατά την αποθήκευση.", "error");
     }
+    
   };
 
 
@@ -75,33 +139,84 @@ const OwnerProfile = () => {
   return ( 
     isLoggedIn ?
     (
+    <>
     <ProfileLayout role={userData?.role || "owner"}>
       <Box sx={{ mb: 4 }}>
-        <Typography variant="h5" sx={{ mb: 4, fontWeight: "bold", color: "#373721" }}>
-          Προσωπικά στοιχεία
+        <Typography
+          variant="h5"
+          sx={{ mb: 4, fontWeight: "bold", color: "#373721" }}
+        >
+          Στοιχεία Προφίλ Ιδιοκτήτη
         </Typography>
 
-        <Box sx={{ position: 'relative', maxWidth: '400px' }}>
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                minHeight: '60vh',
-              }}
-            >
-              <UserInfoCard
-                fields={ownerFields}
-                data={userData}
-                isEditing={isEditing}
-                onChange={handleChange}
-                onEdit={() => setIsEditing(true)}
-                onSave={handleSave}
-              />
-            </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            width: '100%',
+          }}
+        >
+          <UserInfoCard
+            fields={ownerFields}
+            data={userData}
+            isEditing={isEditing}
+            onChange={handleChange}
+            errors={errors}
+          />
         </Box>
       </Box>
+      <Box sx={{ mt: 4, display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
+        {!isEditing ? (
+          <Button
+            variant="contained"
+            onClick={() => setIsEditing(true)}
+            sx={{
+              backgroundColor: '#9a9b6a',
+              px: 4,
+              borderRadius: '10px',
+              fontWeight: 'bold',
+              '&:hover': { backgroundColor: '#8a8b5a' },
+            }}
+          >
+            ΕΠΕΞΕΡΓΑΣΙΑ
+          </Button>
+        ) : (
+          <>
+            <Button
+              variant="contained"
+              color="success"
+              onClick={handleSave}
+              sx={{ borderRadius: '10px', px: 4 }}
+            >
+              ΑΠΟΘΗΚΕΥΣΗ
+            </Button>
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={handleCancel}
+              sx={{ borderRadius: '10px', px: 4 }}
+            >
+              ΑΚΥΡΩΣΗ
+            </Button>
+          </>
+        )}
+      </Box>
     </ProfileLayout>
+    <Snackbar
+      open={snackbar.open}
+      autoHideDuration={3000} // 3 seconds
+      onClose={() => setSnackbar({ ...snackbar, open: false })}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+    >
+      <Alert
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        severity={snackbar.severity}
+        sx={{ width: '100%' }}
+      >
+        {snackbar.message}
+      </Alert>
+    </Snackbar>
+    </>
   ) :
   (
     <Typography variant="h6" color="error" textAlign="center" sx={{ mt: 10 }}>

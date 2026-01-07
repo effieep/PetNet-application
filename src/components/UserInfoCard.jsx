@@ -1,95 +1,143 @@
 import {
-  Box,
   Grid,
   TextField,
   Paper,
-  Button,
+  Typography,
 } from '@mui/material';
 
 const UserInfoCard = ({
-  fields,
   data,
   isEditing,
   onChange,
-  onEdit,
-  onSave,
+  errors,
+  
 }) => {
   return (
     <Paper
       elevation={0}
       sx={{
-        maxWidth: 460,
+        width: '100%',
         p: 4,
         borderRadius: '20px',
         backgroundColor: '#ffffff',
         border: '1px solid rgba(58, 78, 27, 0.15)',
-        mx: 'auto'
       }}
     >
+      {/* ===== ΠΡΟΣΩΠΙΚΑ ΣΤΟΙΧΕΙΑ ===== */}
+      <Typography sx={{ mb: 2, fontWeight: 'bold' }}>
+        Προσωπικά στοιχεία
+      </Typography>
 
-      {/* FIELDS */}
       <Grid container spacing={2}>
-        {fields.map((field) => (
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label={field.label}
-              name={field.name}
-              value={data?.[field.name] || ''}
-              onChange={onChange}
-              disabled={field.disabled || !isEditing}
-              variant={field.disabled ? 'filled' : 'outlined'}
-              sx={
-                field.disabled
-                  ? {
-                      backgroundColor: '#f2f3ed',
-                      borderRadius: '8px',
-                    }
-                  : {}
-              }
-            />
-          </Grid>
-        ))}
+        <Grid item xs={4}>
+          <TextField
+            fullWidth
+            label="Όνομα"
+            name="name"
+            value={data?.name || ''}
+            onChange={onChange}
+            disabled={!isEditing}
+          />
+        </Grid>
+
+        <Grid item xs={4}>
+          <TextField
+            fullWidth
+            label="Επώνυμο"
+            name="surname"
+            value={data?.surname || ''}
+            onChange={onChange}
+            disabled={!isEditing}
+          />
+        </Grid>
+
+        <Grid item xs={4}>
+          <TextField
+            fullWidth
+            label="ΑΦΜ"
+            name="afm"
+            value={data?.afm || ''}
+            disabled
+            variant="filled"
+            sx={{ backgroundColor: '#f2f3ed', borderRadius: '8px' }}
+          />
+        </Grid>
       </Grid>
 
-      {/* ACTIONS */}
-      <Box sx={{ mt: 4, display: 'flex', gap: 2 }}>
-        {!isEditing ? (
-          <Button
-            variant="contained"
-            onClick={onEdit}
-            sx={{
-              backgroundColor: '#9a9b6a',
-              px: 4,
-              py: 1.5,
-              borderRadius: '10px',
-              fontWeight: 'bold',
-              '&:hover': { backgroundColor: '#8a8b5a' },
-            }}
-          >
-            ΕΠΕΞΕΡΓΑΣΙΑ ΣΤΟΙΧΕΙΩΝ
-          </Button>
-        ) : (
-          <>
-            <Button
-              variant="contained"
-              color="success"
-              onClick={onSave}
-              sx={{ borderRadius: '10px', px: 4 }}
-            >
-              ΑΠΟΘΗΚΕΥΣΗ
-            </Button>
-            <Button 
-                variant="outlined" 
-                color="error" 
-                onClick={() => onEdit(false)}
-                sx={{ borderRadius: "10px", px: 4 }}
-            >
-              ΑΚΥΡΩΣΗ
-            </Button>
-          </>
-        )}
-      </Box>
+      {/* ===== ΣΤΟΙΧΕΙΑ ΕΠΙΚΟΙΝΩΝΙΑΣ ===== */}
+      <Typography sx={{ mt: 4, mb: 2, fontWeight: 'bold' }}>
+        Στοιχεία επικοινωνίας
+      </Typography>
+
+      <Grid container spacing={2}>
+        <Grid item xs={6}>
+          <TextField
+            fullWidth
+            label="Email"
+            name="email"
+            value={data?.email || ''}
+            onChange={onChange}
+            disabled={!isEditing}
+            helperText={errors?.email || ''}
+            error={Boolean(errors?.email)}
+          />
+        </Grid>
+
+        <Grid item xs={6}>
+          <TextField
+            fullWidth
+            label="Τηλέφωνο"
+            name="phone"
+            value={data?.phone || ''}
+            onChange={onChange}
+            disabled={!isEditing}
+            helperText={errors?.phone || ''}
+            error={Boolean(errors?.phone)}
+          />
+        </Grid>
+      </Grid>
+
+      {/* ===== ΔΙΕΥΘΥΝΣΗ ===== */}
+      <Typography sx={{ mt: 4, mb: 2, fontWeight: 'bold' }}>
+        Διεύθυνση
+      </Typography>
+
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            fullWidth
+            label="Οδός και αριθμός"
+            name="street"
+            value={data?.street || ''}
+            onChange={onChange}
+            disabled={!isEditing}
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={3}>
+          <TextField
+            fullWidth
+            label="Πόλη"
+            name="city"
+            value={data?.city || ''}
+            onChange={onChange}
+            disabled={!isEditing}
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={3}>
+          <TextField
+            fullWidth
+            label="Ταχυδρομικός Κώδικας"
+            name="postalCode"
+            value={data?.postalCode || ''}
+            onChange={onChange}
+            disabled={!isEditing}
+            helperText={errors?.postalCode || ''}
+            error={Boolean(errors?.postalCode)}
+          />
+        </Grid>
+      </Grid>
     </Paper>
   );
 };

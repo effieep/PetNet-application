@@ -91,72 +91,61 @@
     }
   ],
   "declarations": [
-    
     {
       "id": 12,
       "type": "LOSS",
       "status": "SUBMITTED",
       "createdAt": "2024-11-20",
-
       "petId": "p3",
       "ownerId": "u1",
-
       "location": {
         "address": "Γλυφάδα, Αθήνα"
       },
-
       "description": "Χάθηκε κοντά στην πλατεία",
       "contact": {
         "phone": "6985595001"
       }
     },
-        {
+    {
       "id": 12,
       "type": "LOSS",
       "status": "PENDING",
       "createdAt": "2024-11-20",
-
       "petId": "p2",
       "ownerId": "u1",
-
       "location": {
         "address": "Γλυφάδα, Αθήνα"
       },
-
       "description": "Χάθηκε κοντά στην πλατεία",
       "contact": {
         "phone": "6985595001"
       }
-    },    {
+    },
+    {
       "id": 12,
       "type": "LOSS",
       "status": "PENDING",
       "createdAt": "2023-11-20",
-
       "petId": "p1",
       "ownerId": "u1",
-
       "location": {
         "address": "Γλυφάδα, Αθήνα"
       },
-
       "description": "Χάθηκε κοντά στην πλατεία",
       "contact": {
         "phone": "6985595001"
       }
-    },    {
+    },
+    {
       "id": 12,
       "type": "LOSS",
       "status": "PENDING",
       "createdAt": "2025-11-20",
-
       "petId": "p3",
       "ownerId": "u1",
-
       "location": {
         "address": "Γλυφάδα, Αθήνα"
       },
-
       "description": "Χάθηκε κοντά στην πλατεία",
       "contact": {
         "phone": "6985595001"
@@ -167,14 +156,11 @@
       "type": "FOUND",
       "status": "PENDING",
       "createdAt": "2024-12-01",
-
       "petId": "p2",
       "ownerId": "u1",
-
       "location": {
         "address": "Κυψέλη, Αθήνα"
       },
-
       "description": "Χάθηκε κοντά στον σταθμό Βικτώρια",
       "contact": {
         "phone": "6985595001"

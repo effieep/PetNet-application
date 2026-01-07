@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { Collapse, Divider } from "@mui/material";
 import { SwitchTransition } from "react-transition-group";
-import UniversalButton from "../components/UniversalButton";
 import {
   Stepper,
   Step,
