@@ -1,24 +1,40 @@
-import { Box, Card, CardContent, Chip, IconButton, Typography } from "@mui/material";
-import PetsIcon from '@mui/icons-material/Pets';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import {
+  Box,
+  Card,
+  CardContent,
+  Chip,
+  IconButton,
+  Typography,
+} from "@mui/material";
+import PetsIcon from "@mui/icons-material/Pets";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 const statusMap = {
   PENDING: { label: "Εκκρεμεί", color: "warning" },
+  SUBMITTED: { label: "Υποβλήθηκε", color: "info" },
   RESOLVED: { label: "Επιλυμένη", color: "success" },
   REJECTED: { label: "Απορριφθείσα", color: "error" },
-  SUBMITTED: { label: "Υποβλήθηκε", color: "info" },
 };
 
-const DeclarationCard = ({ declaration,  }) => {
+const DeclarationCard = ({ declaration }) => {
   if (!declaration) return null;
-  if (declaration.type == "LOSS"){
-    const { pet, type, status, createdAt, location } = declaration;
-  }else{
-    const { petType, microchip, type, status, createdAt, location } = declaration;
-  }
-  
 
-  const st = statusMap[status] || { label: status || "Άγνωστο", color: "default" };
+  const {
+    type,
+    status,
+    createdAt,
+    location,
+
+    // LOSS fields
+    pet,
+    lostDate,
+
+    // FOUND fields
+    petType,
+    microchip,
+  } = declaration;
+
+  const st = statusMap[status] || { label: status, color: "default" };
 
   return (
     <Card
@@ -26,7 +42,10 @@ const DeclarationCard = ({ declaration,  }) => {
       sx={{
         mb: 2,
         borderRadius: "14px",
-        backgroundColor: type === "LOSS" ? "rgba(255, 235, 59, 0.2)" : "rgba(76, 175, 80, 0.2)",
+        backgroundColor:
+          type === "LOSS"
+            ? "rgba(255, 193, 7, 0.18)"   // κίτρινο απώλειας
+            : "rgba(76, 175, 80, 0.18)", // πράσινο εύρεσης
         border: "1px solid rgba(0,0,0,0.1)",
       }}
     >
@@ -34,11 +53,31 @@ const DeclarationCard = ({ declaration,  }) => {
         <PetsIcon sx={{ fontSize: 32 }} />
 
         <Box sx={{ flex: 1 }}>
-          {type === "LOSS" && <Typography fontWeight="bold">{pet?.name || "-"} · Microchip: {pet?.microchip || "-"}</Typography>}
-          {type === "FOUND" && <Typography fontWeight="bold">Βρέθηκε {petType || "-"} · Microchip: {pet?.microchip || "-"}</Typography>}
+          {/* 🔹 LOSS */}
+          {type === "LOSS" && (
+            <>
+              <Typography fontWeight="bold">
+                {pet?.name || "-"} · Microchip: {pet?.microchip || "-"}
+              </Typography>
 
+              <Typography variant="body2">
+                Ημερομηνία απώλειας: {lostDate || "-"}
+              </Typography>
+            </>
+          )}
+
+          {/* 🔹 FOUND */}
+          {type === "FOUND" && (
+            <>
+              <Typography fontWeight="bold">
+                Βρέθηκε {petType || "Ζώο"} · Microchip: {microchip || "-"}
+              </Typography>
+            </>
+          )}
+
+          {/* 🔹 Κοινά */}
           <Typography variant="body2">
-            Ημερομηνία Δημιoυργίας: {createdAt || "-"}
+            Ημερομηνία δήλωσης: {createdAt || "-"}
           </Typography>
 
           <Typography variant="body2" color="text.secondary">
