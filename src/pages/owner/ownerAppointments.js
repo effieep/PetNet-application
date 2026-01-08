@@ -54,10 +54,10 @@ const OwnerAppointments = () => {
     setOpenAppointmentId(prev => (prev === id ? null : id));
   };
 
-  const handleRemoveFromUI = (idToDelete) => {
-    // Ενημερώνουμε το state αφαιρώντας το συγκεκριμένο ID
-    setAppointments(prev => prev.filter(app => app.id !== idToDelete));
-  };
+  // const handleRemoveFromUI = (idToDelete) => {
+  //   // Ενημερώνουμε το state αφαιρώντας το συγκεκριμένο ID
+  //   setAppointments(prev => prev.filter(app => app.id !== idToDelete));
+  // };
 
 
   const petById = useMemo(() => {
@@ -147,7 +147,6 @@ const OwnerAppointments = () => {
         <AppointmentCard  
           key={a.id}
           appointment={a}
-          onDeleteSuccess={handleRemoveFromUI}
           open={openAppointmentId === a.id}
           onToggle={() => toggleOpen(a.id)} />
             ))}

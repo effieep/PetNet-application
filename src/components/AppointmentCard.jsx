@@ -80,11 +80,9 @@ const AppointmentCard = ({ appointment, open, onToggle, onDeleteSuccess }) => {
       </Card>
 
       {/* 🔽 EXPANDED SECTION */}
-      {/* Στο return του AppointmentCard */}
     <Collapse in={open} timeout="auto" unmountOnExit>
         <ExpandedAppointmentDetails 
             appointment={appointment} 
-            onDeleteSuccess={onDeleteSuccess}
         />
     </Collapse>
     </>
