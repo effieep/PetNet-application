@@ -41,6 +41,8 @@ export function AuthProvider({ children }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          profilePic: null,
+          oldProfilePic: null,
           ...formData.personal,
           ...formData.contact,
           ...formData.address,
@@ -65,7 +67,7 @@ export function AuthProvider({ children }) {
             castration: false,
             emergency: false
           },
-          reviews: null
+          reviews: []
 
         })
       });

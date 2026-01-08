@@ -130,29 +130,6 @@ const OwnerProfile = () => {
     (
     <>
     <ProfileLayout role={userData?.role || "owner"}>
-      <Box sx={{ mb: 4 }}>
-        <Typography
-          variant="h5"
-          sx={{ mb: 4, fontWeight: "bold", color: "#373721" }}
-        >
-          Στοιχεία Προφίλ Ιδιοκτήτη
-        </Typography>
-
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            width: '100%',
-          }}
-        >
-          <UserInfoCard
-            data={userData}
-            isEditing={isEditing}
-            onChange={handleChange}
-            errors={errors}
-          />
-        </Box>
-      </Box>
       <Box sx={{ mt: 4, display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
         {!isEditing ? (
           <Button
@@ -188,6 +165,29 @@ const OwnerProfile = () => {
             </Button>
           </>
         )}
+      </Box>
+      <Box sx={{ mb: 4 }}>
+        <Typography
+          variant="h5"
+          sx={{ mb: 4, fontWeight: "bold", color: "#373721" }}
+        >
+          Στοιχεία Προφίλ Ιδιοκτήτη
+        </Typography>
+
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            width: '100%',
+          }}
+        >
+          <UserInfoCard
+            data={userData}
+            isEditing={isEditing}
+            onChange={handleChange}
+            errors={errors}
+          />
+        </Box>
       </Box>
     </ProfileLayout>
     <Snackbar

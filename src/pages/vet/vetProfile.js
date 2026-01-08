@@ -129,29 +129,6 @@ const VetProfile = () => {
     (
     <>
     <ProfileLayout role={userData?.role || "vet"}>
-      <Box sx={{ mb: 4 }}>
-        <Typography
-          variant="h5"
-          sx={{ mb: 4, fontWeight: "bold", color: "#373721" }}
-        >
-          Στοιχεία Προφίλ Κτηνίατρου
-        </Typography>
-
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            width: '100%',
-          }}
-        >
-          <VetInfoCard
-            data={userData}
-            isEditing={isEditing}
-            onChange={handleChange}
-            errors={errors}
-          />
-        </Box>
-      </Box>
       <Box sx={{ mt: 4, display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
         {!isEditing ? (
           <Button
@@ -187,6 +164,29 @@ const VetProfile = () => {
             </Button>
           </>
         )}
+      </Box>
+      <Box sx={{ mb: 4 }}>
+        <Typography
+          variant="h5"
+          sx={{ mb: 4, fontWeight: "bold", color: "#373721" }}
+        >
+          Στοιχεία Προφίλ Κτηνίατρου
+        </Typography>
+
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            width: '100%',
+          }}
+        >
+          <VetInfoCard
+            data={userData}
+            isEditing={isEditing}
+            onChange={handleChange}
+            errors={errors}
+          />
+        </Box>
       </Box>
     </ProfileLayout>
     <Snackbar

@@ -46,29 +46,101 @@ const VetPublicInfoCard = ({
         border: '1px solid rgba(58, 78, 27, 0.15)',
       }}
     >
-      {/* ===== ΠΡΟΣΩΠΙΚΑ ΣΤΟΙΧΕΙΑ ===== */}
+      {/* ===== ΦΩΤΟΓΡΑΦΙΑ ΠΡΟΦΙΛ ===== */}
       <Typography sx={{ mb: 2, fontWeight: 'bold' }}>
-        Μερικά λόγια για εσάς
+        Φωτογραφία Προφίλ & μερικά λόγια για εσάς
       </Typography>
+      <Box sx={{ mb: 4, display: 'flex', alignItems: 'flex-end', gap: 2 }}>
+        <Box
+          sx={{
+            position: 'relative',
+            width: 200,
+            height: 200,
+            border: '2px solid #e2d082ff',
+            borderRadius: '8px',
+            overflow: 'hidden',
+            cursor: 'pointer',
+            '&:hover .hoverOverlay': {
+              opacity: isEditing ? 1 : 0,
+            },
+          }}
+          onClick={() => 
+            {
+              if (isEditing){
+                document.getElementById('profile-upload-input').click();
+              }
+            }
+          }
+        >
+          {/* Profile image */}
+          <Box
+            component="img"
+            src={data?.profilePic || '/default_profile_pic.png'}
+            alt="Profile"
+            sx={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              transition: '0.3s',
+            }}
+          />
+
+          {/* Hover overlay */}
+          <Box
+            className="hoverOverlay"
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              bgcolor: 'rgba(0,0,0,0.5)',
+              color: '#fff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              opacity: 0, 
+              transition: '0.3s',
+              fontWeight: 'bold',
+              fontSize: '16px',
+              textAlign: 'center',
+              pointerEvents: 'none', 
+            }}
+          >
+            📷 Επιλέξτε για αλλαγή
+          </Box>
+
+          {/* Hidden input */}
+          <input
+            name="profilePic"
+            type="file"
+            id="profile-upload-input"
+            accept="image/*"
+            style={{ display: 'none' }}
+            disabled={!isEditing}
+            onChange={onChange}
+          />
+        </Box>
 
         <TextField
-        fullWidth
-        label="Γράψτε μία περίληψη για εσάς, την εμπειρία σας στο χώρο και έμμεσα λόγους για τους οποίους κανείς 
-               θα επέλεγε εσάς ως κτηνίατρο."
-        name="description"
-        value={data?.description || ''}
-        onChange={onChange}
-        disabled={!isEditing}
-        multiline    
-        minRows={4}   
-        maxRows={8}     
-        InputLabelProps={{
-          sx: {
-            whiteSpace: 'normal', 
-            wordWrap: 'break-word',
-          },
-        }}
-      />
+          fullWidth
+          label="Γράψτε μία περίληψη για εσάς, την εμπειρία σας στο χώρο και έμμεσα λόγους για τους οποίους κανείς 
+          θα επέλεγε εσάς ως κτηνίατρο."
+          name="description"
+          value={data?.description || ''}
+          onChange={onChange}
+          disabled={!isEditing}
+          multiline    
+          minRows={4}   
+          maxRows={8}     
+          InputLabelProps={{
+            sx: {
+              whiteSpace: 'normal', 
+              wordWrap: 'break-word',
+            },
+          }}
+        />
+      </Box>
 
       <Typography sx={{ my: 2, fontWeight: 'bold' }}>
         Oί σπουδές σας
