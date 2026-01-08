@@ -54,8 +54,7 @@
       "clinicZip": "17676",
       "clinicCity": "Kallithea,Athens",
       "role": "vet",
-      "reviews": [
-      ]
+      "reviews": []
     },
     {
       "profilePic": null,
@@ -76,14 +75,14 @@
       "specialization": "",
       "registryNum": "111111",
       "practiceYears": 2,
-      "clinicAddress": "Αριστομένους ",
+      "clinicAddress": "Αριστομένους 27",
       "clinicZip": "15111",
-      "clinicCity": "27",
+      "clinicCity": "Θεσσαλονίκη",
       "role": "vet",
       "reviews": []
     }
   ],
-"pets": [
+  "pets": [
     {
       "id": "p1",
       "ownerId": "u1",
@@ -116,20 +115,52 @@
         },
         "history": {
           "vaccinations": [
-            { "id": "v101", "date": "15-09-2025", "name": "Nobivac Tricat", "vetId": "v1" },
-            { "id": "v100", "date": "15-09-2024", "name": "Nobivac Tricat", "vetId": "v1" }
+            {
+              "id": "v101",
+              "date": "15-09-2025",
+              "name": "Nobivac Tricat",
+              "vetId": "v1"
+            },
+            {
+              "id": "v100",
+              "date": "15-09-2024",
+              "name": "Nobivac Tricat",
+              "vetId": "v1"
+            }
           ],
           "deworming": [
-            { "id": "d101", "date": "15-09-2025", "type": "Internal", "product": "Milbemax" },
-            { "id": "d102", "date": "15-09-2025", "type": "External", "product": "Advocate" }
+            {
+              "id": "d101",
+              "date": "15-09-2025",
+              "type": "Internal",
+              "product": "Milbemax"
+            },
+            {
+              "id": "d102",
+              "date": "15-09-2025",
+              "type": "External",
+              "product": "Advocate"
+            }
           ],
           "medicalActs": {
             "tests": [],
             "surgeries": [
-              { "id": "s1", "date": "20-01-2021", "title": "Στείρωση (Ουδετεροποίηση)", "vetId": "v1", "notes": "Ολική αφαίρεση" }
+              {
+                "id": "s1",
+                "date": "20-01-2021",
+                "title": "Στείρωση (Ουδετεροποίηση)",
+                "vetId": "v1",
+                "notes": "Ολική αφαίρεση"
+              }
             ],
             "medication": [
-              { "id": "m1", "startDate": "15-09-2025", "endDate": "22-09-2025", "name": "Zymox", "dosage": "Τοπική χρήση" }
+              {
+                "id": "m1",
+                "startDate": "15-09-2025",
+                "endDate": "22-09-2025",
+                "name": "Zymox",
+                "dosage": "Τοπική χρήση"
+              }
             ]
           }
         }
@@ -162,16 +193,43 @@
         },
         "history": {
           "vaccinations": [
-             { "id": "v201", "date": "10-06-2025", "name": "Vanguard 7", "vetId": "v2" },
-             { "id": "v200", "date": "05-06-2024", "name": "Vanguard 7", "vetId": "v2" }
+            {
+              "id": "v201",
+              "date": "10-06-2025",
+              "name": "Vanguard 7",
+              "vetId": "v2"
+            },
+            {
+              "id": "v200",
+              "date": "05-06-2024",
+              "name": "Vanguard 7",
+              "vetId": "v2"
+            }
           ],
           "deworming": [
-             { "id": "d201", "date": "01-06-2025", "type": "External", "product": "Seresto Collar" }
+            {
+              "id": "d201",
+              "date": "01-06-2025",
+              "type": "External",
+              "product": "Seresto Collar"
+            }
           ],
           "medicalActs": {
             "tests": [
-               { "id": "t201", "date": "10-06-2025", "title": "Εξετάσεις Αίματος (Leishmania)", "vetId": "v2", "result": "Αρνητικό" },
-               { "id": "t202", "date": "10-06-2025", "title": "Γενική Αίματος", "vetId": "v2", "result": "Φυσιολογική" }
+              {
+                "id": "t201",
+                "date": "10-06-2025",
+                "title": "Εξετάσεις Αίματος (Leishmania)",
+                "vetId": "v2",
+                "result": "Αρνητικό"
+              },
+              {
+                "id": "t202",
+                "date": "10-06-2025",
+                "title": "Γενική Αίματος",
+                "vetId": "v2",
+                "result": "Φυσιολογική"
+              }
             ],
             "surgeries": [],
             "medication": []
@@ -206,12 +264,23 @@
         },
         "history": {
           "vaccinations": [
-             { "id": "v301", "date": "20-03-2025", "name": "Purevax RCP", "vetId": "v1" }
+            {
+              "id": "v301",
+              "date": "20-03-2025",
+              "name": "Purevax RCP",
+              "vetId": "v1"
+            }
           ],
           "deworming": [],
           "medicalActs": {
             "tests": [
-               { "id": "t301", "date": "15-03-2022", "title": "Υπέρηχος Καρδιάς (HCM Screen)", "vetId": "v2", "result": "Καθαρό" }
+              {
+                "id": "t301",
+                "date": "15-03-2022",
+                "title": "Υπέρηχος Καρδιάς (HCM Screen)",
+                "vetId": "v2",
+                "result": "Καθαρό"
+              }
             ],
             "surgeries": [],
             "medication": []
@@ -228,9 +297,9 @@
       "vetId": "v1",
       "date": "15-12-2024",
       "time": "14:30",
-      "status": "CONFIRMED",
+      "status": "COMPLETED",
       "reason": "Ετήσιος εμβολιασμός",
-      "reviewed": false
+      "reviewed": true
     },
     {
       "id": "2",

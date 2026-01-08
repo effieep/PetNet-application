@@ -32,7 +32,7 @@ const VetHistory = () => {
     }, [user]);
 
     return ( 
-        <ProfileLayout role={userData?.role || "owner"}>
+        <ProfileLayout role={userData?.role || "vet"}>
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'column',    

@@ -1,9 +1,11 @@
 import React from "react";
 import { API_URL } from "../api";
+import { useNavigate } from 'react-router-dom';
 
 const AuthContext = React.createContext(null);
 
 export function AuthProvider({ children }) {
+  const navigate = useNavigate();
   const [user, setUser] = React.useState(null);
   const isLoggedIn = !!user;
 
@@ -103,6 +105,7 @@ export function AuthProvider({ children }) {
   const logout = () => {
     setUser(null);
     localStorage.removeItem("auth_user");
+    navigate("/");
   };
 
   return (
