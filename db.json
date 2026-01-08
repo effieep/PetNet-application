@@ -53,7 +53,9 @@
       "clinicAddress": "Sapfous 42",
       "clinicZip": "17676",
       "clinicCity": "Kallithea,Athens",
-      "role": "vet"
+      "role": "vet",
+      "reviews": [
+      ]
     },
     {
       "id": "v1",
@@ -69,34 +71,14 @@
       "degreeInst": "Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης",
       "masterInst": "",
       "phdInst": "",
-      "specialization": [
-        "Γενική Κτηνιατρική"
-      ],
+      "specialization": "",
       "registryNum": "111111",
       "practiceYears": 2,
-      "clinicAddress": "Αριστομένους 23",
+      "clinicAddress": "Αριστομένους ",
       "clinicZip": "15111",
-      "clinicCity": "Θεσσαλονίκη",
+      "clinicCity": "27",
       "role": "vet",
-      "jobs": null,
-      "services": {
-        "general": true,
-        "vacinations": false,
-        "nutrition": false,
-        "consulting": false
-      },
-      "diagnostics": {
-        "blood": false,
-        "xrays": false,
-        "odontology": false,
-        "other": false
-      },
-      "surgeries": {
-        "general": false,
-        "castration": false,
-        "emergency": false
-      },
-      "reviews": null
+      "reviews": []
     }
   ],
   "pets": [
@@ -141,7 +123,8 @@
       "date": "15-12-2024",
       "time": "14:30",
       "status": "CONFIRMED",
-      "reason": "Ετήσιος εμβολιασμός"
+      "reason": "Ετήσιος εμβολιασμός",
+      "reviewed": false
     },
     {
       "id": "2",
@@ -151,7 +134,8 @@
       "date": "27-11-2025",
       "time": "18:00",
       "status": "PENDING",
-      "reason": ""
+      "reason": "",
+      "reviewed": false
     },
     {
       "id": "3",
@@ -160,7 +144,8 @@
       "vetId": "v2",
       "date": "10-01-2024",
       "time": "10:00",
-      "status": "COMPLETED"
+      "status": "COMPLETED",
+      "reviewed": false
     },
     {
       "id": "4",
@@ -169,7 +154,8 @@
       "vetId": "v1",
       "date": "10-01-2024",
       "time": "13:00",
-      "status": "CANCELLED"
+      "status": "CANCELLED",
+      "reviewed": false
     },
     {
       "id": "5",
@@ -177,7 +163,8 @@
       "vetId": "v1",
       "date": "10-01-2024",
       "time": "13:00",
-      "status": "CANCELLED"
+      "status": "CANCELLED",
+      "reviewed": false
     }
   ],
   "medicalRecords": [

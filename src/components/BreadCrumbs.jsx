@@ -18,6 +18,7 @@ const breadcrumbMap = {
   'public-profile': 'Δημόσιο Προφίλ Κτηνιάτρου',
   'randezvous-history': 'Ιστορικό Ραντεβού',
   reviews: 'Αξιολογήσεις Κτηνιάτρου',
+  review: 'Αξιολόγηση Ραντεβού',
 };
 
 function AppBreadcrumbs() {

@@ -1,8 +1,19 @@
 import { Box, Typography, Card, Divider, Button} from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const ExpandedAppointmentDetails = ({ appointment, onCancelSuccess }) => {
-  const { pet, vet, date, time, status, reason } = appointment;
+  const { pet, vet, date, time, status, reason, reviewed } = appointment;
 
+  const navigate = useNavigate();
+
+  const handleReviewClick = () => {
+    navigate(`/owner/appointments/review`, {
+      state: { 
+        vet: vet,             
+        appointment: appointment 
+      }
+    });
+  }
   // Μετατροπή dd-mm-yyyy σε δυναμικά στοιχεία
   const formatDate = (dateStr) => {
     if (!dateStr) return { dayNum: "-", dayName: "-", monthName: "-" };
@@ -177,10 +188,11 @@ const ExpandedAppointmentDetails = ({ appointment, onCancelSuccess }) => {
 
   {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: Αξιολόγηση ΚΑΙ Προβολή Κτηνιάτρου */}
       <Box sx={{ display: 'flex', gap: 2, alignItems: "center" }}>
-        {status === "COMPLETED" && (
+        {status === "COMPLETED" && reviewed === false && (
           <Button 
             variant="outlined" 
             color="primary" 
+            onClick={handleReviewClick}
             sx={{ 
               borderRadius: "8px", 
               backgroundColor: "white",
@@ -190,6 +202,12 @@ const ExpandedAppointmentDetails = ({ appointment, onCancelSuccess }) => {
           >
             ΚΑΝΤΕ ΑΞΙΟΛΟΓΗΣΗ
           </Button>
+        )}
+
+        {status === "COMPLETED" && reviewed === true && (
+          <Typography color="text.secondary">
+            Έχετε ήδη αξιολογήσει αυτό το ραντεβού.
+          </Typography>
         )}
 
       </Box>
