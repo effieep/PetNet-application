@@ -4,6 +4,7 @@ import { useAuth } from "../../auth/AuthContext";
 import ProfileLayout from "../../components/profileLayout"; // Σιγουρέψου για το σωστό path
 import VetPublicInfoCard from "../../components/VetPublicInfoCard";
 
+
 const VetProfile = () => {
   
   const [snackbar, setSnackbar] = useState({
@@ -57,12 +58,11 @@ const VetProfile = () => {
       try {
         const response = await fetch(`http://localhost:3001/users/${user.id}`);
         const data = await response.json();
-
         setUserData({
           ...data,
           jobs: data.jobs || {
             "job-0": { role: "", company: "", startYear: "", endYear: "" },
-          }
+          },
         });
       } catch (err) {
         setError(err.message);
@@ -76,9 +76,11 @@ const VetProfile = () => {
 
   // 2. Ενημέρωση του τοπικού state όταν γράφουμε στα inputs
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, checked, type } = e.target;
 
+    // =========================
     // ADD JOB
+    // =========================
     if (name === '__ADD_JOB__') {
       setUserData(prev => {
         const keys = Object.keys(prev.jobs || {});
@@ -95,7 +97,9 @@ const VetProfile = () => {
       return;
     }
 
+    // =========================
     // REMOVE LAST JOB (keep at least 1)
+    // =========================
     if (name === '__REMOVE_JOB__') {
       setUserData(prev => {
         const keys = Object.keys(prev.jobs || {});
@@ -112,28 +116,70 @@ const VetProfile = () => {
       return;
     }
 
-    // JOB FIELD CHANGE
+    // =========================
+    // SPECIALIZATION (array of strings)
+    // =========================
+    if (name.startsWith('specialization.')) {
+      const spec = name.split('.')[1];
+
+      setUserData(prev => {
+        const current = Array.isArray(prev.specialization)
+          ? prev.specialization
+          : [];
+
+        return {
+          ...prev,
+          specialization: checked
+            ? [...current, spec]
+            : current.filter(s => s !== spec),
+        };
+      });
+
+      return;
+    }
+    
+    // =========================
+    // NESTED FIELD (job OR checkbox)
+    // =========================
     if (name.includes('.')) {
-      const [jobKey, field] = name.split('.');
+      const [group, field] = name.split('.');
+
+      // ✔ JOBS (job-0, job-1, ...)
+      if (group.startsWith('job-')) {
+        setUserData(prev => ({
+          ...prev,
+          jobs: {
+            ...prev.jobs,
+            [group]: {
+              ...prev.jobs[group],
+              [field]: value
+            }
+          }
+        }));
+        return;
+      }
+
+      // ✔ CHECKBOX GROUPS (services / diagnostics / surgeries)
       setUserData(prev => ({
         ...prev,
-        jobs: {
-          ...prev.jobs,
-          [jobKey]: {
-            ...prev.jobs[jobKey],
-            [field]: value
-          }
+        [group]: {
+          ...prev[group],
+          [field]: type === 'checkbox' ? checked : value
         }
       }));
       return;
     }
 
+
+    // =========================
     // NORMAL FIELD
+    // =========================
     setUserData(prev => ({
       ...prev,
       [name]: value
     }));
   };
+
 
   const handleCancel = () => {
     // Επαναφορά των δεδομένων από το db.json

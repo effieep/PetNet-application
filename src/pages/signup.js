@@ -333,7 +333,7 @@ export default function SignUpStepper() {
       degreeInst: "",
       masterInst: "",
       phdInst: "",
-      specialization: "",
+      specialization: ["Γενική Κτηνιατρική"],
       registryNum: "",
       practiceYears: "",
       clinicAddress: "",

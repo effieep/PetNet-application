@@ -47,7 +47,26 @@ export function AuthProvider({ children }) {
           password: formData.auth.password,
           ...formData.vet,
           role: formData.userType,
-          jobs: null
+          jobs: null,
+          services: {
+            general: true,
+            vacinations: false,
+            nutrition: false,
+            consulting: false
+          },
+          diagnostics: {
+            blood: false,
+            xrays: false,
+            odontology: false,
+            other: false
+          },
+          surgeries: {
+            general: false,
+            castration: false,
+            emergency: false
+          },
+          reviews: null
+
         })
       });
 

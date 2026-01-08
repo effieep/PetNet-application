@@ -69,14 +69,34 @@
       "degreeInst": "Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης",
       "masterInst": "",
       "phdInst": "",
-      "specialization": "",
+      "specialization": [
+        "Γενική Κτηνιατρική"
+      ],
       "registryNum": "111111",
       "practiceYears": 2,
       "clinicAddress": "Αριστομένους 23",
       "clinicZip": "15111",
       "clinicCity": "Θεσσαλονίκη",
       "role": "vet",
-      "jobs": null
+      "jobs": null,
+      "services": {
+        "general": true,
+        "vacinations": false,
+        "nutrition": false,
+        "consulting": false
+      },
+      "diagnostics": {
+        "blood": false,
+        "xrays": false,
+        "odontology": false,
+        "other": false
+      },
+      "surgeries": {
+        "general": false,
+        "castration": false,
+        "emergency": false
+      },
+      "reviews": null
     }
   ],
   "pets": [

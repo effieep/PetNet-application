@@ -5,10 +5,22 @@ import {
   Box,
   IconButton,
   MenuItem,
+  FormControlLabel,
+  FormGroup,
+  Checkbox,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import dayjs from 'dayjs';
+const SPECIALIZATIONS = [
+  "Γενική Κτηνιατρική",
+  "Παθολογία",
+  "Χειρουργική",
+  "Οδοντιατρική",
+  "Δερματολογία",
+  "Οφθαλμολογία",
+  "Διατροφολογία"
+];
 
 const VetPublicInfoCard = ({
   data,
@@ -322,6 +334,178 @@ const VetPublicInfoCard = ({
       <Typography sx={{ my: 2, fontWeight: 'bold' }}>
         Παρεχόμενες Υπηρεσίες & Ειδικότητες
       </Typography>
+      <Box sx={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+        {/* ===== Προληπτική Υγεία ===== */}
+        <Box>
+          <Typography sx={{ mb: 1, fontWeight: 'bold' }}>Προληπτική Υγεία και Φροντίδα</Typography>
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={data.services?.general || true}
+                  onChange={onChange}
+                  name="services.general"
+                  disabled={true}
+                />
+              }
+              label="Γενικός έλεγχος υγείας"
+            />
+
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={data.services?.vacinations || false}
+                  onChange={onChange}
+                  name="services.vacinations"
+                  disabled={!isEditing}
+                />
+              }
+              label="Εμβόλια / Προληπτική φροντίδα"
+            />
+
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={data.services?.nutrition || false}
+                  onChange={onChange}
+                  name="services.nutrition"
+                  disabled={!isEditing}
+                />
+              }
+              label="Διατροφική συμβουλευτική"
+            />
+
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={data.services?.consulting || false}
+                  onChange={onChange}
+                  name="services.consulting"
+                  disabled={!isEditing}
+                />
+              }
+              label="Συμβουλές συμπεριφοράς"
+            />
+          </FormGroup>
+        </Box>
+
+        {/* ===== Διαγνωστικά ===== */}
+        <Box>
+          <Typography sx={{ mb: 1, fontWeight: 'bold' }}>Διαγνωστικά Τεστ</Typography>
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={data.diagnostics?.blood || false}
+                  onChange={onChange}
+                  name="diagnostics.blood"
+                  disabled={!isEditing}
+                />
+              }
+              label="Αιματολογικές / Βιοχημικές"
+            />
+
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={data.diagnostics?.xrays || false}
+                  onChange={onChange}
+                  name="diagnostics.xrays"
+                  disabled={!isEditing}
+                />
+              }
+              label="Απεικονιστικές εξετάσεις"
+            />
+
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={data.diagnostics?.odontology || false}
+                  onChange={onChange}
+                  name="diagnostics.odontology"
+                  disabled={!isEditing}
+                />
+              }
+              label="Οδοντιατρικός έλεγχος"
+            />
+
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={data.diagnostics?.other || false}
+                  onChange={onChange}
+                  name="diagnostics.other"
+                  disabled={!isEditing}
+                />
+              }
+              label="Άλλες εξετάσεις"
+            />
+          </FormGroup>
+        </Box>
+
+        {/* ===== Χειρουργεία ===== */}
+        <Box>
+          <Typography sx={{ mb: 1, fontWeight: 'bold' }}>Χειρουργικές επεμβάσεις</Typography>
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={data.surgeries?.general || false}
+                  onChange={onChange}
+                  name="surgeries.general"
+                  disabled={!isEditing}
+                />
+              }
+              label="Γενικές επεμβάσεις"
+            />
+
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={data.surgeries?.castration || false}
+                  onChange={onChange}
+                  name="surgeries.castration"
+                  disabled={!isEditing}
+                />
+              }
+              label="Στείρωση"
+            />
+
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={data.surgeries?.emergency || false}
+                  onChange={onChange}
+                  name="surgeries.emergency"
+                  disabled={!isEditing}
+                />
+              }
+              label="Επείγουσες επεμβάσεις"
+            />
+          </FormGroup>
+        </Box>
+      </Box>
+      <Typography sx={{ my: 2, fontWeight: 'bold' }}>
+        Ειδικεύσεις
+      </Typography>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+        {SPECIALIZATIONS.map((spec) => (
+          <FormControlLabel
+            key={spec} 
+            control={
+              <Checkbox
+                checked={(data?.specialization?.includes(spec)) || false}
+                onChange={onChange}
+                name={`specialization.${spec}`}
+                disabled={
+                  spec === "Γενική Κτηνιατρική" || !isEditing
+                }
+              />
+            }
+            label={spec}
+          />
+        ))}
+      </Box>
     </Paper>
   );
 };
