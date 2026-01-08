@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Typography, CircularProgress, Alert, Box, FormControl, InputLabel, Select, MenuItem} from "@mui/material";
-
+import { API_URL } from "../../api";
 import { useAuth } from "../../auth/AuthContext";
 import ProfileLayout from "../../components/profileLayout";
 import DeclarationCard from "../../components/DeclarationCard";
@@ -22,8 +22,8 @@ const OwnerDeclarations = () => {
         setLoading(true);
 
         const [decRes, petsRes] = await Promise.all([
-          fetch(`http://localhost:3001/declarations?ownerId=${user.id}`),
-          fetch(`http://localhost:3001/pets?ownerId=${user.id}`),
+          fetch(`${API_URL}/declarations?ownerId=${user.id}`),
+          fetch(`${API_URL}/pets?ownerId=${user.id}`),
         ]);
 
         if (!decRes.ok) throw new Error("Σφάλμα φόρτωσης δηλώσεων");

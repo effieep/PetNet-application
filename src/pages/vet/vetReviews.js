@@ -2,6 +2,7 @@ import ProfileLayout from "../../components/profileLayout";
 import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "../../auth/AuthContext";
 import { Box, Typography, CircularProgress, Alert } from "@mui/material";
+import { API_URL } from "../../api";
 
 const VetHistory = () => {
   const { user } = useAuth();
@@ -15,13 +16,13 @@ const VetHistory = () => {
       setLoading(true);
       try {
         // Fetch current user data
-        const response = await fetch(`http://localhost:3001/users/${user.id}`);
+        const response = await fetch(`${API_URL}/users/${user.id}`);
         if (!response.ok) throw new Error("Δεν βρέθηκαν τα στοιχεία του χρήστη.");
         const data = await response.json();
         setUserData(data);
 
         // Fetch all users to build a map for author names
-        const res = await fetch("http://localhost:3001/users");
+        const res = await fetch(`${API_URL}/users`);
         const users = await res.json();
         const map = users.reduce((acc, u) => {
           acc[u.id] = `${u.name} ${u.surname}`;

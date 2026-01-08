@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Grid, Paper, Divider, CircularProgress, Stack} from '@mui/material';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import { API_URL } from '../api';
 
 const PetDetailsCard = ({ petId }) => {
   const [pet, setPet] = useState(null);
@@ -12,12 +13,12 @@ const PetDetailsCard = ({ petId }) => {
       setLoading(true);
       try {
         // 1. Κλήση για τα δεδομένα του κατοικιδίου
-        const petRes = await fetch(`http://localhost:3001/pets/${petId}`);
+        const petRes = await fetch(`${API_URL}/pets/${petId}`);
         const petData = await petRes.json();
         setPet(petData);
 
         // 2. Κλήση για τα δεδομένα του ιδιοκτήτη
-        const ownerRes = await fetch(`http://localhost:3001/users/${petData.ownerId}`);
+        const ownerRes = await fetch(`${API_URL}/users/${petData.ownerId}`);
         const ownerData = await ownerRes.json();
         setOwner(ownerData);
       } catch (error) {

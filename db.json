@@ -59,6 +59,9 @@
     {
       "profilePic": null,
       "oldProfilePic": null,
+      "specialization": [
+        "Γενική Κτηνιατρική"
+      ],
       "id": "v1",
       "name": "Άγγελος",
       "surname": "Ζωάκης",
@@ -72,7 +75,6 @@
       "degreeInst": "Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης",
       "masterInst": "",
       "phdInst": "",
-      "specialization": "",
       "registryNum": "111111",
       "practiceYears": 2,
       "clinicAddress": "Αριστομένους 27",

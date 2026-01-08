@@ -3,6 +3,7 @@ import { Box, Typography, CircularProgress, Alert, Button, Snackbar } from "@mui
 import { useAuth } from "../../auth/AuthContext";
 import ProfileLayout from "../../components/profileLayout"; // Σιγουρέψου για το σωστό path
 import VetInfoCard from "../../components/VetInfoCard";
+import { API_URL } from "../../api";
 
 
 const VetProfile = () => {
@@ -32,7 +33,7 @@ const VetProfile = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`http://localhost:3001/users/${user.id}`);
+        const response = await fetch(`${API_URL}/users/${user.id}`);
         if (!response.ok) throw new Error("Δεν βρέθηκαν τα στοιχεία του χρήστη.");
         const data = await response.json();
         setUserData(data);
@@ -63,7 +64,7 @@ const VetProfile = () => {
     // Επαναφορά των δεδομένων από το db.json
     setIsEditing(false);
     setErrors({});
-    fetch(`http://localhost:3001/users/${user.id}`)
+    fetch(`${API_URL}/users/${user.id}`)
       .then((response) => response.json())
       .then((data) => {
         setUserData(data);
@@ -101,7 +102,7 @@ const VetProfile = () => {
     if (!validateFields()) return
 
     try {
-      const response = await fetch(`http://localhost:3001/users/${user.id}`, {
+      const response = await fetch(`${API_URL}/users/${user.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userData),

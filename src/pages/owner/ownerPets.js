@@ -18,7 +18,7 @@ const OwnerPets = () => {
   useEffect(() => {
     if (!isLoggedIn || !user?.id) return;
 
-    fetch(`http://localhost:3001/pets?ownerId=${user.id}`)
+    fetch(`${API_URL}/pets?ownerId=${user.id}`)
       .then(res => res.json())
       .then(data => setPets(data))
       .catch(err => console.error(err));

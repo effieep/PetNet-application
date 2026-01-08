@@ -2,6 +2,7 @@ import ProfileLayout from "../../components/profileLayout";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../auth/AuthContext";
 import { Box, Typography } from "@mui/material";
+import { API_URL } from "../../api";
 
 const VetHistory = () => {
 
@@ -13,7 +14,7 @@ const VetHistory = () => {
     useEffect(() => {
         const fetchUserData = async () => {
         try {
-            const response = await fetch(`http://localhost:3001/users/${user.id}`);
+            const response = await fetch(`${API_URL}/users/${user.id}`);
             if (!response.ok) throw new Error("Δεν βρέθηκαν τα στοιχεία του χρήστη.");
             const data = await response.json();
             setUserData(data);

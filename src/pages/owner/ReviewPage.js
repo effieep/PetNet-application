@@ -3,6 +3,7 @@ import { useAuth } from '../../auth/AuthContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Box, Typography, Rating, TextField, Button, Paper, Container } from '@mui/material';
 import ProfileLayout from '../../components/profileLayout';
+import { API_URL } from "../../api";
 
 const ReviewPage = () => {
   const location = useLocation();
@@ -27,14 +28,14 @@ const ReviewPage = () => {
 
     try {
       // Παίρνουμε τα τρέχοντα δεδομένα του κτηνιάτρου
-      const userRes = await fetch(`http://localhost:3001/users/${vet.id}`);
+      const userRes = await fetch(`${API_URL}/users/${vet.id}`);
       const userData = await userRes.json();
 
       // Ενημερώνουμε τη λίστα των reviews του κτηνιάτρου
       const updatedReviews = userData.reviews ? [...userData.reviews, newReview] : [newReview];
 
       // Στέλνουμε PATCH στον συγκεκριμένο user (vet)
-      const patchRes = await fetch(`http://localhost:3001/users/${vet.id}`, {
+      const patchRes = await fetch(`${API_URL}/users/${vet.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ reviews: updatedReviews }),
@@ -43,7 +44,7 @@ const ReviewPage = () => {
       if (patchRes.ok) {
   
         // 6. Ενημερώνουμε το ραντεβού ως "reviewed"
-        await fetch(`http://localhost:3001/appointments/${appointment.id}`, {
+        await fetch(`${API_URL}/appointments/${appointment.id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ reviewed: true }),
