@@ -5,7 +5,7 @@ import {
   Typography,
 } from '@mui/material';
 
-const UserInfoCard = ({
+const VetInfoCard = ({
   data,
   isEditing,
   onChange,
@@ -138,8 +138,50 @@ const UserInfoCard = ({
           />
         </Grid>
       </Grid>
+
+      {/* ===== ΔΙΕΥΘΥΝΣΗ ===== */}
+      <Typography sx={{ mt: 4, mb: 2, fontWeight: 'bold' }}>
+        Διεύθυνση Ιατρείου
+      </Typography>
+
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            fullWidth
+            label="Οδός και αριθμός"
+            name="clinicAddress"
+            value={data?.clinicAddress || ''}
+            onChange={onChange}
+            disabled={!isEditing}
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={3}>
+          <TextField
+            fullWidth
+            label="Πόλη"
+            name="clinicCity"
+            value={data?.clinicCity || ''}
+            onChange={onChange}
+            disabled={!isEditing}
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={3}>
+          <TextField
+            fullWidth
+            label="Ταχυδρομικός Κώδικας"
+            name="clinicZip"
+            value={data?.clinicZip || ''}
+            onChange={onChange}
+            disabled={!isEditing}
+            helperText={errors?.clinicZip || ''}
+            error={Boolean(errors?.clinicZip)}
+          />
+        </Grid>
+      </Grid>
     </Paper>
   );
 };
 
-export default UserInfoCard;
+export default VetInfoCard;

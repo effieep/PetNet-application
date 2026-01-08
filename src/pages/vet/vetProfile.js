@@ -2,11 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Box, Typography, CircularProgress, Alert, Button, Snackbar } from "@mui/material";
 import { useAuth } from "../../auth/AuthContext";
 import ProfileLayout from "../../components/profileLayout"; // Σιγουρέψου για το σωστό path
-import UserInfoCard from "../../components/UserInfoCard";
+import VetInfoCard from "../../components/VetInfoCard";
 
 
-
-const OwnerProfile = () => {
+const VetProfile = () => {
   
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -126,10 +125,10 @@ const OwnerProfile = () => {
   if (error) return <Alert severity="error">{error}</Alert>;
 
   return ( 
-    (isLoggedIn && userData?.role === "owner") ?
+    (isLoggedIn && userData?.role === "vet") ?
     (
     <>
-    <ProfileLayout role={userData?.role || "owner"}>
+    <ProfileLayout role={userData?.role || "vet"}>
       <Box sx={{ mt: 4, display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
         {!isEditing ? (
           <Button
@@ -171,7 +170,7 @@ const OwnerProfile = () => {
           variant="h5"
           sx={{ mb: 4, fontWeight: "bold", color: "#373721" }}
         >
-          Στοιχεία Προφίλ Ιδιοκτήτη
+          Στοιχεία Προφίλ Κτηνίατρου
         </Typography>
 
         <Box
@@ -181,7 +180,7 @@ const OwnerProfile = () => {
             width: '100%',
           }}
         >
-          <UserInfoCard
+          <VetInfoCard
             data={userData}
             isEditing={isEditing}
             onChange={handleChange}
@@ -208,10 +207,10 @@ const OwnerProfile = () => {
   ) :
   (
     <Typography variant="h6" color="error" textAlign="center" sx={{ mt: 10 }}>
-      Παρακαλώ συνδεθείτε ως Ιδιοκτήτης για να δείτε το προφίλ σας.
+      Παρακαλώ συνδεθείτε ως Κτηνίατρος για να δείτε το προφίλ σας.
     </Typography>
   )
   );
 };
 
-export default OwnerProfile;
+export default VetProfile;

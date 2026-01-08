@@ -13,7 +13,7 @@
       "surname": "Papafili",
       "afm": "154789635",
       "email": "epapafili2003@gmail.com",
-      "phone": "6985595009",
+      "phone": "6985595001",
       "password": "blablabla",
       "role": "owner",
       "street": "Δημοσθένους 12",
@@ -32,6 +32,54 @@
       "city": "Τεστανδρι",
       "postalCode": "15111",
       "role": "owner"
+    },
+    {
+      "id": "v2",
+      "name": "Αποστόλης",
+      "surname": "Χριστοδουλόπουλος",
+      "afm": "452136987",
+      "email": "apostolos.christodoulou@gmail.com",
+      "phone": "6958471236",
+      "street": "Kungshamra 31",
+      "city": "SOLNA",
+      "postalCode": "17070",
+      "password": "123456789",
+      "degreeInst": "Εθνικό και Καποδοστριακό",
+      "masterInst": "",
+      "phdInst": "",
+      "specialization": "",
+      "registryNum": "547893",
+      "practiceYears": 7,
+      "clinicAddress": "Sapfous 42",
+      "clinicZip": "17676",
+      "clinicCity": "Kallithea,Athens",
+      "role": "vet",
+      "reviews": []
+    },
+    {
+      "profilePic": null,
+      "oldProfilePic": null,
+      "id": "v1",
+      "name": "Άγγελος",
+      "surname": "Ζωάκης",
+      "afm": "171111111",
+      "email": "vet1@example.com",
+      "phone": "6911111111",
+      "street": "Αριστοτέλους 13",
+      "city": "Θεσσαλονίκη",
+      "postalCode": "15111",
+      "password": "12345678",
+      "degreeInst": "Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης",
+      "masterInst": "",
+      "phdInst": "",
+      "specialization": "",
+      "registryNum": "111111",
+      "practiceYears": 2,
+      "clinicAddress": "Αριστομένους 27",
+      "clinicZip": "15111",
+      "clinicCity": "Θεσσαλονίκη",
+      "role": "vet",
+      "reviews": []
     }
   ],
   "pets": [
@@ -42,8 +90,81 @@
       "species": "Γάτα",
       "breed": "Siam",
       "microchip": "9585764839",
-      "birthDate": "2020-05-12",
-      "gender": "Θηλυκό"
+      "birthDate": "15-05-2020",
+      "gender": "Θηλυκό",
+      "color": "Γκρι",
+      "health": {
+        "neutered": true,
+        "overview": {
+          "lastVaccine": {
+            "name": "Λύσσας - Nobivac",
+            "date": "15-09-2025",
+            "nextDate": "15-09-2026"
+          },
+          "lastDeworming": {
+            "internal": "Milbemax (15/09/2025)",
+            "external": "Advocate (15/09/2025)",
+            "nextInternal": "15/12/2025",
+            "nextExternal": "15/12/2025"
+          },
+          "activeMedication": {
+            "name": "Κρέμα Zymox",
+            "instructions": "Πρωί - Βράδυ για 7 ημέρες τοπικά",
+            "endDate": "22-09-2025"
+          }
+        },
+        "history": {
+          "vaccinations": [
+            {
+              "id": "v101",
+              "date": "15-09-2025",
+              "name": "Nobivac Tricat",
+              "vetId": "v1"
+            },
+            {
+              "id": "v100",
+              "date": "15-09-2024",
+              "name": "Nobivac Tricat",
+              "vetId": "v1"
+            }
+          ],
+          "deworming": [
+            {
+              "id": "d101",
+              "date": "15-09-2025",
+              "type": "Internal",
+              "product": "Milbemax"
+            },
+            {
+              "id": "d102",
+              "date": "15-09-2025",
+              "type": "External",
+              "product": "Advocate"
+            }
+          ],
+          "medicalActs": {
+            "tests": [],
+            "surgeries": [
+              {
+                "id": "s1",
+                "date": "20-01-2021",
+                "title": "Στείρωση (Ουδετεροποίηση)",
+                "vetId": "v1",
+                "notes": "Ολική αφαίρεση"
+              }
+            ],
+            "medication": [
+              {
+                "id": "m1",
+                "startDate": "15-09-2025",
+                "endDate": "22-09-2025",
+                "name": "Zymox",
+                "dosage": "Τοπική χρήση"
+              }
+            ]
+          }
+        }
+      }
     },
     {
       "id": "p2",
@@ -52,8 +173,69 @@
       "species": "Σκύλος",
       "breed": "Labrador",
       "microchip": "1234567890",
-      "birthDate": "2019-08-22",
-      "gender": "Αρσενικό"
+      "birthDate": "22-08-2019",
+      "gender": "Αρσενικό",
+      "health": {
+        "neutered": true,
+        "overview": {
+          "lastVaccine": {
+            "name": "Vanguard 7",
+            "date": "10-06-2025",
+            "nextDate": "10-06-2026"
+          },
+          "lastDeworming": {
+            "internal": "Drontal (01/06/2025)",
+            "external": "Seresto Collar (01/06/2025)",
+            "nextInternal": "01/09/2025",
+            "nextExternal": "01/01/2026"
+          },
+          "activeMedication": null
+        },
+        "history": {
+          "vaccinations": [
+            {
+              "id": "v201",
+              "date": "10-06-2025",
+              "name": "Vanguard 7",
+              "vetId": "v2"
+            },
+            {
+              "id": "v200",
+              "date": "05-06-2024",
+              "name": "Vanguard 7",
+              "vetId": "v2"
+            }
+          ],
+          "deworming": [
+            {
+              "id": "d201",
+              "date": "01-06-2025",
+              "type": "External",
+              "product": "Seresto Collar"
+            }
+          ],
+          "medicalActs": {
+            "tests": [
+              {
+                "id": "t201",
+                "date": "10-06-2025",
+                "title": "Εξετάσεις Αίματος (Leishmania)",
+                "vetId": "v2",
+                "result": "Αρνητικό"
+              },
+              {
+                "id": "t202",
+                "date": "10-06-2025",
+                "title": "Γενική Αίματος",
+                "vetId": "v2",
+                "result": "Φυσιολογική"
+              }
+            ],
+            "surgeries": [],
+            "medication": []
+          }
+        }
+      }
     },
     {
       "id": "p3",
@@ -62,20 +244,102 @@
       "species": "Γάτα",
       "breed": "Maine Coon",
       "microchip": "9876543210",
-      "birthDate": "2021-03-15",
-      "gender": "Θηλυκό"
+      "birthDate": "15-03-2021",
+      "gender": "Θηλυκό",
+      "health": {
+        "neutered": false,
+        "overview": {
+          "lastVaccine": {
+            "name": "Purevax RCP",
+            "date": "20-03-2025",
+            "nextDate": "20-03-2026"
+          },
+          "lastDeworming": {
+            "internal": "Stronghold (20/03/2025)",
+            "external": "Stronghold (20/03/2025)",
+            "nextInternal": "20/04/2025",
+            "nextExternal": "20/04/2025"
+          },
+          "activeMedication": null
+        },
+        "history": {
+          "vaccinations": [
+            {
+              "id": "v301",
+              "date": "20-03-2025",
+              "name": "Purevax RCP",
+              "vetId": "v1"
+            }
+          ],
+          "deworming": [],
+          "medicalActs": {
+            "tests": [
+              {
+                "id": "t301",
+                "date": "15-03-2022",
+                "title": "Υπέρηχος Καρδιάς (HCM Screen)",
+                "vetId": "v2",
+                "result": "Καθαρό"
+              }
+            ],
+            "surgeries": [],
+            "medication": []
+          }
+        }
+      }
     }
   ],
   "appointments": [
     {
-      "id": "a1",
+      "id": "1",
+      "ownerId": "u1",
+      "petId": "p2",
+      "vetId": "v1",
+      "date": "15-12-2024",
+      "time": "14:30",
+      "status": "COMPLETED",
+      "reason": "Ετήσιος εμβολιασμός",
+      "reviewed": false
+    },
+    {
+      "id": "2",
+      "ownerId": "u1",
+      "petId": "p1",
+      "vetId": "v2",
+      "date": "27-11-2025",
+      "time": "18:00",
+      "status": "PENDING",
+      "reason": "",
+      "reviewed": false
+    },
+    {
+      "id": "3",
+      "ownerId": "u1",
+      "petId": "p3",
+      "vetId": "v2",
+      "date": "10-01-2024",
+      "time": "10:00",
+      "status": "COMPLETED",
+      "reviewed": false
+    },
+    {
+      "id": "4",
+      "ownerId": "u1",
+      "petId": "p2",
+      "vetId": "v1",
+      "date": "10-01-2024",
+      "time": "13:00",
+      "status": "CANCELLED",
+      "reviewed": false
+    },
+    {
+      "id": "5",
       "ownerId": "u1",
       "vetId": "v1",
-      "petId": "p1",
-      "date": "2024-02-15",
-      "time": "10:30",
-      "service": "Εμβολιασμός",
-      "status": "pending"
+      "date": "10-01-2024",
+      "time": "13:00",
+      "status": "CANCELLED",
+      "reviewed": false
     }
   ],
   "medicalRecords": [
@@ -84,21 +348,92 @@
       "petId": "p1",
       "vetId": "v1",
       "type": "vaccine",
-      "date": "2024-01-10",
+      "date": "10-01-2024",
       "title": "Εμβόλιο Λύσσας",
       "details": "Επόμενη δόση σε 1 χρόνο",
       "documentUrl": ""
     }
   ],
-  "lostFound": [
+  "declarations": [
     {
-      "id": "lf1",
-      "type": "lost",
-      "petName": "Μαξ",
-      "area": "Καλλιθέα",
-      "contactPhone": "69...",
-      "photo": "base64_string_or_url",
-      "description": "Φοράει κόκκινο περιλαίμιο"
+      "id": "12",
+      "type": "LOSS",
+      "status": "SUBMITTED",
+      "createdAt": "20-11-2024",
+      "petId": "p3",
+      "ownerId": "u1",
+      "lostDate": "18-11-2024",
+      "location": {
+        "address": "Γλυφάδα, Αθήνα"
+      },
+      "description": "Χάθηκε κοντά στην πλατεία",
+      "contact": {
+        "phone": "6985595001"
+      }
+    },
+    {
+      "id": "12",
+      "type": "LOSS",
+      "status": "PENDING",
+      "createdAt": "20-11-2024",
+      "petId": "p2",
+      "ownerId": "u1",
+      "lostDate": "18-11-2024",
+      "location": {
+        "address": "Γλυφάδα, Αθήνα"
+      },
+      "description": "Χάθηκε κοντά στην πλατεία",
+      "contact": {
+        "phone": "6985595001"
+      }
+    },
+    {
+      "id": "15",
+      "type": "LOSS",
+      "status": "PENDING",
+      "createdAt": "20-11-2023",
+      "petId": "p1",
+      "ownerId": "u1",
+      "lostDate": "18-11-2023",
+      "location": {
+        "address": "Γλυφάδα, Αθήνα"
+      },
+      "description": "Χάθηκε κοντά στην πλατεία",
+      "contact": {
+        "phone": "6985595001"
+      }
+    },
+    {
+      "id": "12",
+      "type": "LOSS",
+      "status": "PENDING",
+      "createdAt": "20-11-2025",
+      "petId": "p3",
+      "ownerId": "u1",
+      "lostDate": "18-11-2025",
+      "location": {
+        "address": "Γλυφάδα, Αθήνα"
+      },
+      "description": "Χάθηκε κοντά στην πλατεία",
+      "contact": {
+        "phone": "6985595001"
+      }
+    },
+    {
+      "id": "14",
+      "type": "FOUND",
+      "status": "PENDING",
+      "createdAt": "22-11-2022",
+      "petType": "Σκύλος",
+      "microchip": "1234567890",
+      "ownerId": "u1",
+      "location": {
+        "address": "Κυψέλη, Αθήνα"
+      },
+      "description": "Χάθηκε κοντά στον σταθμό Βικτώρια",
+      "contact": {
+        "phone": "6985595001"
+      }
     }
   ]
 }

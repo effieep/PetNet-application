@@ -5,6 +5,7 @@ import { MdOutlinePets, MdPublic, MdContactPage   } from "react-icons/md";
 import {FaCheckDouble } from "react-icons/fa";
 import {CgArrowLongRight } from "react-icons/cg";
 import UButton from "../../components/UniversalButton"; 
+import Hero from "../../components/Hero";
 
 const managementItems = [
   "Καταχώρηση Ζώου & Βιβλιάριο: Εγγραφή ζώου και δημιουργία ηλεκτρονικού βιβλιαρίου υγείας συνδεδεμένου με τον ιδιοκτήτη.",
@@ -38,6 +39,7 @@ function renderBoldBullet(item) {
 const Vet = () => {
   return (
     <>
+      <Hero image={'/vet-hero.png'} title={"Κτηνίατρος"} subtitle={"Όλες οι υπηρεσίες για κτηνιάτρους σε ένα σημείο."} height={"50vh"}/>
         <Box sx ={{ display: "flex", gap: 60, justifyContent: "center" }}>
           <UButton 
             text="Διαχείριση Κατοικιδίων"

@@ -1,0 +1,37 @@
+import HealthRecordLayout from "../../components/HealthRecordLayout";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+
+const HealthRecord = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const [pet, setPet] = useState(location.state?.pet || null);
+
+  useEffect(() => {
+    if (!pet) {
+      const storedPetId = localStorage.getItem("activePetId");
+      if (storedPetId) {
+        // Κάνουμε fetch το ζώο ξανά
+        fetch(`http://localhost:3001/pets/${storedPetId}`)
+          .then(res => res.json())
+          .then(data => setPet(data))
+          .catch(() => navigate('/owner/pets'));
+      } else {
+        // Αν δεν βρούμε τίποτα, πίσω στη λίστα
+        navigate('/owner/pets');
+      }
+    }
+  }, [pet, navigate]);
+
+  // Αν δεν έχουν φορτώσει ακόμα τα δεδομένα, δεν δείχνουμε τίποτα (ή ένα Spinner)
+  if (!pet) return null;
+
+  return (
+    <HealthRecordLayout petData={pet}>
+      <div>Health Record Page</div>
+    </HealthRecordLayout>
+  )
+};
+
+export default HealthRecord;

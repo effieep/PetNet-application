@@ -2,7 +2,7 @@ import React, { useState, useEffect} from 'react';
 import { Collapse } from "@mui/material";
 import { SwitchTransition } from "react-transition-group";
 import UniversalButton from '../components/UniversalButton';
-import { Stepper, Step, StepLabel, Button, Typography, Box, Paper, TextField, Grid, Divider, MenuItem } from '@mui/material';
+import { Stepper, Step, StepLabel, Button, Typography, Box, Paper, TextField, Grid, Divider, MenuItem, Autocomplete } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 
@@ -11,6 +11,20 @@ import { useAuth } from '../auth/AuthContext';
 // SUB-COMPONENTS (ΤΟ ΠΕΡΙΕΧΟΜΕΝΟ ΤΩΝ ΒΗΜΑΤΩΝ)
 // ==============================================
 
+const greekUniversities = [
+  { name: "Εθνικό και Καποδιστριακό Πανεπιστήμιο Αθηνών", acronym: "ΕΚΠΑ" },
+  { name: "Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης", acronym: "ΑΠΘ" },
+  { name: "Πανεπιστήμιο Πατρών", acronym: "ΠΑΤΡΑ" },
+  { name: "Πανεπιστήμιο Κρήτης", acronym: "ΠΚ" },
+  { name: "Οικονομικό Πανεπιστήμιο Αθηνών", acronym: "ΟΠΑ" },
+  { name: "Πανεπιστήμιο Ιωαννίνων", acronym: "ΠΙ" },
+  { name: "Πανεπιστήμιο Μακεδονίας", acronym: "ΠΑΜΑΚ" },
+  { name: "Δημοκρίτειο Πανεπιστήμιο Θράκης", acronym: "ΔΠΘ" },
+  { name: "Πανεπιστήμιο Δυτικής Αττικής", acronym: "ΠΑΔΑ" },
+  { name: "Πανεπιστήμιο Θεσσαλίας", acronym: "ΠΘ" },
+  { name: "University of Nicosia", acronym: "UNIC" },
+  { name: "European University Cyprus", acronym: "EUC" },
+];
 
 // Επιλογή Ρόλου Ιδιοκτήτη ή Κτηνιάτρου
 const RoleOption = ({ label, selected, onClick }) => (
@@ -153,10 +167,25 @@ const StepVetProfessional = ({ formData, updateField, errors }) => (
       </Typography>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <TextField fullWidth label="Ίδρυμα Προπτυχιακού Πτυχίου" size="small" 
-          value={formData.vet.degreeInst} onChange={(e) => updateField("vet", "degreeInst", e.target.value)} 
-          error={!!errors["vet.degreeInst"]}
-          helperText={errors["vet.degreeInst"]}/>
+          <Autocomplete
+            options={greekUniversities}
+            getOptionLabel={(option) => `${option.name} (${option.acronym})`}
+            value={greekUniversities.find(u => u.name === formData.vet.degreeInst) || null}
+            onChange={(event, newValue) => {
+              updateField("vet", "degreeInst", newValue ? newValue.name : "");
+            }}
+            renderInput={(params) => (
+              <TextField
+                fullWidth
+                sx = {{ minWidth: "35vh" }}
+                {...params}
+                label="Ίδρυμα Προπτυχιακού Πτυχίου"
+                size="small"
+                error={!!errors["vet.degreeInst"]}
+                helperText={errors["vet.degreeInst"]}
+              />
+            )}
+          />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField fullWidth label="Αριθμός Μητρώου Π.Κ.Σ." size="small" 
@@ -304,7 +333,7 @@ export default function SignUpStepper() {
       degreeInst: "",
       masterInst: "",
       phdInst: "",
-      specialization: "",
+      specialization: ["Γενική Κτηνιατρική"],
       registryNum: "",
       practiceYears: "",
       clinicAddress: "",

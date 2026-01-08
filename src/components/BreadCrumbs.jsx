@@ -12,7 +12,18 @@ const breadcrumbMap = {
   'manage-pets': 'Διαχείριση Ζώων',
   'manage-appointments': 'Διαχείριση Ραντεβού',
   'search-vet': 'Αναζήτηση Κτηνιάτρου',
-  lost_pet: 'Xάθηκε Ζώο',
+  lost_pet: 'Δήλωση Απώλειας',
+  found_pet: 'Δήλωση Εύρεσης',
+  'lost-found': 'Χάθηκε/Βρέθηκε Ζώο',
+  'public-profile': 'Δημόσιο Προφίλ Κτηνιάτρου',
+  'randezvous-history': 'Ιστορικό Ραντεβού',
+  reviews: 'Αξιολογήσεις Κτηνιάτρου',
+  review: 'Αξιολόγηση Ραντεβού',
+  healthRecord: 'Βιβλιάριο Υγείας',
+  overview: 'Προεπισκόπηση',
+  vaccinations: 'Εμβολιασμοί & Αποπαρασιτώσεις',
+  medicalHistory: 'Ιστορικό Ιατρικών Πράξεων',
+  petInfo: 'Στοιχεία Ζώου'
 };
 
 function AppBreadcrumbs() {

@@ -15,7 +15,8 @@ import PersonIcon from '@mui/icons-material/Person';
 import PetsIcon from '@mui/icons-material/Pets';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import EventIcon from '@mui/icons-material/Event';
-import SettingsIcon from '@mui/icons-material/Settings';
+import { FaGlobe } from 'react-icons/fa';
+import { IoStarHalf } from 'react-icons/io5';
 
 import { Link, useLocation } from 'react-router-dom';
 
@@ -28,9 +29,9 @@ const ProfileLayout = ({ children, role = 'owner' }) => {
     role === 'vet'
       ? [
           { text: 'Τα στοιχεία μου', icon: <PersonIcon />, path: '/vet/info' },
-          { text: 'Δημόσιο Προφίλ', icon: <SettingsIcon />, path: '/vet/public-profile' },
-          { text: 'Διαχείριση Ραντεβού', icon: <EventIcon />, path: '/vet/appointments' },
-          { text: 'Διαχείριση Ζώων', icon: <PetsIcon />, path: '/vet/animals' },
+          { text: 'Δημόσιο Προφίλ', icon: <FaGlobe  />, path: '/vet/public-profile' },
+          { text: 'Iστορικό Ραντεβού', icon: <EventIcon  />, path: '/vet/randezvous-history' },
+          { text: 'Οι αξιολογήσεις μου', icon: <IoStarHalf />, path: '/vet/reviews' },
         ]
       : [
           { text: 'Τα στοιχεία μου', icon: <PersonIcon />, path: '/owner/info' },
@@ -125,29 +126,22 @@ const ProfileLayout = ({ children, role = 'owner' }) => {
           sx={{
             flex: 1,
             display: 'flex',
-            minHeight: 'calc(100vh - 120px)', // δίνει ύψος για κάθετο κέντρο
           }}
         >
           <Paper
-            elevation={0}
+            elevation={10}
             sx={{
               width: '100%',
               p: { xs: 2, md: 4 },
               borderRadius: '18px',
               backgroundColor: '#fbfbf7',
+              // backgroundImage: `url('/pet-pattern.jpg')`,
               border: '1px solid rgba(58, 78, 27, 0.18)',
               boxShadow: '0 10px 30px rgba(0,0,0,0.06)',
 
-              // ✅ ΚΕΝΤΡΑΡΙΣΜΑ
-              display: 'flex',
-              justifyContent: 'center', // οριζόντια
-              alignItems: 'center',     // κάθετα
             }}
           >
-            {/* Προαιρετικό: για να μην απλώνει σε τεράστιες οθόνες */}
-            <Box sx={{ width: '100%', maxWidth: 700 }}>
-              {children}
-            </Box>
+            {children}
           </Paper>
         </Box>
       </Box>

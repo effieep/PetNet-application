@@ -323,8 +323,8 @@ function NavBar() {
               }}  
             >
               <MenuItem onClick={handleOwnerClose} component={Link} to = "/owner">Δυνατότητες</MenuItem>
-              <MenuItem onClick={handleOwnerClose}>Αναζήτηση Κτηνιάτρου</MenuItem>
-              <MenuItem onClick={handleOwnerClose}>Χάθηκε/Βρέθηκε Ζώο</MenuItem>
+              <MenuItem onClick={handleOwnerClose} component={Link} to = "/owner/search-vet">Αναζήτηση Κτηνιάτρου</MenuItem>
+              <MenuItem onClick={handleOwnerClose} component={Link} to = "/lost-found">Χάθηκε/Βρέθηκε Ζώο</MenuItem>
               <MenuItem onClick={handleOwnerClose} component={Link} to = "/owner/info">Το προφίλ μου</MenuItem>
             </Menu>
           <Button
@@ -385,7 +385,7 @@ function NavBar() {
               <MenuItem onClick={handleVetClose} component={Link} to ="/vet" >Δυνατότητες</MenuItem>
               <MenuItem onClick={handleVetClose}>Διαχείριση Ζώων</MenuItem>
               <MenuItem onClick={handleVetClose}>Διαχείριση Ραντεβού</MenuItem>
-              <MenuItem onClick={handleVetClose}>Το προφίλ μου</MenuItem>
+              <MenuItem onClick={handleVetClose} component={Link} to = "/vet/info">Το προφίλ μου</MenuItem>
             </Menu>
           <Button
               component={Link}

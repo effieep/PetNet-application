@@ -6,9 +6,11 @@ import PetDetailsCard from "../../components/PetDetailsCard";
 import Divider from '@mui/material/Divider';
 import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
 import { useAuth } from "../../auth/AuthContext";
+import { useNavigate }from 'react-router-dom';
 
 
 const OwnerPets = () => {
+  const navigate = useNavigate();
   const { user, isLoggedIn } = useAuth();
   const [pets, setPets] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
@@ -22,6 +24,15 @@ const OwnerPets = () => {
       .catch(err => console.error(err));
   } , [isLoggedIn, user?.id]);
 
+
+  const handleOpenHealthRecord = (pet) => {
+   
+    localStorage.setItem("activePetId", pet.id);
+
+    navigate('/healthRecord', { 
+      state: { pet: pet } 
+    });
+  };
 
   return (
     isLoggedIn ?
@@ -49,8 +60,7 @@ const OwnerPets = () => {
           </Typography>
           <Box sx={{ mt: 2, mb: 2, display: 'flex', justifyContent: 'center' }}>
             <Button 
-              // component={Link}
-              // to={`/owner/pets/${petId}/health`} // Δυναμικό link για το βιβλιάριο
+              onClick={() => handleOpenHealthRecord(pets.find(p => p.id === selectedId))}
               variant="outlined" 
               startIcon={<MedicalServicesIcon />}
               sx={{ py: 2, borderRadius: '12px', borderColor: '#4a6cc4ff', color: '#f4f4f4ff', backgroundColor: '#3641a6ff' }}

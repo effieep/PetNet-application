@@ -1,9 +1,11 @@
 import React from "react";
 import { API_URL } from "../api";
+import { useNavigate } from 'react-router-dom';
 
 const AuthContext = React.createContext(null);
 
 export function AuthProvider({ children }) {
+  const navigate = useNavigate();
   const [user, setUser] = React.useState(null);
   const isLoggedIn = !!user;
 
@@ -41,12 +43,34 @@ export function AuthProvider({ children }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          profilePic: null,
+          oldProfilePic: null,
           ...formData.personal,
           ...formData.contact,
           ...formData.address,
           password: formData.auth.password,
           ...formData.vet,
           role: formData.userType,
+          jobs: null,
+          services: {
+            general: true,
+            vacinations: false,
+            nutrition: false,
+            consulting: false
+          },
+          diagnostics: {
+            blood: false,
+            xrays: false,
+            odontology: false,
+            other: false
+          },
+          surgeries: {
+            general: false,
+            castration: false,
+            emergency: false
+          },
+          reviews: []
+
         })
       });
 
@@ -81,6 +105,7 @@ export function AuthProvider({ children }) {
   const logout = () => {
     setUser(null);
     localStorage.removeItem("auth_user");
+    navigate("/");
   };
 
   return (
