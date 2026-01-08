@@ -54,11 +54,13 @@ const OwnerAppointments = () => {
     setOpenAppointmentId(prev => (prev === id ? null : id));
   };
 
-  // const handleRemoveFromUI = (idToDelete) => {
-  //   // Ενημερώνουμε το state αφαιρώντας το συγκεκριμένο ID
-  //   setAppointments(prev => prev.filter(app => app.id !== idToDelete));
-  // };
-
+  const handleCancelSuccess = (id) => {
+    setAppointments(prev =>
+      prev.map(a =>
+        a.id === id ? { ...a, status: "CANCELLED" } : a
+      )
+    );
+  };
 
   const petById = useMemo(() => {
     const map = {};
@@ -125,12 +127,16 @@ const OwnerAppointments = () => {
             key={a.id}
             appointment={a}
             open={openAppointmentId === a.id}
-            onToggle={() => toggleOpen(a.id)} />
+            onToggle={() => toggleOpen(a.id)}
+            onCancelSuccess={handleCancelSuccess} />
             ))
       )}
 
       <Typography variant="h6" sx={{ mt: 4, mb: 2 }}>
         Ολοκληρωμένα
+      </Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+        Μπορείτε να αξιολογήσετε τον κτηνίατρό σας από τα ολοκληρωμένα ραντεβού.
       </Typography>
       {completed.map(a => (
         <AppointmentCard  
@@ -148,7 +154,8 @@ const OwnerAppointments = () => {
           key={a.id}
           appointment={a}
           open={openAppointmentId === a.id}
-          onToggle={() => toggleOpen(a.id)} />
+          onToggle={() => toggleOpen(a.id)} 
+          />
             ))}
 
     </ProfileLayout>

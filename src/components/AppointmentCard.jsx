@@ -18,7 +18,7 @@ const statusBg = {
   CANCELLED: "rgba(244, 67, 54, 0.18)",
 };
 
-const AppointmentCard = ({ appointment, open, onToggle, onDeleteSuccess }) => {
+const AppointmentCard = ({ appointment, open, onToggle, onCancelSuccess }) => {
   if (!appointment) return null;
 
   const { pet, vet, date, time, status, reason } = appointment;
@@ -83,6 +83,7 @@ const AppointmentCard = ({ appointment, open, onToggle, onDeleteSuccess }) => {
     <Collapse in={open} timeout="auto" unmountOnExit>
         <ExpandedAppointmentDetails 
             appointment={appointment} 
+            onCancelSuccess={onCancelSuccess}
         />
     </Collapse>
     </>

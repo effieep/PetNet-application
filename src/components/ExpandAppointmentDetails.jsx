@@ -1,6 +1,6 @@
 import { Box, Typography, Card, Divider, Button} from "@mui/material";
 
-const ExpandedAppointmentDetails = ({ appointment }) => {
+const ExpandedAppointmentDetails = ({ appointment, onCancelSuccess }) => {
   const { pet, vet, date, time, status, reason } = appointment;
 
   // Μετατροπή dd-mm-yyyy σε δυναμικά στοιχεία
@@ -155,18 +155,25 @@ const ExpandedAppointmentDetails = ({ appointment }) => {
         flexWrap: "wrap"
       }}
     >
-    {/* ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΑ: Μόνο η Ακύρωση */}
-    <Box>
-      {status === "PENDING" && (
-        <Button 
-          variant="contained" 
-          color="error" 
-          sx={{ borderRadius: "8px", fontWeight: "bold" }}
-        >
-          ΑΚΥΡΩΣΗ ΡΑΝΤΕΒΟΥ
-        </Button>
-      )}
-    </Box>
+    {status === "PENDING" && (
+      <Button
+        variant="contained"
+        color="error"
+        onClick={async () => {
+          const ok = window.confirm("Θέλετε σίγουρα να ακυρώσετε το ραντεβού;");
+          if (!ok) return;
+
+          await fetch(`http://localhost:3001/appointments/${appointment.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: "CANCELLED" }),
+          });
+
+          onCancelSuccess(appointment.id);
+        }}
+      >
+        ΑΚΥΡΩΣΗ ΡΑΝΤΕΒΟΥ
+      </Button>)}
 
   {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: Αξιολόγηση ΚΑΙ Προβολή Κτηνιάτρου */}
       <Box sx={{ display: 'flex', gap: 2, alignItems: "center" }}>
