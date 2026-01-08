@@ -34,7 +34,7 @@ const HealthRecordLayout = ( {petData, children }) => {
     { 
       text: 'Προεπισκόπηση', 
       icon: <VisibilityIcon />, 
-      path: `/healthRecord/overview` 
+      path: `/healthRecord` 
     },
     { 
       text: 'Εμβολιασμοί & Αποπαρασιτώσεις', 
@@ -109,6 +109,7 @@ const HealthRecordLayout = ( {petData, children }) => {
                       component={Link}
                       to={item.path}
                       selected={isActive}
+                      state={{ pet: petData }}
                       sx={{
                         borderRadius: '12px',
                         py: 1.5,
