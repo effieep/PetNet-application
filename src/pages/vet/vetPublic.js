@@ -191,16 +191,8 @@ const VetProfile = () => {
     }
   };
 
-  // Validate fields (placeholder)
-  const validateFields = () => {
-    const newErrors = {};
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
   // Save edits
   const handleSave = async () => {
-    if (!validateFields()) return;
 
     const dataToSave = { ...userData, jobs: normalizeJobs(userData.jobs) };
 
