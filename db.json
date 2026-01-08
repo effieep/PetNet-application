@@ -299,7 +299,7 @@
       "time": "14:30",
       "status": "COMPLETED",
       "reason": "Ετήσιος εμβολιασμός",
-      "reviewed": true
+      "reviewed": false
     },
     {
       "id": "2",

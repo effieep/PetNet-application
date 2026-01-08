@@ -19,6 +19,11 @@ const breadcrumbMap = {
   'randezvous-history': 'Ιστορικό Ραντεβού',
   reviews: 'Αξιολογήσεις Κτηνιάτρου',
   review: 'Αξιολόγηση Ραντεβού',
+  healthRecord: 'Βιβλιάριο Υγείας',
+  overview: 'Προεπισκόπηση',
+  vaccinations: 'Εμβολιασμοί & Αποπαρασιτώσεις',
+  medicalHistory: 'Ιστορικό Ιατρικών Πράξεων',
+  petInfo: 'Στοιχεία Ζώου'
 };
 
 function AppBreadcrumbs() {

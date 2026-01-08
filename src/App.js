@@ -11,6 +11,7 @@ import OwnerPets from './pages/owner/ownerPets.js';
 import OwnerDeclarations from './pages/owner/ownerDeclarations.js';
 import OwnerAppointments from './pages/owner/ownerAppointments.js';
 import ReviewPage from './pages/owner/ReviewPage.js';
+import HealthRecord from './pages/healthRecord/healthRecord.js';
 import SignUp from './pages/signup.js';
 import ReportLost from './pages/report_lost.js';
 import Error404 from './pages/404.js';
@@ -57,6 +58,7 @@ function App() {
           <Route path="/owner/declarations" element={<OwnerDeclarations />} />
           <Route path="/owner/appointments" element={<OwnerAppointments />} />
           <Route path="/owner/appointments/review" element={<ReviewPage />} />
+          <Route path="/healthRecord" element={<HealthRecord/>} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="*" element={<Error404 />} />
         </Routes>
