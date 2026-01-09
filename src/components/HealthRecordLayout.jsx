@@ -34,7 +34,7 @@ const HealthRecordLayout = ( {petData, children }) => {
     { 
       text: 'Προεπισκόπηση', 
       icon: <VisibilityIcon />, 
-      path: `/healthRecord/overview` 
+      path: `/healthRecord` 
     },
     { 
       text: 'Εμβολιασμοί & Αποπαρασιτώσεις', 
@@ -59,7 +59,7 @@ const HealthRecordLayout = ( {petData, children }) => {
         sx={{
           display: 'flex',
           width: '100%',
-          maxWidth: 1400,
+          maxWidth: '100%',
           px: { xs: 2, md: 4 },
           gap: 4,
           flexDirection: { xs: 'column', md: 'row' }
@@ -109,6 +109,7 @@ const HealthRecordLayout = ( {petData, children }) => {
                       component={Link}
                       to={item.path}
                       selected={isActive}
+                      state={{ pet: petData }}
                       sx={{
                         borderRadius: '12px',
                         py: 1.5,
@@ -156,7 +157,7 @@ const HealthRecordLayout = ( {petData, children }) => {
           <Paper
             elevation={0}
             sx={{
-              width: '100%',
+              maxWidth: '95%',
               minHeight: 600,
               p: { xs: 2, md: 4 },
               borderRadius: '30px', 
@@ -167,6 +168,7 @@ const HealthRecordLayout = ( {petData, children }) => {
             <Box
               sx={{
                 display: 'flex',
+                maxWidth: '100%',
                 justifyContent: 'center',
                 alignItems: 'center',
                 position: 'relative',

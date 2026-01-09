@@ -3,7 +3,7 @@ import { Box, Typography, CircularProgress, Alert, Button, Snackbar } from "@mui
 import { useAuth } from "../../auth/AuthContext";
 import ProfileLayout from "../../components/profileLayout";
 import VetPublicInfoCard from "../../components/VetPublicInfoCard";
-import { supabase } from "../../api";
+import { supabase, API_URL } from "../../api";
 
 const VetProfile = () => {
   const [snackbar, setSnackbar] = useState({
@@ -45,7 +45,7 @@ const VetProfile = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`http://localhost:3001/users/${user.id}`);
+        const response = await fetch(`${API_URL}/users/${user.id}`);
         const data = await response.json();
         setUserData({
           ...data,
@@ -183,29 +183,24 @@ const VetProfile = () => {
 
     // Revert state to DB
     try {
-      const response = await fetch(`http://localhost:3001/users/${user.id}`);
+      const response = await fetch(`${API_URL}/users/${user.id}`);
       const data = await response.json();
-      setUserData(data);
+      setUserData(prev => ({
+        ...data,
+        jobs: data.jobs || { "job-0": { role: "", company: "", startYear: "", endYear: "" } },
+      }) );
     } catch (err) {
       setError(err.message);
     }
   };
 
-  // Validate fields (placeholder)
-  const validateFields = () => {
-    const newErrors = {};
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
   // Save edits
   const handleSave = async () => {
-    if (!validateFields()) return;
 
     const dataToSave = { ...userData, jobs: normalizeJobs(userData.jobs) };
 
     try {
-      const response = await fetch(`http://localhost:3001/users/${user.id}`, {
+      const response = await fetch(`${API_URL}/users/${user.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dataToSave),

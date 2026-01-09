@@ -7,7 +7,7 @@ import Divider from '@mui/material/Divider';
 import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
 import { useAuth } from "../../auth/AuthContext";
 import { useNavigate }from 'react-router-dom';
-
+import { API_URL }from "../../api";
 
 const OwnerPets = () => {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ const OwnerPets = () => {
   useEffect(() => {
     if (!isLoggedIn || !user?.id) return;
 
-    fetch(`http://localhost:3001/pets?ownerId=${user.id}`)
+    fetch(`${API_URL}/pets?ownerId=${user.id}`)
       .then(res => res.json())
       .then(data => setPets(data))
       .catch(err => console.error(err));

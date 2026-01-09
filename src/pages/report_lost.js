@@ -12,130 +12,94 @@ import {
   Paper,
   TextField,
   Grid,
-  MenuItem,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import LoginDialog from "../components/login";
+import PetPreviewCard from "../components/PetPreviewCard";
+import PetDetailsCard from "../components/PetDetailsCard";
+import { API_URL } from "../api";
 
 // ==============================================
 // SUB-COMPONENTS (ΤΟ ΠΕΡΙΕΧΟΜΕΝΟ ΤΩΝ ΒΗΜΑΤΩΝ)
 // ==============================================
 
-const StepPetDetails = ({ formData, updateField, errors }) => (
-  <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-    <Box>
-      <Typography variant="h6" sx={{ fontWeight: "bold", color: "#9a9b6a", mb: 2 }}>
-        Στοιχεία Ζώου
-      </Typography>
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            fullWidth
-            label="Αρ. Microchip"
-            variant="outlined"
-            size="small"
-            value={formData.pet.microchip}
-            onChange={(e) => updateField("pet", "microchip", e.target.value)}
-            error={!!errors["pet.microchip"]}
-            helperText={errors["pet.microchip"]}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            select
-            fullWidth
-            label="Είδος"
-            variant="outlined"
-            size="small"
-            value={formData.pet.species}
-            onChange={(e) => updateField("pet", "species", e.target.value)}
-            error={!!errors["pet.species"]}
-            helperText={errors["pet.species"]}
+const StepLogin = ({ isLoggedIn, onOpenLogin }) => (
+  <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+    {!isLoggedIn && (
+      <>
+        <Typography variant="h6" color="error" textAlign="center" sx={{ fontWeight: "bold" }}>
+          Απαιτείται σύνδεση για να κάνετε δήλωση απώλειας κατοικιδίου.
+        </Typography>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <Button
+            variant="contained"
+            onClick={onOpenLogin}
+            sx={{ px: 4, py: 1, fontWeight: "bold" }}
           >
-            <MenuItem value="">-</MenuItem>
-            <MenuItem value="dog">Σκύλος</MenuItem>
-            <MenuItem value="cat">Γάτα</MenuItem>
-            <MenuItem value="rabbit">Κουνέλι</MenuItem>
-            <MenuItem value="hamster">Χάμστερ</MenuItem>
-          </TextField>
-        </Grid>
+            Σύνδεση
+          </Button>
+        </Box>
+      </>
+    )}
+  </Box>
+);
 
-        <Grid item xs={12} sm={6}>
-          <TextField
-            fullWidth
-            label="Φυλή"
-            variant="outlined"
-            size="small"
-            value={formData.pet.breed}
-            onChange={(e) => updateField("pet", "breed", e.target.value)}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            select
-            fullWidth
-            label="Φύλο"
-            variant="outlined"
-            size="small"
-            value={formData.pet.sex}
-            onChange={(e) => updateField("pet", "sex", e.target.value)}
-          >
-            <MenuItem value="">-</MenuItem>
-            <MenuItem value="male">Αρσενικό</MenuItem>
-            <MenuItem value="female">Θηλυκό</MenuItem>
-          </TextField>
-        </Grid>
+const StepSelectPet = ({ pets, loading, selectedPetId, previewPetId, errorText, onSelectPet, onPreviewPet }) => (
+  <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+    <Typography variant="h6" sx={{ fontWeight: "bold", color: "#9a9b6a" }}>
+      Επιλογή Κατοικιδίου
+    </Typography>
+    <Typography sx={{ fontSize: 13, opacity: 0.8 }}>
+      Επιλέξτε το κατοικίδιο που θέλετε να δηλώσετε ως χαμένο.
+    </Typography>
 
-        <Grid item xs={12} sm={6}>
-          <TextField
-            fullWidth
-            label="Χρώμα"
-            variant="outlined"
-            size="small"
-            value={formData.pet.color}
-            onChange={(e) => updateField("pet", "color", e.target.value)}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            select
-            fullWidth
-            label="Μέγεθος"
-            variant="outlined"
-            size="small"
-            value={formData.pet.size}
-            onChange={(e) => updateField("pet", "size", e.target.value)}
-          >
-            <MenuItem value="">-</MenuItem>
-            <MenuItem value="small">Μικρό</MenuItem>
-            <MenuItem value="medium">Μεσαίο</MenuItem>
-            <MenuItem value="large">Μεγάλο</MenuItem>
-          </TextField>
-        </Grid>
-
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            label="Ιδιαίτερα χαρακτηριστικά"
-            variant="outlined"
-            size="small"
-            value={formData.pet.features}
-            onChange={(e) => updateField("pet", "features", e.target.value)}
-          />
-        </Grid>
-      </Grid>
-    </Box>
-
-    <Divider />
-
-    <Box>
-      <Typography variant="h6" sx={{ fontWeight: "bold", color: "#9a9b6a", mb: 2 }}>
-        Φωτογραφία
+    {errorText && (
+      <Typography variant="body2" color="error" sx={{ fontWeight: 700 }}>
+        {errorText}
       </Typography>
-      <Typography sx={{ fontSize: 13, opacity: 0.8, mb: 1 }}>
-        (Placeholder) Αργότερα θα συνδεθεί με upload / db.
-      </Typography>
-      <TextField fullWidth label="URL/όνομα αρχείου" variant="outlined" size="small" value={formData.pet.photo} onChange={(e) => updateField("pet", "photo", e.target.value)} />
-    </Box>
+    )}
+
+    {loading ? (
+      <Typography sx={{ opacity: 0.8 }}>Φόρτωση...</Typography>
+    ) : pets.length === 0 ? (
+      <Typography sx={{ opacity: 0.8 }}>Δεν βρέθηκαν κατοικίδια στο προφίλ σας.</Typography>
+    ) : (
+      <Box
+        sx={{
+          display: "flex",
+          gap: 2,
+          overflowX: "auto",
+          pb: 1,
+          WebkitOverflowScrolling: "touch",
+        }}
+      >
+        {pets.map((pet) => (
+          <Box key={pet.id} sx={{ flex: "0 0 auto", width: { xs: 240, sm: 260, md: 280 } }}>
+            <PetPreviewCard
+              pet={pet}
+              wrapInGrid={false}
+              selected={selectedPetId === pet.id}
+              onCardClick={() => onSelectPet(pet)}
+              onPreview={() => onPreviewPet(pet)}
+              cardSx={{
+                transition: "transform 150ms ease",
+                "&:hover": { transform: "translateY(-1px)" },
+              }}
+            />
+          </Box>
+        ))}
+      </Box>
+    )}
+
+    {previewPetId && (
+      <Box sx={{ mt: 2 }}>
+        <Divider sx={{ mb: 2 }} />
+        <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
+          Λεπτομέρειες Κατοικιδίου
+        </Typography>
+        <PetDetailsCard petId={previewPetId} />
+      </Box>
+    )}
   </Box>
 );
 
@@ -297,8 +261,15 @@ const StepSummary = () => (
 export default function ReportLostStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [errors, setErrors] = useState({});
+  const [loginOpen, setLoginOpen] = useState(false);
   const navigate = useNavigate();
-  const { isLoggedIn } = useAuth();
+  const { user, isLoggedIn } = useAuth();
+
+  const [pets, setPets] = useState([]);
+  const [petsLoading, setPetsLoading] = useState(false);
+  const [petsError, setPetsError] = useState("");
+  const [selectedPetId, setSelectedPetId] = useState(null);
+  const [previewPetId, setPreviewPetId] = useState(null);
 
   const [formData, setFormData] = useState({
     pet: {
@@ -328,6 +299,38 @@ export default function ReportLostStepper() {
     setErrors({});
   }, [activeStep]);
 
+  useEffect(() => {
+    if (activeStep === 0 && isLoggedIn) {
+      setLoginOpen(false);
+      setActiveStep(1);
+    }
+    if (activeStep > 0 && !isLoggedIn) {
+      setActiveStep(0);
+    }
+  }, [activeStep, isLoggedIn]);
+
+  useEffect(() => {
+    if (!isLoggedIn || !user?.id) {
+      setPets([]);
+      setPetsError("");
+      setPetsLoading(false);
+      setSelectedPetId(null);
+      setPreviewPetId(null);
+      return;
+    }
+
+    setPetsLoading(true);
+    setPetsError("");
+    fetch(`${API_URL}/pets?ownerId=${user.id}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Αποτυχία φόρτωσης κατοικιδίων");
+        return res.json();
+      })
+      .then((data) => setPets(Array.isArray(data) ? data : []))
+      .catch(() => setPetsError("Δεν ήταν δυνατή η φόρτωση των κατοικιδίων."))
+      .finally(() => setPetsLoading(false));
+  }, [isLoggedIn, user?.id]);
+
   const updateField = (section, field, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -341,17 +344,16 @@ export default function ReportLostStepper() {
   const validateStep = () => {
     const newErrors = {};
 
-    if (activeStep === 0) {
-      if (!formData.pet.microchip.trim()) newErrors["pet.microchip"] = "Υποχρεωτικό";
-      if (!formData.pet.species) newErrors["pet.species"] = "Υποχρεωτικό";
+    if (activeStep === 1) {
+      if (!selectedPetId) newErrors["pet.selected"] = "Επιλέξτε κατοικίδιο";
     }
 
-    if (activeStep === 1) {
+    if (activeStep === 2) {
       if (!formData.loss.date) newErrors["loss.date"] = "Υποχρεωτικό";
       if (!formData.loss.area.trim()) newErrors["loss.area"] = "Υποχρεωτικό";
     }
 
-    if (activeStep === 2) {
+    if (activeStep === 3) {
       if (!formData.contact.name.trim()) newErrors["contact.name"] = "Υποχρεωτικό";
       if (!formData.contact.phone.trim()) newErrors["contact.phone"] = "Υποχρεωτικό";
       if (!formData.contact.email.trim()) newErrors["contact.email"] = "Υποχρεωτικό";
@@ -375,38 +377,62 @@ export default function ReportLostStepper() {
     setActiveStep((prev) => prev + 1);
   };
 
+  const handleSelectPet = (pet) => {
+    setSelectedPetId(pet.id);
+    setPreviewPetId(pet.id);
+    setFormData((prev) => ({
+      ...prev,
+      pet: {
+        ...prev.pet,
+        microchip: pet.microchip || "",
+        species: pet.species || "",
+        breed: pet.breed || "",
+        sex: pet.gender || "",
+        color: pet.color || "",
+      },
+    }));
+  };
+
+  const handlePreviewPet = (pet) => {
+    setPreviewPetId(pet.id);
+  };
+
   const getStepContent = (stepIndex) => {
     switch (stepIndex) {
       case 0:
-        return <StepPetDetails formData={formData} updateField={updateField} errors={errors} />;
+        return <StepLogin isLoggedIn={isLoggedIn} onOpenLogin={() => setLoginOpen(true)} />;
       case 1:
-        return <StepLossDetails formData={formData} updateField={updateField} errors={errors} />;
+        return (
+          <StepSelectPet
+            pets={pets}
+            loading={petsLoading}
+            selectedPetId={selectedPetId}
+            previewPetId={previewPetId}
+            errorText={errors["pet.selected"] || petsError}
+            onSelectPet={handleSelectPet}
+            onPreviewPet={handlePreviewPet}
+          />
+        );
       case 2:
-        return <StepContactDetails formData={formData} updateField={updateField} errors={errors} />;
+        return <StepLossDetails formData={formData} updateField={updateField} errors={errors} />;
       case 3:
-        return <StepConfirmation formData={formData} />;
+        return <StepContactDetails formData={formData} updateField={updateField} errors={errors} />;
       case 4:
+        return <StepConfirmation formData={formData} />;
+      case 5:
         return <StepSummary />;
       default:
         return "Άγνωστο";
     }
   };
 
-  const steps = ["Στοιχεία Ζώου", "Στοιχεία Απώλειας", "Επικοινωνία", "Σύνοψη", "Ολοκλήρωση"];
+  const steps = ["Σύνδεση", "Επιλογή Κατοικιδίου", "Στοιχεία Απώλειας", "Επικοινωνία", "Σύνοψη", "Ολοκλήρωση"];
 
   const isDone = activeStep >= steps.length - 1;
   const isConfirmStep = activeStep === steps.length - 2;
 
-  if (!isLoggedIn)
-  {
-    return (
-      <>
-          <Typography variant="h6" color= "error" textAlign="center" sx={{ mt: "15%", fontWeight: "bold" }}>
-            Απαιτείται σύνδεση για να κάνετε δήλωση απώλειας κατοικιδίου.
-          </Typography>
-      </>
-    );
-  }
+  const isLoginGateStep = activeStep === 0;
+  const shouldShowFooterActions = !(isLoginGateStep && !isLoggedIn);
 
   return (
     
@@ -420,6 +446,8 @@ export default function ReportLostStepper() {
         px: 2,
       }}
     >
+
+      <LoginDialog open={loginOpen} onClose={() => setLoginOpen(false)} />
 
       <Paper
         sx={{
@@ -499,7 +527,7 @@ export default function ReportLostStepper() {
                 pb: 1,
               }}
             >
-              {activeStep !== 0 && (
+              {shouldShowFooterActions && activeStep !== 0 && (
                 <Button
                   onClick={handleBack}
                   sx={{
@@ -512,23 +540,25 @@ export default function ReportLostStepper() {
                 </Button>
               )}
 
-              {isDone ? (
-                <Button
-                  variant="contained"
-                  color="success"
-                  onClick={() => navigate("/lost-found")}
-                  sx={{ px: 4, py: 1, fontWeight: "bold", ml: "auto" }}
-                >
-                  ΕΠΙΣΤΡΟΦΗ
-                </Button>
-              ) : isConfirmStep ? (
-                <Button variant="contained" color="success" onClick={handleSubmit} sx={{ px: 4, py: 1, fontWeight: "bold", ml: "auto" }}>
-                  ΟΛΟΚΛΗΡΩΣΗ
-                </Button>
-              ) : (
-                <Button variant="contained" onClick={handleNext} sx={{ px: 4, py: 1, fontWeight: "bold", ml: "auto" }}>
-                  ΕΠΟΜΕΝΟ
-                </Button>
+              {shouldShowFooterActions && (
+                isDone ? (
+                  <Button
+                    variant="contained"
+                    color="success"
+                    onClick={() => navigate("/lost-found")}
+                    sx={{ px: 4, py: 1, fontWeight: "bold", ml: "auto" }}
+                  >
+                    ΕΠΙΣΤΡΟΦΗ
+                  </Button>
+                ) : isConfirmStep ? (
+                  <Button variant="contained" color="success" onClick={handleSubmit} sx={{ px: 4, py: 1, fontWeight: "bold", ml: "auto" }}>
+                    ΟΛΟΚΛΗΡΩΣΗ
+                  </Button>
+                ) : (
+                  <Button variant="contained" onClick={handleNext} sx={{ px: 4, py: 1, fontWeight: "bold", ml: "auto" }}>
+                    ΕΠΟΜΕΝΟ
+                  </Button>
+                )
               )}
             </Box>
           </Grid>

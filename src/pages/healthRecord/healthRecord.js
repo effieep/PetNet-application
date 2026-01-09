@@ -1,6 +1,8 @@
 import HealthRecordLayout from "../../components/HealthRecordLayout";
+import HealthPreview from "../../components/HealthPreview";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { API_URL }from "../../api";
 
 const HealthRecord = () => {
   const location = useLocation();
@@ -13,7 +15,7 @@ const HealthRecord = () => {
       const storedPetId = localStorage.getItem("activePetId");
       if (storedPetId) {
         // Κάνουμε fetch το ζώο ξανά
-        fetch(`http://localhost:3001/pets/${storedPetId}`)
+        fetch(`${API_URL}/pets/${storedPetId}`)
           .then(res => res.json())
           .then(data => setPet(data))
           .catch(() => navigate('/owner/pets'));
@@ -28,8 +30,8 @@ const HealthRecord = () => {
   if (!pet) return null;
 
   return (
-    <HealthRecordLayout petData={pet}>
-      <div>Health Record Page</div>
+    <HealthRecordLayout petData={pet} activeTab="healthOverview">
+      <HealthPreview healthData={pet.health} />
     </HealthRecordLayout>
   )
 };

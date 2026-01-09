@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Typography, CircularProgress, Alert, Box} from "@mui/material";
-
+import { API_URL } from "../../api";
 import { useAuth } from "../../auth/AuthContext";
 import ProfileLayout from "../../components/profileLayout";
 import AppointmentCard from "../../components/AppointmentCard";
@@ -23,9 +23,9 @@ const OwnerAppointments = () => {
         setLoading(true);
 
         const [appoRes, petsRes, vetsRes] = await Promise.all([
-          fetch(`http://localhost:3001/appointments?ownerId=${user.id}`),
-          fetch(`http://localhost:3001/pets?ownerId=${user.id}`),
-          fetch(`http://localhost:3001/users?role=vet`),
+          fetch(`${API_URL}/appointments?ownerId=${user.id}`),
+          fetch(`${API_URL}/pets?ownerId=${user.id}`),
+          fetch(`${API_URL}/users?role=vet`),
         ]);
 
         if (!appoRes.ok) throw new Error("Σφάλμα φόρτωσης ραντεβού");

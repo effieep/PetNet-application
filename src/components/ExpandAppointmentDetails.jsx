@@ -1,5 +1,6 @@
 import { Box, Typography, Card, Divider, Button} from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../api";
 
 const ExpandedAppointmentDetails = ({ appointment, onCancelSuccess }) => {
   const { pet, vet, date, time, status, reason, reviewed } = appointment;
@@ -174,7 +175,7 @@ const ExpandedAppointmentDetails = ({ appointment, onCancelSuccess }) => {
           const ok = window.confirm("Θέλετε σίγουρα να ακυρώσετε το ραντεβού;");
           if (!ok) return;
 
-          await fetch(`http://localhost:3001/appointments/${appointment.id}`, {
+          await fetch(`${API_URL}/appointments/${appointment.id}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ status: "CANCELLED" }),
