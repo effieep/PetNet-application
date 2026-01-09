@@ -26,6 +26,14 @@ import VetReviews from './pages/vet/vetReviews.js';
 import VetPublic from './pages/vet/vetPublic.js';
 import VetManagePets from './pages/vet/VetManagePets.js';
 import VetManageRdvz from './pages/vet/VetManageRdvz.js';
+import VetAvailability from './pages/vet/vetAvailability.js';
+import VetRequestRdvz from './pages/vet/vetRequestRdvz.js';
+import VetScheduledRdvz from './pages/vet/vetScheduledRdvz.js'; 
+import RegisterPet from './pages/vet/RegisterPet.js';
+import RegisterMedical from './pages/vet/RegisterMedical.js';
+import RegisterEvent from './pages/vet/RegisterEvent.js';
+import ViewHealth from './pages/vet/ViewHealth.js';
+
 import { Box } from "@mui/material";
 
 function App() {
@@ -55,7 +63,14 @@ function App() {
           <Route path="/vet/randezvous-history" element={<VetRandezvousHistory />} />
           <Route path="/vet/reviews" element={<VetReviews />} />
           <Route path="/vet/manage-pets" element={<VetManagePets />} />
+          <Route path="/vet/manage-pets/register-pet" element={<RegisterPet />} />
+          <Route path="/vet/manage-pets/record-medical-action" element={<RegisterEvent />} />
+          <Route path="/vet/manage-pets/view-health-record" element={<ViewHealth />} />
+          <Route path="/vet/manage-pets/record-life-event" element={<RegisterMedical />} />
           <Route path="/vet/manage-appointments" element={<VetManageRdvz />} />
+          <Route path="/vet/manage-appointments/manage-availability" element={<VetAvailability />} />
+          <Route path="/vet/manage-appointments/manage-requests" element={<VetRequestRdvz />} />
+          <Route path="/vet/manage-appointments/scheduled-appointments" element={<VetScheduledRdvz />} />
           <Route path="/owner/search-vet" element={<SearchVet />} />
           <Route path="/lost-found" element={<LostFound />} />
           <Route path="/lost-found/lost_pet" element={<ReportLost />} />

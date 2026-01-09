@@ -118,7 +118,7 @@ const VetManagePets = () => {
                 Kαταγραφή Συμβάντος Ζωής
               </Typography>
               <Typography variant="body1" sx={{ p: 2, color: '#42422B' }}>
-                Καταγράψτε <strong>σημαντικά γεγονότα στη ζωή του ζώου.</strong> Οι αλλαγές ενημερώνουν αυτόματα τον ιδιοκτήτη, τις υπηρεσίες και το ιστορικό.
+                Καταγράψτε <strong>σημαντικά γεγονότα στη ζωή του ζώου.</strong> Οι αλλαγές ενημερώνουν αυτόματα τον ιδιοκτήτη και τις υπηρεσίες.
               </Typography>
               <Divider sx={{ mx: 2, backgroundColor: '#42422B' }} />
               <Typography variant="body2" sx={{ p: 2, color: '#42422B', fontStyle: 'italic' }}>

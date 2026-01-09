@@ -13,7 +13,7 @@ const VetManageRdvz = () => {
 
   return (
     <>
-      <Hero image={'/vet-hero.png'} title={"Διαχείριση Ζώων "} subtitle={"Καταχωρήστε νέα ζώα, ενημερώστε το ηλεκτρονικό βιβλιάριο υγείας και διαχειριστείτε σημαντικά συμβάντα ζωής."} height={"50vh"}/>
+      <Hero image={'/vet-hero.png'} title={"Διαχείριση Ραντεβού"} subtitle={"Καταχωρήστε νέα ζώα, ενημερώστε το ηλεκτρονικό βιβλιάριο υγείας και διαχειριστείτε σημαντικά συμβάντα ζωής."} height={"50vh"}/>
       <Box sx={{ display: 'flex', p: 2, flexDirection: 'row'}}>
         <SubMenu 
           submenuItems={submenuItems}
