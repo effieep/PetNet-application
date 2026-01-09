@@ -185,7 +185,10 @@ const VetProfile = () => {
     try {
       const response = await fetch(`${API_URL}/users/${user.id}`);
       const data = await response.json();
-      setUserData(data);
+      setUserData(prev => ({
+        ...data,
+        jobs: data.jobs || { "job-0": { role: "", company: "", startYear: "", endYear: "" } },
+      }) );
     } catch (err) {
       setError(err.message);
     }
