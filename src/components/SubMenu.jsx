@@ -22,7 +22,7 @@ const LeftSubmenu = (
         py: 1,
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
       }}
     >
       <List>
@@ -35,8 +35,8 @@ const LeftSubmenu = (
               color: "#2f3e2f",
               mx: 1,
               borderBottom: "1px solid #1414145e",
-              "&:first-of-type": {
-                borderTop: "1px solid #1414145e",
+              "&:last-of-type": {
+                borderBottom: "none",
               },
               "&.Mui-hover": {
                 backgroundColor: "#f2f3eaff",
