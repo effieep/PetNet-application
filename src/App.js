@@ -24,6 +24,8 @@ import VetProfile from './pages/vet/vetProfile.js';
 import VetRandezvousHistory from './pages/vet/vetHistory.js';
 import VetReviews from './pages/vet/vetReviews.js';
 import VetPublic from './pages/vet/vetPublic.js';
+import VetManagePets from './pages/vet/VetManagePets.js';
+import VetManageRdvz from './pages/vet/VetManageRdvz.js';
 import { Box } from "@mui/material";
 
 function App() {
@@ -52,6 +54,8 @@ function App() {
           <Route path="/vet/public-profile" element={<VetPublic />} />
           <Route path="/vet/randezvous-history" element={<VetRandezvousHistory />} />
           <Route path="/vet/reviews" element={<VetReviews />} />
+          <Route path="/vet/manage-pets" element={<VetManagePets />} />
+          <Route path="/vet/manage-appointments" element={<VetManageRdvz />} />
           <Route path="/owner/search-vet" element={<SearchVet />} />
           <Route path="/lost-found" element={<LostFound />} />
           <Route path="/lost-found/lost_pet" element={<ReportLost />} />

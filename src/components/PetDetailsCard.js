@@ -41,6 +41,7 @@ const PetDetailsCard = ({ petId }) => {
       elevation={0} 
       sx={{ 
         p: 4, 
+        maxWidth: 900,
         backgroundColor: '#F1D77A', 
         borderRadius: '20px', 
         border: '1px solid #000',
