@@ -1,4 +1,5 @@
 import HealthRecordLayout from "../../components/HealthRecordLayout";
+import HealthPreview from "../../components/HealthPreview";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { API_URL }from "../../api";
@@ -30,7 +31,7 @@ const HealthRecord = () => {
 
   return (
     <HealthRecordLayout petData={pet} activeTab="healthOverview">
-      <div>Health Record Page</div>
+      <HealthPreview healthData={pet.health} />
     </HealthRecordLayout>
   )
 };

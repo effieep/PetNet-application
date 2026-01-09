@@ -114,7 +114,7 @@
       "gender": "Θηλυκό",
       "color": "Γκρι",
       "health": {
-        "neutered": true,
+        "neutered": false,
         "overview": {
           "lastVaccine": {
             "name": "Λύσσας - Nobivac",
@@ -136,40 +136,156 @@
         "history": {
           "vaccinations": [
             {
+              "id": "v115",
+              "date": "15-09-2025",
+              "name": "Nobivac Tricat",
+              "dose": "1"
+            },
+            {
+              "id": "v114",
+              "date": "15-09-2025",
+              "name": "Nobivac Rabies (Λύσσας)",
+              "dose": "1"
+            },
+            {
+              "id": "v113",
+              "date": "10-09-2024",
+              "name": "Purevax RCP",
+              "dose": "Εφάπαξ"
+            },
+            {
+              "id": "v112",
+              "date": "10-09-2024",
+              "name": "Purevax FeLV (Λευχαιμίας)",
+              "dose": "Εφάπαξ"
+            },
+            {
+              "id": "v111",
+              "date": "12-09-2023",
+              "name": "Purevax RCP",
+              "dose": "1"
+            },
+            {
+              "id": "v110",
+              "date": "12-09-2023",
+              "name": "Rabisin (Λύσσας)",
+              "dose": "1"
+            },
+            {
+              "id": "v109",
+              "date": "05-06-2022",
+              "name": "Feligen CRP",
+              "dose": "Εφάπαξ"
+            },
+            {
+              "id": "v108",
+              "date": "05-06-2022",
+              "name": "Leucogen (Λευχαιμίας)",
+              "dose": "Εφάπαξ"
+            },
+            {
+              "id": "v107",
+              "date": "15-05-2021",
+              "name": "Nobivac Tricat",
+              "dose": "2"
+            },
+            {
+              "id": "v106",
+              "date": "20-06-2020",
+              "name": "Nobivac Rabies (Λύσσας)",
+              "dose": "1"
+            },
+            {
+              "id": "v105",
+              "date": "20-06-2020",
+              "name": "Nobivac Tricat",
+              "dose": "3"
+            },
+            {
+              "id": "v104",
+              "date": "20-06-2020",
+              "name": "Leucogen (Λευχαιμίας)",
+              "dose": "2"
+            },
+            {
+              "id": "v103",
+              "date": "20-05-2020",
+              "name": "Nobivac Tricat",
+              "dose": "2"
+            },
+            {
+              "id": "v102",
+              "date": "20-05-2020",
+              "name": "Leucogen (Λευχαιμίας)",
+              "dose": "1"
+            },
+            {
               "id": "v101",
-              "date": "15-09-2025",
+              "date": "20-04-2020",
               "name": "Nobivac Tricat",
-              "vetId": "v1"
-            },
-            {
-              "id": "v100",
-              "date": "15-09-2024",
-              "name": "Nobivac Tricat",
-              "vetId": "v1"
+              "dose": "1"
             }
           ],
-          "deworming": [
-            {
-              "id": "d101",
-              "date": "15-09-2025",
-              "type": "Internal",
-              "product": "Milbemax"
-            },
-            {
-              "id": "d102",
-              "date": "15-09-2025",
-              "type": "External",
-              "product": "Advocate"
-            }
-          ],
+        "deworming": [
+          {
+            "id": "d106",
+            "date": "10-11-2025",
+            "type": "Internal",
+            "product": "Milbemax"
+          },
+          {
+            "id": "d105",
+            "date": "15-09-2025",
+            "type": "Internal",
+            "product": "Milbemax"
+          },
+          {
+            "id": "d104",
+            "date": "15-10-2024",
+            "type": "External",
+            "product": "Advocate"
+          },
+          {
+            "id": "d103",
+            "date": "15-06-2024",
+            "type": "External",
+            "product": "Advocate"
+          },
+          {
+            "id": "d102",
+            "date": "15-09-2021",
+            "type": "External",
+            "product": "Advocate"
+          },
+          {
+            "id": "d101",
+            "date": "15-06-2020",
+            "type": "Internal",
+            "product": "Milbemax"
+          }
+      ],
           "medicalActs": {
-            "tests": [],
+            "tests": [{
+                "id": "t201",
+                "date": "10-06-2025",
+                "title": "Εξετάσεις Αίματος (Leishmania)",
+                "vet": "Αποστόλης Χριστοδουλόπουλος",
+                "result": "Αρνητικό"
+              },
+              {
+                "id": "t202",
+                "date": "10-06-2025",
+                "title": "Γενική Αίματος",
+                "vet": "Αποστόλης Χριστοδουλόπουλος",
+                "result": "Φυσιολογική"
+              }
+            ],
             "surgeries": [
               {
                 "id": "s1",
                 "date": "20-01-2021",
                 "title": "Στείρωση (Ουδετεροποίηση)",
-                "vetId": "v1",
+                "vet": "Άγγελος Ζωάκης",
                 "notes": "Ολική αφαίρεση"
               }
             ],
@@ -177,9 +293,8 @@
               {
                 "id": "m1",
                 "startDate": "15-09-2025",
-                "endDate": "22-09-2025",
                 "name": "Zymox",
-                "dosage": "Τοπική χρήση"
+                "instructions": "Τοπική χρήση για 7 μέρες"
               }
             ]
           }
@@ -187,127 +302,244 @@
       }
     },
     {
-      "id": "p2",
-      "ownerId": "u1",
-      "name": "Μαξ",
-      "species": "Σκύλος",
-      "breed": "Labrador",
-      "microchip": "1234567890",
-      "birthDate": "22-08-2019",
-      "gender": "Αρσενικό",
-      "health": {
-        "neutered": true,
-        "overview": {
-          "lastVaccine": {
-            "name": "Vanguard 7",
-            "date": "10-06-2025",
-            "nextDate": "10-06-2026"
-          },
-          "lastDeworming": {
-            "internal": "Drontal (01/06/2025)",
-            "external": "Seresto Collar (01/06/2025)",
-            "nextInternal": "01/09/2025",
-            "nextExternal": "01/01/2026"
-          },
-          "activeMedication": null
-        },
-        "history": {
-          "vaccinations": [
-            {
-              "id": "v201",
-              "date": "10-06-2025",
-              "name": "Vanguard 7",
-              "vetId": "v2"
-            },
-            {
-              "id": "v200",
-              "date": "05-06-2024",
-              "name": "Vanguard 7",
-              "vetId": "v2"
-            }
-          ],
-          "deworming": [
-            {
-              "id": "d201",
-              "date": "01-06-2025",
-              "type": "External",
-              "product": "Seresto Collar"
-            }
-          ],
-          "medicalActs": {
-            "tests": [
-              {
-                "id": "t201",
-                "date": "10-06-2025",
-                "title": "Εξετάσεις Αίματος (Leishmania)",
-                "vetId": "v2",
-                "result": "Αρνητικό"
-              },
-              {
-                "id": "t202",
-                "date": "10-06-2025",
-                "title": "Γενική Αίματος",
-                "vetId": "v2",
-                "result": "Φυσιολογική"
-              }
-            ],
-            "surgeries": [],
-            "medication": []
-          }
-        }
-      }
+  "id": "p2",
+  "ownerId": "u1",
+  "name": "Μαξ",
+  "species": "Σκύλος",
+  "breed": "Labrador",
+  "microchip": "1234567890",
+  "birthDate": "22-08-2019",
+  "gender": "Αρσενικό",
+  "color": "Μπεζ/Ξανθό",
+  "health": {
+    "neutered": true,
+    "overview": {
+      "lastVaccine": {
+        "name": "Vanguard 7",
+        "date": "10-06-2025",
+        "nextDate": "10-06-2026"
+      },
+      "lastDeworming": {
+        "internal": "Drontal (01/06/2025)",
+        "external": "Seresto Collar (01/06/2025)",
+        "nextInternal": "01/09/2025",
+        "nextExternal": "01/01/2026"
+      },
+      "activeMedication": null
     },
-    {
-      "id": "p3",
-      "ownerId": "u1",
-      "name": "Λούνα",
-      "species": "Γάτα",
-      "breed": "Maine Coon",
-      "microchip": "9876543210",
-      "birthDate": "15-03-2021",
-      "gender": "Θηλυκό",
-      "health": {
-        "neutered": false,
-        "overview": {
-          "lastVaccine": {
-            "name": "Purevax RCP",
-            "date": "20-03-2025",
-            "nextDate": "20-03-2026"
-          },
-          "lastDeworming": {
-            "internal": "Stronghold (20/03/2025)",
-            "external": "Stronghold (20/03/2025)",
-            "nextInternal": "20/04/2025",
-            "nextExternal": "20/04/2025"
-          },
-          "activeMedication": null
+    "history": {
+      "vaccinations": [
+        {
+          "id": "v205",
+          "date": "10-06-2025",
+          "name": "Vanguard 7",
+          "dose": "Ετήσιος"
         },
-        "history": {
-          "vaccinations": [
-            {
-              "id": "v301",
-              "date": "20-03-2025",
-              "name": "Purevax RCP",
-              "vetId": "v1"
-            }
-          ],
-          "deworming": [],
-          "medicalActs": {
-            "tests": [
-              {
-                "id": "t301",
-                "date": "15-03-2022",
-                "title": "Υπέρηχος Καρδιάς (HCM Screen)",
-                "vetId": "v2",
-                "result": "Καθαρό"
-              }
-            ],
-            "surgeries": [],
-            "medication": []
-          }
+        {
+          "id": "v204",
+          "date": "10-06-2025",
+          "name": "Rabisin (Λύσσας)",
+          "dose": "Ετήσιος"
+        },
+        {
+          "id": "v203",
+          "date": "05-06-2024",
+          "name": "Vanguard 7",
+          "dose": "Ετήσιος"
+        },
+        {
+          "id": "v202",
+          "date": "05-06-2023",
+          "name": "Vanguard 7",
+          "dose": "Ετήσιος"
+        },
+        {
+          "id": "v201",
+          "date": "15-10-2019",
+          "name": "Vanguard 7 (Puppy)",
+          "dose": "3"
+        },
+        {
+          "id": "v200",
+          "date": "15-09-2019",
+          "name": "Vanguard 7 (Puppy)",
+          "dose": "2"
         }
+      ],
+      "deworming": [
+        {
+          "id": "d204",
+          "date": "01-06-2025",
+          "type": "Internal",
+          "product": "Drontal Plus"
+        },
+        {
+          "id": "d203",
+          "date": "01-06-2025",
+          "type": "External",
+          "product": "Seresto Collar"
+        },
+        {
+          "id": "d202",
+          "date": "01-03-2025",
+          "type": "Internal",
+          "product": "Milbemax"
+        },
+        {
+          "id": "d201",
+          "date": "15-01-2025",
+          "type": "External",
+          "product": "Advantix"
+        }
+      ],
+      "medicalActs": {
+        "tests": [
+          {
+            "id": "t201",
+            "date": "10-06-2025",
+            "title": "Εξετάσεις Αίματος (Leishmania)",
+            "vet": "Αποστόλης Χριστοδουλόπουλος",
+            "result": "Αρνητικό"
+          },
+          {
+            "id": "t202",
+            "date": "10-06-2025",
+            "title": "Γενική Αίματος & Βιοχημικές",
+            "vet": "Αποστόλης Χριστοδουλόπουλος",
+            "result": "Φυσιολογική"
+          },
+          {
+            "id": "t203",
+            "date": "15-02-2021",
+            "title": "Ακτινογραφία Ισχίων (Δυσπλασία)",
+            "vet": "Άγγελος Ζωάκης",
+            "result": "Καθαρή (Grade A)"
+          }
+        ],
+        "surgeries": [
+          {
+            "id": "s201",
+            "date": "20-05-2021",
+            "title": "Στείρωση (Ορχεκτομή)",
+            "vet": "Άγγελος Ζωάκης",
+            "notes": "Ομαλή ανάνηψη, αφαίρεση ραμμάτων σε 10 μέρες"
+          }
+        ],
+        "medication": [
+          {
+            "id": "m201",
+            "startDate": "10-04-2023",
+            "name": "Otipax",
+            "instructions": "5 σταγόνες σε κάθε αυτί για 5 μέρες (Ωτίτιδα)"
+          }
+        ]
       }
     }
+  }
+},
+{
+  "id": "p3",
+  "ownerId": "u1",
+  "name": "Λούνα",
+  "species": "Γάτα",
+  "breed": "Maine Coon",
+  "microchip": "9876543210",
+  "birthDate": "15-03-2021",
+  "gender": "Θηλυκό",
+  "color": "Silver Tabby",
+  "health": {
+    "neutered": false,
+    "overview": {
+      "lastVaccine": {
+        "name": "Purevax RCP",
+        "date": "20-03-2025",
+        "nextDate": "20-03-2026"
+      },
+      "lastDeworming": {
+        "internal": "Stronghold (20/03/2025)",
+        "external": "Stronghold (20/03/2025)",
+        "nextInternal": "20/04/2025",
+        "nextExternal": "20/04/2025"
+      },
+      "activeMedication": null
+    },
+    "history": {
+      "vaccinations": [
+        {
+          "id": "v304",
+          "date": "20-03-2025",
+          "name": "Purevax RCP",
+          "dose": "Ετήσιος"
+        },
+        {
+          "id": "v303",
+          "date": "20-03-2024",
+          "name": "Purevax RCP",
+          "dose": "Ετήσιος"
+        },
+        {
+          "id": "v302",
+          "date": "15-06-2021",
+          "name": "Purevax RCP (Kitten)",
+          "dose": "2"
+        },
+        {
+          "id": "v301",
+          "date": "15-05-2021",
+          "name": "Purevax RCP (Kitten)",
+          "dose": "1"
+        }
+      ],
+      "deworming": [
+        {
+          "id": "d303",
+          "date": "20-03-2025",
+          "type": "External",
+          "product": "Stronghold Plus"
+        },
+        {
+          "id": "d302",
+          "date": "20-01-2025",
+          "type": "Internal",
+          "product": "Milbemax"
+        },
+        {
+          "id": "d301",
+          "date": "20-11-2024",
+          "type": "External",
+          "product": "Broadline"
+        }
+      ],
+      "medicalActs": {
+        "tests": [
+          {
+            "id": "t301",
+            "date": "15-03-2022",
+            "title": "Υπέρηχος Καρδιάς (HCM Screen)",
+            "vet": "Αποστόλης Χριστοδουλόπουλος",
+            "result": "Καθαρό / Αρνητικό για HCM"
+          },
+          {
+            "id": "t302",
+            "date": "20-03-2025",
+            "title": "Γενική Εξέταση Κοπράνων",
+            "vet": "Αποστόλης Χριστοδουλόπουλος",
+            "result": "Καθαρή"
+          }
+        ],
+        "surgeries": [],
+        "medication": [
+          {
+            "id": "m301",
+            "startDate": "05-12-2023",
+            "name": "Tobradex (Κολλύριο)",
+            "instructions": "1 σταγόνα πρωί-βράδυ για 5 μέρες (Επεφυκίτιδα)"
+          }
+        ]
+      }
+    }
+  }
+}
   ],
   "appointments": [
     {
