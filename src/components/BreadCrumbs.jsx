@@ -23,7 +23,14 @@ const breadcrumbMap = {
   overview: 'Προεπισκόπηση',
   vaccinations: 'Εμβολιασμοί & Αποπαρασιτώσεις',
   medicalHistory: 'Ιστορικό Ιατρικών Πράξεων',
-  petInfo: 'Στοιχεία Ζώου'
+  petInfo: 'Στοιχεία Ζώου',
+  'register-pet': 'Καταγραφή Νέου Κατοικιδίου',
+  'record-medical-action': 'Kαταγραφή Ιατρικής Πράξης',
+  'record-life-event': 'Καταγραφή Συμβάντος Ζωής',
+  'view-health-record': 'Προβολή Βιβλιαρίου Υγείας',
+  'manage-availability': 'Διαχείριση Διαθεσιμότητας',
+  'manage-requests': 'Διαχείριση Αιτημάτων Ραντεβού',
+  'scheduled-appointments': 'Προγραμμάτιστα Ραντεβού',
 };
 
 function AppBreadcrumbs() {
