@@ -12,11 +12,13 @@ import {
   Paper,
   TextField,
   Grid,
+  MenuItem,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import LoginDialog from "../components/login";
 import PetPreviewCard from "../components/PetPreviewCard";
 import PetDetailsCard from "../components/PetDetailsCard";
+import AddressPicker from "../components/AddressPicker";
 import { API_URL } from "../api";
 
 // ==============================================
@@ -67,14 +69,26 @@ const StepSelectPet = ({ pets, loading, selectedPetId, previewPetId, errorText, 
       <Box
         sx={{
           display: "flex",
-          gap: 2,
+          // Match OwnerPets Grid spacing={3} (24px)
+          gap: 3,
           overflowX: "auto",
           pb: 1,
           WebkitOverflowScrolling: "touch",
         }}
       >
         {pets.map((pet) => (
-          <Box key={pet.id} sx={{ flex: "0 0 auto", width: { xs: 240, sm: 260, md: 280 } }}>
+          <Box
+            key={pet.id}
+            sx={{
+              flex: "0 0 auto",
+              // Mimic Grid item widths: xs=12, sm=6, md=4 with spacing={3}
+              width: {
+                xs: "100%",
+                sm: "calc((100% - 24px) / 2)",
+                md: "calc((100% - 48px) / 3)",
+              },
+            }}
+          >
             <PetPreviewCard
               pet={pet}
               wrapInGrid={false}
@@ -137,13 +151,18 @@ const StepLossDetails = ({ formData, updateField, errors }) => (
           />
         </Grid>
         <Grid item xs={12}>
-          <TextField
-            fullWidth
-            label="Περιοχή που χάθηκε"
-            variant="outlined"
-            size="small"
+          <AddressPicker
+            label="Διεύθυνση / Περιοχή που χάθηκε"
             value={formData.loss.area}
-            onChange={(e) => updateField("loss", "area", e.target.value)}
+            onChange={(val) => updateField("loss", "area", val)}
+            coords={{
+              lat: formData.loss.lat,
+              lon: formData.loss.lon,
+            }}
+            onCoordsChange={(c) => {
+              updateField("loss", "lat", c.lat);
+              updateField("loss", "lon", c.lon);
+            }}
             error={!!errors["loss.area"]}
             helperText={errors["loss.area"]}
           />
@@ -165,7 +184,7 @@ const StepLossDetails = ({ formData, updateField, errors }) => (
   </Box>
 );
 
-const StepContactDetails = ({ formData, updateField, errors }) => (
+const StepContactDetails = ({ formData, updateField, errors, user, contactPreset, onContactPresetChange, showAltContact, onToggleAltContact }) => (
   <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
     <Box>
       <Typography variant="h6" sx={{ fontWeight: "bold", color: "#9a9b6a", mb: 2 }}>
@@ -174,12 +193,38 @@ const StepContactDetails = ({ formData, updateField, errors }) => (
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <TextField
+            select
+            fullWidth
+            label="Επιλογή στοιχείων επικοινωνίας"
+            variant="outlined"
+            size="small"
+            value={contactPreset}
+            onChange={(e) => onContactPresetChange(e.target.value)}
+            helperText={
+              contactPreset === "account"
+                ? "Θα χρησιμοποιηθούν τα στοιχεία του λογαριασμού σας."
+                : contactPreset === "empty"
+                  ? "Θα καθαριστούν τα πεδία. Συμπληρώστε χειροκίνητα για να συνεχίσετε."
+                  : "Συμπληρώστε χειροκίνητα τα στοιχεία επικοινωνίας."
+            }
+          >
+            <MenuItem value="empty">Κενό</MenuItem>
+            <MenuItem value="account" disabled={!user}>
+              Στοιχεία χρήστη
+            </MenuItem>
+            <MenuItem value="manual">Άλλα στοιχεία</MenuItem>
+          </TextField>
+        </Grid>
+
+        <Grid item xs={12}>
+          <TextField
             fullWidth
             label="Όνομα επικοινωνίας"
             variant="outlined"
             size="small"
             value={formData.contact.name}
             onChange={(e) => updateField("contact", "name", e.target.value)}
+            disabled={contactPreset === "account"}
             error={!!errors["contact.name"]}
             helperText={errors["contact.name"]}
           />
@@ -192,6 +237,7 @@ const StepContactDetails = ({ formData, updateField, errors }) => (
             size="small"
             value={formData.contact.phone}
             onChange={(e) => updateField("contact", "phone", e.target.value)}
+            disabled={contactPreset === "account"}
             error={!!errors["contact.phone"]}
             helperText={errors["contact.phone"]}
           />
@@ -204,10 +250,54 @@ const StepContactDetails = ({ formData, updateField, errors }) => (
             size="small"
             value={formData.contact.email}
             onChange={(e) => updateField("contact", "email", e.target.value)}
+            disabled={contactPreset === "account"}
             error={!!errors["contact.email"]}
             helperText={errors["contact.email"]}
           />
         </Grid>
+
+        <Grid item xs={12}>
+          <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
+            <Button variant="outlined" onClick={onToggleAltContact} sx={{ fontWeight: 700 }}>
+              {showAltContact ? "Αφαίρεση επιπλέον επαφής" : "Προσθήκη επιπλέον επαφής"}
+            </Button>
+          </Box>
+        </Grid>
+
+        {showAltContact && (
+          <>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Επιπλέον όνομα επικοινωνίας (προαιρετικό)"
+                variant="outlined"
+                size="small"
+                value={formData.contact.altName}
+                onChange={(e) => updateField("contact", "altName", e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Επιπλέον τηλέφωνο (προαιρετικό)"
+                variant="outlined"
+                size="small"
+                value={formData.contact.altPhone}
+                onChange={(e) => updateField("contact", "altPhone", e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Επιπλέον email (προαιρετικό)"
+                variant="outlined"
+                size="small"
+                value={formData.contact.altEmail}
+                onChange={(e) => updateField("contact", "altEmail", e.target.value)}
+              />
+            </Grid>
+          </>
+        )}
       </Grid>
     </Box>
   </Box>
@@ -238,6 +328,28 @@ const StepConfirmation = ({ formData }) => (
         <li>
           <strong>Email:</strong> {formData.contact.email}
         </li>
+        {(formData.contact.altName || formData.contact.altPhone || formData.contact.altEmail) && (
+          <>
+            <li style={{ marginTop: 8, opacity: 0.9 }}>
+              <strong>Επιπλέον επαφή:</strong>
+            </li>
+            {formData.contact.altName && (
+              <li>
+                <strong>Όνομα:</strong> {formData.contact.altName}
+              </li>
+            )}
+            {formData.contact.altPhone && (
+              <li>
+                <strong>Τηλέφωνο:</strong> {formData.contact.altPhone}
+              </li>
+            )}
+            {formData.contact.altEmail && (
+              <li>
+                <strong>Email:</strong> {formData.contact.altEmail}
+              </li>
+            )}
+          </>
+        )}
       </ul>
     </Box>
   </Box>
@@ -286,14 +398,22 @@ export default function ReportLostStepper() {
       date: "",
       time: "",
       area: "",
+      lat: null,
+      lon: null,
       notes: "",
     },
     contact: {
       name: "",
       phone: "",
       email: "",
+      altName: "",
+      altPhone: "",
+      altEmail: "",
     },
   });
+
+  const [contactPreset, setContactPreset] = useState("manual");
+  const [showAltContact, setShowAltContact] = useState(false);
 
   useEffect(() => {
     setErrors({});
@@ -308,6 +428,67 @@ export default function ReportLostStepper() {
       setActiveStep(0);
     }
   }, [activeStep, isLoggedIn]);
+
+  useEffect(() => {
+    // When entering the contact step, default to account details (only if fields are empty).
+    if (activeStep !== 3) return;
+    if (!isLoggedIn || !user) return;
+    const isEmpty =
+      !formData.contact.name.trim() &&
+      !formData.contact.phone.trim() &&
+      !formData.contact.email.trim();
+    if (!isEmpty) return;
+
+    const fullName = `${user.name || ""} ${user.surname || ""}`.trim();
+    setContactPreset("account");
+    setFormData((prev) => ({
+      ...prev,
+      contact: {
+        ...prev.contact,
+        name: fullName,
+        phone: user.phone || "",
+        email: user.email || "",
+      },
+    }));
+  }, [activeStep, isLoggedIn, user, formData.contact.email, formData.contact.name, formData.contact.phone]);
+
+  const handleContactPresetChange = (nextPreset) => {
+    setContactPreset(nextPreset);
+
+    if (nextPreset === "empty") {
+      setFormData((prev) => ({
+        ...prev,
+        contact: { ...prev.contact, name: "", phone: "", email: "" },
+      }));
+      return;
+    }
+
+    if (nextPreset === "account") {
+      const fullName = `${user?.name || ""} ${user?.surname || ""}`.trim();
+      setFormData((prev) => ({
+        ...prev,
+        contact: {
+          ...prev.contact,
+          name: fullName,
+          phone: user?.phone || "",
+          email: user?.email || "",
+        },
+      }));
+    }
+  };
+
+  const handleToggleAltContact = () => {
+    setShowAltContact((prev) => {
+      const next = !prev;
+      if (!next) {
+        setFormData((current) => ({
+          ...current,
+          contact: { ...current.contact, altName: "", altPhone: "", altEmail: "" },
+        }));
+      }
+      return next;
+    });
+  };
 
   useEffect(() => {
     if (!isLoggedIn || !user?.id) {
@@ -416,7 +597,18 @@ export default function ReportLostStepper() {
       case 2:
         return <StepLossDetails formData={formData} updateField={updateField} errors={errors} />;
       case 3:
-        return <StepContactDetails formData={formData} updateField={updateField} errors={errors} />;
+        return (
+          <StepContactDetails
+            formData={formData}
+            updateField={updateField}
+            errors={errors}
+            user={user}
+            contactPreset={contactPreset}
+            onContactPresetChange={handleContactPresetChange}
+            showAltContact={showAltContact}
+            onToggleAltContact={handleToggleAltContact}
+          />
+        );
       case 4:
         return <StepConfirmation formData={formData} />;
       case 5:
@@ -433,6 +625,17 @@ export default function ReportLostStepper() {
 
   const isLoginGateStep = activeStep === 0;
   const shouldShowFooterActions = !(isLoginGateStep && !isLoggedIn);
+
+  const layout = (() => {
+    // Step 1 (pet selection) needs room for horizontal cards + details preview.
+    if (activeStep === 1) return { paperMaxWidth: 1200, contentMaxWidth: "100%" };
+    // Login step stays compact.
+    if (activeStep === 0) return { paperMaxWidth: 760, contentMaxWidth: 520 };
+    // Step 2 (loss details) includes the map + notes; make it wider but still centered.
+    if (activeStep === 2) return { paperMaxWidth: 980, contentMaxWidth: 760 };
+    // Forms are medium width (avoid huge empty white area).
+    return { paperMaxWidth: 980, contentMaxWidth: 520 };
+  })();
 
   return (
     
@@ -451,18 +654,34 @@ export default function ReportLostStepper() {
 
       <Paper
         sx={{
-          p: 4,
-          maxWidth: 1100,
+          p: { xs: 2.5, sm: 3, md: 4 },
+          width: "100%",
+          maxWidth: layout.paperMaxWidth,
           display: "flex",
           flexDirection: "column",
+          transition: "max-width 250ms ease-out",
         }}
       >
         <Typography variant="h4" align="center" sx={{ mb: 4, fontWeight: "bold", color: "#373721" }}>
           Δήλωση Απώλειας
         </Typography>
 
-        <Grid container spacing={4} sx={{ flexGrow: 1 }}>
-          <Grid item xs={12} md={3} sx={{ borderRight: { md: "1px solid #e0e0e0" }, pr: { md: 2 } }}>
+        <Box
+          sx={{
+            flexGrow: 1,
+            display: { xs: "block", md: "flex" },
+            gap: 4,
+          }}
+        >
+          <Box
+            sx={{
+              width: { xs: "100%", md: 280 },
+              flexShrink: 0,
+              borderRight: { md: "1px solid #e0e0e0" },
+              pr: { md: 2 },
+              mb: { xs: 3, md: 0 },
+            }}
+          >
             <Stepper
               activeStep={activeStep}
               orientation="vertical"
@@ -491,23 +710,21 @@ export default function ReportLostStepper() {
                 </Step>
               ))}
             </Stepper>
-          </Grid>
+          </Box>
 
-          <Grid
-            item
-            xs={12}
-            md={9}
+          <Box
             sx={{
+              flex: 1,
+              minWidth: 0,
               display: "flex",
               flexDirection: "column",
-              flexGrow: 1,
               alignItems: "center",
             }}
           >
             <Box sx={{ width: "100%", px: 2, pt: 2 }}>
               <SwitchTransition mode="out-in">
                 <Collapse key={activeStep} in timeout={300} easing={{ enter: "ease-out", exit: "ease-in" }}>
-                  <Box sx={{ width: "100%", maxWidth: 520 }}>{getStepContent(activeStep)}</Box>
+                  <Box sx={{ width: "100%", maxWidth: layout.contentMaxWidth }}>{getStepContent(activeStep)}</Box>
                 </Collapse>
               </SwitchTransition>
             </Box>
@@ -517,7 +734,7 @@ export default function ReportLostStepper() {
             <Box
               sx={{
                 width: "100%",
-                maxWidth: 520,
+                maxWidth: layout.contentMaxWidth,
                 mt: 2,
                 pt: 2,
                 borderTop: "1px solid #f0f0f0",
@@ -561,8 +778,8 @@ export default function ReportLostStepper() {
                 )
               )}
             </Box>
-          </Grid>
-        </Grid>
+          </Box>
+        </Box>
       </Paper>
     </Box>
   );
