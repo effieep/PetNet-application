@@ -77,7 +77,7 @@
     const handleChange = (e) => {
       const { name } = e.target;
       let newValue = e.target.value;
-      let nextDate = reverseDateString(data.nextDate);
+      let nextDate = data.nextDate;
 
       if (name === 'dose') {
 
@@ -109,7 +109,6 @@
 
       if(name === 'date') {
         const date = new Date(newValue);
-        newValue = reverseDateString(newValue);
 
         if (data.dose && data.dose === 'Ετησίως') {
           date.setFullYear(date.getFullYear() + 1);
@@ -128,7 +127,6 @@
       }
 
       if(name === 'nextDate'){
-        newValue = reverseDateString(newValue);
         setData(prev => ({
           ...prev,
           [name]: newValue,
@@ -136,7 +134,6 @@
         return;
       }
       
-      nextDate = nextDate === '' ? '' : reverseDateString(nextDate);
       setData(prev => ({
         ...prev,
         [name]: newValue,
@@ -167,7 +164,11 @@
         const petId = localStorage.getItem("activePetId");
 
         const newVaccine = {
-          ...data,
+          name: data.name,
+          date: reverseDateString(data.date),
+          dose: data.dose,
+          nextDate: reverseDateString(data.nextDate),
+          vetId: data.vetId,
         };
 
         const updatedVaccinations = [
@@ -289,7 +290,7 @@
             type="date"
             variant="outlined"
             sx={{ backgroundColor: '#fff' }}
-            value={reverseDateString(data.date)}
+            value={data.date}
             onChange={handleChange}
             name="date"
             helperText={errors.date}
@@ -349,7 +350,7 @@
             type="date"
             variant="outlined"
             sx={{ backgroundColor: '#fff' }}
-            value={reverseDateString(data.nextDate)}
+            value={data.nextDate}
             onChange={handleChange}
             name="nextDate"
             InputLabelProps={{ shrink: true }}
