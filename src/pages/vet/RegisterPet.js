@@ -13,6 +13,9 @@ import { OwnerField, DetailRow } from '../../components/PetDetailsCard';
 
 const steps = ['Στοιχεία Κατοικιδίου', 'Ανάθεση σε Ιδιοκτήτη', 'Επιβεβαίωση & Υποβολή'];
 
+const reverseDateString = (dateStr) => {
+  return dateStr.split('-').reverse().join('-');
+}
 
 const PetItems = [
   { label: "Φυλή", type: "text", name: "breed" },
@@ -251,7 +254,7 @@ const RegisterPet = () => {
         await fetch(`${API_URL}/pets`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData),
+          body: JSON.stringify({ ...formData, birthDate: reverseDateString(formData.birthDate) }),
         });
         openSnackbar('Το κατοικίδιο καταχωρήθηκε επιτυχώς!', 'success');
         setActiveStep(0);
