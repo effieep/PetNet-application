@@ -12,6 +12,7 @@ import {
   Paper,
   TextField,
   Grid,
+  MenuItem,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import LoginDialog from "../components/login";
@@ -183,7 +184,7 @@ const StepLossDetails = ({ formData, updateField, errors }) => (
   </Box>
 );
 
-const StepContactDetails = ({ formData, updateField, errors }) => (
+const StepContactDetails = ({ formData, updateField, errors, user, contactPreset, onContactPresetChange, showAltContact, onToggleAltContact }) => (
   <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
     <Box>
       <Typography variant="h6" sx={{ fontWeight: "bold", color: "#9a9b6a", mb: 2 }}>
@@ -192,12 +193,38 @@ const StepContactDetails = ({ formData, updateField, errors }) => (
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <TextField
+            select
+            fullWidth
+            label="Επιλογή στοιχείων επικοινωνίας"
+            variant="outlined"
+            size="small"
+            value={contactPreset}
+            onChange={(e) => onContactPresetChange(e.target.value)}
+            helperText={
+              contactPreset === "account"
+                ? "Θα χρησιμοποιηθούν τα στοιχεία του λογαριασμού σας."
+                : contactPreset === "empty"
+                  ? "Θα καθαριστούν τα πεδία. Συμπληρώστε χειροκίνητα για να συνεχίσετε."
+                  : "Συμπληρώστε χειροκίνητα τα στοιχεία επικοινωνίας."
+            }
+          >
+            <MenuItem value="empty">Κενό</MenuItem>
+            <MenuItem value="account" disabled={!user}>
+              Στοιχεία χρήστη
+            </MenuItem>
+            <MenuItem value="manual">Άλλα στοιχεία</MenuItem>
+          </TextField>
+        </Grid>
+
+        <Grid item xs={12}>
+          <TextField
             fullWidth
             label="Όνομα επικοινωνίας"
             variant="outlined"
             size="small"
             value={formData.contact.name}
             onChange={(e) => updateField("contact", "name", e.target.value)}
+            disabled={contactPreset === "account"}
             error={!!errors["contact.name"]}
             helperText={errors["contact.name"]}
           />
@@ -210,6 +237,7 @@ const StepContactDetails = ({ formData, updateField, errors }) => (
             size="small"
             value={formData.contact.phone}
             onChange={(e) => updateField("contact", "phone", e.target.value)}
+            disabled={contactPreset === "account"}
             error={!!errors["contact.phone"]}
             helperText={errors["contact.phone"]}
           />
@@ -222,10 +250,54 @@ const StepContactDetails = ({ formData, updateField, errors }) => (
             size="small"
             value={formData.contact.email}
             onChange={(e) => updateField("contact", "email", e.target.value)}
+            disabled={contactPreset === "account"}
             error={!!errors["contact.email"]}
             helperText={errors["contact.email"]}
           />
         </Grid>
+
+        <Grid item xs={12}>
+          <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
+            <Button variant="outlined" onClick={onToggleAltContact} sx={{ fontWeight: 700 }}>
+              {showAltContact ? "Αφαίρεση επιπλέον επαφής" : "Προσθήκη επιπλέον επαφής"}
+            </Button>
+          </Box>
+        </Grid>
+
+        {showAltContact && (
+          <>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Επιπλέον όνομα επικοινωνίας (προαιρετικό)"
+                variant="outlined"
+                size="small"
+                value={formData.contact.altName}
+                onChange={(e) => updateField("contact", "altName", e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Επιπλέον τηλέφωνο (προαιρετικό)"
+                variant="outlined"
+                size="small"
+                value={formData.contact.altPhone}
+                onChange={(e) => updateField("contact", "altPhone", e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Επιπλέον email (προαιρετικό)"
+                variant="outlined"
+                size="small"
+                value={formData.contact.altEmail}
+                onChange={(e) => updateField("contact", "altEmail", e.target.value)}
+              />
+            </Grid>
+          </>
+        )}
       </Grid>
     </Box>
   </Box>
@@ -256,6 +328,28 @@ const StepConfirmation = ({ formData }) => (
         <li>
           <strong>Email:</strong> {formData.contact.email}
         </li>
+        {(formData.contact.altName || formData.contact.altPhone || formData.contact.altEmail) && (
+          <>
+            <li style={{ marginTop: 8, opacity: 0.9 }}>
+              <strong>Επιπλέον επαφή:</strong>
+            </li>
+            {formData.contact.altName && (
+              <li>
+                <strong>Όνομα:</strong> {formData.contact.altName}
+              </li>
+            )}
+            {formData.contact.altPhone && (
+              <li>
+                <strong>Τηλέφωνο:</strong> {formData.contact.altPhone}
+              </li>
+            )}
+            {formData.contact.altEmail && (
+              <li>
+                <strong>Email:</strong> {formData.contact.altEmail}
+              </li>
+            )}
+          </>
+        )}
       </ul>
     </Box>
   </Box>
@@ -312,8 +406,14 @@ export default function ReportLostStepper() {
       name: "",
       phone: "",
       email: "",
+      altName: "",
+      altPhone: "",
+      altEmail: "",
     },
   });
+
+  const [contactPreset, setContactPreset] = useState("manual");
+  const [showAltContact, setShowAltContact] = useState(false);
 
   useEffect(() => {
     setErrors({});
@@ -328,6 +428,67 @@ export default function ReportLostStepper() {
       setActiveStep(0);
     }
   }, [activeStep, isLoggedIn]);
+
+  useEffect(() => {
+    // When entering the contact step, default to account details (only if fields are empty).
+    if (activeStep !== 3) return;
+    if (!isLoggedIn || !user) return;
+    const isEmpty =
+      !formData.contact.name.trim() &&
+      !formData.contact.phone.trim() &&
+      !formData.contact.email.trim();
+    if (!isEmpty) return;
+
+    const fullName = `${user.name || ""} ${user.surname || ""}`.trim();
+    setContactPreset("account");
+    setFormData((prev) => ({
+      ...prev,
+      contact: {
+        ...prev.contact,
+        name: fullName,
+        phone: user.phone || "",
+        email: user.email || "",
+      },
+    }));
+  }, [activeStep, isLoggedIn, user, formData.contact.email, formData.contact.name, formData.contact.phone]);
+
+  const handleContactPresetChange = (nextPreset) => {
+    setContactPreset(nextPreset);
+
+    if (nextPreset === "empty") {
+      setFormData((prev) => ({
+        ...prev,
+        contact: { ...prev.contact, name: "", phone: "", email: "" },
+      }));
+      return;
+    }
+
+    if (nextPreset === "account") {
+      const fullName = `${user?.name || ""} ${user?.surname || ""}`.trim();
+      setFormData((prev) => ({
+        ...prev,
+        contact: {
+          ...prev.contact,
+          name: fullName,
+          phone: user?.phone || "",
+          email: user?.email || "",
+        },
+      }));
+    }
+  };
+
+  const handleToggleAltContact = () => {
+    setShowAltContact((prev) => {
+      const next = !prev;
+      if (!next) {
+        setFormData((current) => ({
+          ...current,
+          contact: { ...current.contact, altName: "", altPhone: "", altEmail: "" },
+        }));
+      }
+      return next;
+    });
+  };
 
   useEffect(() => {
     if (!isLoggedIn || !user?.id) {
@@ -436,7 +597,18 @@ export default function ReportLostStepper() {
       case 2:
         return <StepLossDetails formData={formData} updateField={updateField} errors={errors} />;
       case 3:
-        return <StepContactDetails formData={formData} updateField={updateField} errors={errors} />;
+        return (
+          <StepContactDetails
+            formData={formData}
+            updateField={updateField}
+            errors={errors}
+            user={user}
+            contactPreset={contactPreset}
+            onContactPresetChange={handleContactPresetChange}
+            showAltContact={showAltContact}
+            onToggleAltContact={handleToggleAltContact}
+          />
+        );
       case 4:
         return <StepConfirmation formData={formData} />;
       case 5:
@@ -459,6 +631,8 @@ export default function ReportLostStepper() {
     if (activeStep === 1) return { paperMaxWidth: 1200, contentMaxWidth: "100%" };
     // Login step stays compact.
     if (activeStep === 0) return { paperMaxWidth: 760, contentMaxWidth: 520 };
+    // Step 2 (loss details) includes the map + notes; make it wider but still centered.
+    if (activeStep === 2) return { paperMaxWidth: 980, contentMaxWidth: 760 };
     // Forms are medium width (avoid huge empty white area).
     return { paperMaxWidth: 980, contentMaxWidth: 520 };
   })();
