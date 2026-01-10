@@ -552,7 +552,7 @@
       "gender": "Αρσενικό",
       "birthDate": "2026-01-22",
       "ownerId": "c043",
-      "heath": {
+      "health": {
         "neutered": false,
         "overview": {
           "lastVaccine": {
