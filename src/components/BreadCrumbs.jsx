@@ -31,6 +31,7 @@ const breadcrumbMap = {
   'manage-availability': 'Διαχείριση Διαθεσιμότητας',
   'manage-requests': 'Διαχείριση Αιτημάτων Ραντεβού',
   'scheduled-appointments': 'Προγραμμάτιστα Ραντεβού',
+  'vet-details': 'Πληροφορίες Κτηνιάτρου',
 };
 
 function AppBreadcrumbs() {

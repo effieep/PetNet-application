@@ -1,7 +1,10 @@
-import Hero from '../../components/Hero';
+import Hero from '../../../components/Hero.jsx';
 import { Box, Typography, FormControl, RadioGroup, FormControlLabel, Radio, Button, Autocomplete, TextField, Popper, InputAdornment } from '@mui/material';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { API_URL } from '../../../api.js';
+import CircularProgress from '@mui/material/CircularProgress';
 import { FaFilter, FaSearch  } from 'react-icons/fa';
+import VetCard from '../../../components/VetCard.jsx';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 
@@ -159,6 +162,49 @@ const SearchVet = () => {
         fontSize: 24,            }
     }
   };
+
+  const [vet, setVet] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // Fetch τον κτηνίατρο με το συγκεκριμένο ID που έχεις στη βάση (π.χ. "v1")
+    const fetchVet = async () => {
+      try {
+        const response = await fetch(`${API_URL}/users/v1`);
+        
+        if (!response.ok) {
+          throw new Error('Ο κτηνίατρος δεν βρέθηκε');
+        }
+
+        const data = await response.json();
+        setVet(data);
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching vet:", err);
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchVet();
+  }, []);
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 10 }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Typography color="error" align="center" sx={{ mt: 10 }}>
+        Σφάλμα: {error}
+      </Typography>
+    );
+  }
 
   return (
     <>
@@ -336,6 +382,21 @@ const SearchVet = () => {
           Αναζήτηση
           </Typography>
         </Button>
+      </Box>
+      
+
+      <Box sx={{ minHeight: '100vh', p: 4 }}>
+        <Typography variant="h4" align="center" sx={{ mb: 4, fontWeight: 'bold' }}>
+          Preview Κάρτας Κτηνίατρου
+        </Typography>
+
+        {/* Εδώ εμφανίζεται η κάρτα */}
+        {vet && (
+          <VetCard 
+              vet={vet} 
+              onBookAppointment={(id) => alert(`Πάτησες κράτηση για τον γιατρό με ID: ${id}`)} 
+          />
+        )}
       </Box>
     </>
   );

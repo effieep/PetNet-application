@@ -19,7 +19,8 @@ import SignUp from './pages/signup.js';
 import ReportLost from './pages/report_lost.js';
 import Error404 from './pages/404.js';
 import Footer from './components/footer.jsx';
-import SearchVet from './pages/owner/search-vet.js';
+import SearchVet from './pages/owner/search-vet/search-vet.js';
+import VetDetails from './pages/owner/search-vet/vetDetails.js';
 import VetProfile from './pages/vet/vetProfile.js';
 import VetRandezvousHistory from './pages/vet/vetHistory.js';
 import VetReviews from './pages/vet/vetReviews.js';
@@ -72,6 +73,7 @@ function App() {
           <Route path="/vet/manage-appointments/manage-requests" element={<VetRequestRdvz />} />
           <Route path="/vet/manage-appointments/scheduled-appointments" element={<VetScheduledRdvz />} />
           <Route path="/owner/search-vet" element={<SearchVet />} />
+          <Route path="/owner/search-vet/vet-details" element={<VetDetails />} />
           <Route path="/lost-found" element={<LostFound />} />
           <Route path="/lost-found/lost_pet" element={<ReportLost />} />
           <Route path="/help" element={<Help />} />
