@@ -87,14 +87,14 @@ const PetDetailsCard = ({ petId }) => {
 };
 
 // Helper Components
-const DetailRow = ({ label, value }) => (
+export const DetailRow = ({ label, value }) => (
   <Box sx={{ display: 'flex', mb: 1.2 }}>
     <Typography sx={{ fontWeight: '600', minWidth: '160px' }}>{label}</Typography>
     <Typography>{value}</Typography>
   </Box>
 );
 
-const OwnerField = ({ label, value }) => (
+export const OwnerField = ({ label, value }) => (
   <Box sx={{ mb: 2 }}>
     <Typography variant="caption" sx={{ fontWeight: 'bold', mb: 0.5, display: 'block' }}>{label}</Typography>
     <Box sx={{ backgroundColor: '#FFE58F', p: 1, borderRadius: '20px', border: '1px solid rgba(0,0,0,0.1)' }}>
