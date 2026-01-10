@@ -277,10 +277,14 @@ const VetAvailability = () => {
           </Typography>
         </Box>
 
-        <Grid container spacing={4}>
+        <Grid container spacing={4} wrap='nowrap'>
             
           {/* --- ΣΤΗΛΗ 1: ΕΡΓΑΛΕΙΑ ΔΗΜΙΟΥΡΓΙΑΣ --- */}
-          <Grid item xs={12} lg={6}>
+          <Grid item 
+            sx={{
+              flex: '0 0 45vw',
+              minWidth: '45vw' 
+            }}>
             
             {/* A. ΕΒΔΟΜΑΔΙΑΙΟΣ WIZARD */}
             <Paper elevation={3} sx={{ p: 3, borderRadius: 3, mb: 4 }}>
@@ -461,7 +465,16 @@ const VetAvailability = () => {
 
 
           {/* --- ΣΤΗΛΗ 2: ΠΡΟΒΟΛΗ ΛΙΣΤΑΣ --- */}
-          <Grid item xs={12} lg={6}>
+          <Grid
+            item
+            sx={{
+              flex: '0 0 30vw',
+              minWidth: '30vw',
+              position: 'sticky',
+              top: 24,
+              alignSelf: 'flex-start',
+            }}
+          >
              <Paper elevation={3} sx={{ p: 2, borderRadius: 3, height: '100%', maxHeight: '1200px', display: 'flex', flexDirection: 'column'}}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, gap: 2 }}>
                     <Typography variant="h6" fontWeight="bold">
