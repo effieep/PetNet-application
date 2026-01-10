@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Autocomplete, Box, TextField, Typography } from "@mui/material";
-import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
+import { Autocomplete, Box, CircularProgress, TextField, Typography } from "@mui/material";
+import PlaceIcon from "@mui/icons-material/Place";
+import { MapContainer, TileLayer, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 
 // Fix default marker icons in bundlers like CRA
@@ -20,6 +21,44 @@ function MapRecenter({ center }) {
     if (!center) return;
     map.setView([center.lat, center.lon], map.getZoom(), { animate: true });
   }, [center, map]);
+  return null;
+}
+
+function MapCenterSync({ onCenterSettled }) {
+  const debounceTimer = useRef(null);
+  const abortRef = useRef(null);
+
+  useMapEvents({
+    moveend() {
+      if (debounceTimer.current) window.clearTimeout(debounceTimer.current);
+      debounceTimer.current = window.setTimeout(() => {
+        const map = this;
+        const c = map.getCenter();
+        if (abortRef.current) abortRef.current.abort();
+        abortRef.current = new AbortController();
+        onCenterSettled?.({ lat: c.lat, lon: c.lng, signal: abortRef.current.signal });
+      }, 250);
+    },
+    zoomend() {
+      if (debounceTimer.current) window.clearTimeout(debounceTimer.current);
+      debounceTimer.current = window.setTimeout(() => {
+        const map = this;
+        const c = map.getCenter();
+        if (abortRef.current) abortRef.current.abort();
+        abortRef.current = new AbortController();
+        onCenterSettled?.({ lat: c.lat, lon: c.lng, signal: abortRef.current.signal });
+      }, 250);
+    },
+  });
+
+  useEffect(
+    () => () => {
+      if (debounceTimer.current) window.clearTimeout(debounceTimer.current);
+      if (abortRef.current) abortRef.current.abort();
+    },
+    []
+  );
+
   return null;
 }
 
@@ -76,8 +115,10 @@ export default function AddressPicker({
   const [inputValue, setInputValue] = useState(value || "");
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [reverseLoading, setReverseLoading] = useState(false);
   const debounceTimer = useRef(null);
   const abortRef = useRef(null);
+  const reverseTokenRef = useRef(0);
 
   useEffect(() => {
     setInputValue(value || "");
@@ -86,11 +127,6 @@ export default function AddressPicker({
   const center = useMemo(() => {
     if (coords?.lat != null && coords?.lon != null) return coords;
     return DEFAULT_CENTER;
-  }, [coords]);
-
-  const markerPos = useMemo(() => {
-    if (coords?.lat != null && coords?.lon != null) return [coords.lat, coords.lon];
-    return [DEFAULT_CENTER.lat, DEFAULT_CENTER.lon];
   }, [coords]);
 
   useEffect(() => {
@@ -133,16 +169,23 @@ export default function AddressPicker({
     onCoordsChange?.({ lat: picked.lat, lon: picked.lon });
   };
 
-  const handleMarkerDragEnd = async (e) => {
-    const { lat, lng } = e.target.getLatLng();
-    onCoordsChange?.({ lat, lon: lng });
+  const handleCenterSettled = async ({ lat, lon, signal }) => {
+    reverseTokenRef.current += 1;
+    const token = reverseTokenRef.current;
 
-    const controller = new AbortController();
+    onCoordsChange?.({ lat, lon });
+    setReverseLoading(true);
     try {
-      const addr = await nominatimReverse(lat, lng, controller.signal);
-      if (addr) onChange?.(addr);
+      const addr = await nominatimReverse(lat, lon, signal);
+      if (addr) {
+        // Update both the parent form value and the visible input.
+        onChange?.(addr);
+        setInputValue(addr);
+      }
     } catch {
       // ignore
+    } finally {
+      if (reverseTokenRef.current === token) setReverseLoading(false);
     }
   };
 
@@ -169,13 +212,29 @@ export default function AddressPicker({
             size="small"
             error={error}
             helperText={helperText}
+            InputProps={{
+              ...params.InputProps,
+              endAdornment: (
+                <>
+                  {reverseLoading && (
+                    <CircularProgress
+                      color="inherit"
+                      size={16}
+                      sx={{ mr: 1 }}
+                      aria-label="Γίνεται ενημέρωση διεύθυνσης από τον χάρτη"
+                    />
+                  )}
+                  {params.InputProps.endAdornment}
+                </>
+              ),
+            }}
           />
         )}
       />
 
       <Box>
         <Typography sx={{ fontSize: 13, opacity: 0.8, mb: 1 }}>
-          Σύρετε τον δείκτη για να διορθώσετε την τοποθεσία.
+          Μετακινήστε τον χάρτη ώστε ο δείκτης στο κέντρο να δείχνει το σημείο.
         </Typography>
         <Box
           sx={{
@@ -184,20 +243,38 @@ export default function AddressPicker({
             borderRadius: 2,
             overflow: "hidden",
             border: "1px solid rgba(0,0,0,0.12)",
+            position: "relative",
           }}
         >
-          <MapContainer center={[center.lat, center.lon]} zoom={13} style={{ height: "100%", width: "100%" }}>
+          <MapContainer
+            center={[center.lat, center.lon]}
+            zoom={13}
+            style={{ height: "100%", width: "100%" }}
+          >
             <MapRecenter center={center} />
+            <MapCenterSync onCenterSettled={handleCenterSettled} />
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            <Marker
-              position={markerPos}
-              draggable
-              eventHandlers={{ dragend: handleMarkerDragEnd }}
+              // Modern-looking basemap (no API key)
+              url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
             />
           </MapContainer>
+
+          {/* Fixed center pin overlay */}
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -100%)",
+              pointerEvents: "none",
+              zIndex: 1200,
+              // Keep it readable without blocking map content
+              filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.35))",
+            }}
+          >
+            <PlaceIcon sx={{ fontSize: 40, color: "#d32f2f", opacity: 0.95 }} />
+          </Box>
         </Box>
       </Box>
     </Box>
