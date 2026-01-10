@@ -9,6 +9,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import SubMenu from '../../components/SubMenu.jsx';
+import { Snackbar, Alert } from '@mui/material';
 import dayjs from 'dayjs';
 import 'dayjs/locale/el';
 import { API_URL } from '../../api.js';
@@ -66,7 +67,20 @@ const VetAvailability = () => {
   });
 
   const [availabilities, setAvailabilities] = useState([]);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success',
+  });
   const [loading, setLoading] = useState(true);
+
+  const openSnackbar = (message, severity = 'success') => {
+    setSnackbar({ open: true, message, severity });
+  }
+
+  const closeSnackbar = () => {
+    setSnackbar(prev => ({ ...prev, open: false }));
+  };
 
   // --- FETCH DATA ---
   useEffect(() => {
@@ -116,7 +130,7 @@ const VetAvailability = () => {
   // Handler: Μαζική Δημιουργία
   const handleGenerateSchedule = () => {
     if (rangeEnd.isBefore(rangeStart)) {
-        alert("Η ημερομηνία λήξης πρέπει να είναι μετά την ημερομηνία έναρξης!");
+        openSnackbar("Η ημερομηνία λήξης πρέπει να είναι μετά την ημερομηνία έναρξης.", "error");
         return;
     }
    
@@ -165,9 +179,9 @@ const VetAvailability = () => {
     if (uniqueNewSlots.length === 0) {
         // Αν γεννήθηκαν slots αλλά υπήρχαν όλα, ενημερώνουμε τον χρήστη
         if (generatedSlots.length > 0) {
-            alert("Δεν προστέθηκαν νέα ραντεβού καθώς υπάρχουν ήδη για τις επιλεγμένες μέρες και ώρες.");
+            openSnackbar("Δεν προστέθηκαν νέα ραντεβού καθώς υπάρχουν ήδη για τις επιλεγμένες μέρες και ώρες.", "error");
         } else {
-            alert("Δεν δημιουργήθηκαν ραντεβού. Ελέγξτε αν έχετε ενεργοποιήσει κάποιες μέρες στο πρόγραμμα.");
+            openSnackbar("Δεν δημιουργήθηκαν ραντεβού. Ελέγξτε αν έχετε ενεργοποιήσει κάποιες μέρες στο πρόγραμμα.", "error");
         }
         return;
     }
@@ -191,7 +205,7 @@ const VetAvailability = () => {
     if (duplicatesCount > 0) {
         message += `\n(Αγνοήθηκαν ${duplicatesCount} που υπήρχαν ήδη).`;
     }
-    alert(message);
+    openSnackbar(message, "success");
   };
   // Handler: Μεμονωμένη Προσθήκη
   const handleAddSingleSlot = () => {
@@ -201,7 +215,7 @@ const VetAvailability = () => {
     // Έλεγχος αν υπάρχει ήδη
     const exists = availabilities.some(slot => slot.date === formattedDate && slot.time === formattedTime);
     if (exists) {
-        alert("Υπάρχει ήδη διαθεσιμότητα για αυτή την ημερομηνία και ώρα!");
+        openSnackbar("Υπάρχει ήδη ραντεβού για αυτή την ημερομηνία και ώρα.", "error");
         return;
     }
 
@@ -448,7 +462,7 @@ const VetAvailability = () => {
 
           {/* --- ΣΤΗΛΗ 2: ΠΡΟΒΟΛΗ ΛΙΣΤΑΣ --- */}
           <Grid item xs={12} lg={6}>
-             <Paper elevation={3} sx={{ p: 5, borderRadius: 3, height: '100%', maxHeight: '1200px', display: 'flex', flexDirection: 'column' }}>
+             <Paper elevation={3} sx={{ p: 2, borderRadius: 3, height: '100%', maxHeight: '1200px', display: 'flex', flexDirection: 'column'}}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, gap: 2 }}>
                     <Typography variant="h6" fontWeight="bold">
                         📅 Τρέχουσες Διαθεσιμότητες
@@ -533,6 +547,20 @@ const VetAvailability = () => {
 
         </Grid>
       </Box>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={closeSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert
+          onClose={closeSnackbar}
+          severity={snackbar.severity}
+          variant="filled"
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   ) : ( 
     <Typography variant="h6" color="error" textAlign="center" sx={{ mt: 10 }}>

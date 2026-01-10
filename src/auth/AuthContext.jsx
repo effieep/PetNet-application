@@ -69,7 +69,8 @@ export function AuthProvider({ children }) {
             castration: false,
             emergency: false
           },
-          reviews: []
+          reviews: [],
+          availability: []
 
         })
       });

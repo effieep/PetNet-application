@@ -99,7 +99,8 @@
         "emergency": false
       },
       "reviews": [],
-      "jobs": null
+      "jobs": null,
+      "availability": []
     }
   ],
   "pets": [
