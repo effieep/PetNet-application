@@ -1,10 +1,13 @@
 import React from 'react';
 import { 
-  Box, Typography, Grid, Paper, List, ListItem, ListItemIcon, ListItemText 
+  Box, Typography, Grid, Paper, List, ListItem, ListItemIcon, ListItemText, Divider 
 } from '@mui/material';
-import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord'; // Η τελεία (bullet)
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import SchoolIcon from '@mui/icons-material/School'; // Εικονίδιο για Σπουδές
+import WorkIcon from '@mui/icons-material/Work';     // Εικονίδιο για Εμπειρία
+import CircleIcon from '@mui/icons-material/Circle'; // Μικρή τελεία για λίστα
+
 
 // Λεξικό για μετάφραση των services από το JSON στα Ελληνικά
 const serviceTranslations = {
@@ -32,7 +35,7 @@ const VetBio = ({ vet }) => {
   const jobsArray = vet.jobs ? Object.values(vet.jobs) : [];
 
   return (
-    <Box sx={{ maxWidth: '100%', mx: 'auto', px: 2, py: 4 }}>
+    <Box sx={{ width: '100%', mx: 'auto', px: 2, py: 4 }}>
         
         {/* 1. ΜΕΡΙΚΑ ΛΟΓΙΑ ΓΙΑ ΤΟΝ ΕΙΔΙΚΟ */}
         <Box sx={{ mb: 4 }}>
@@ -49,120 +52,119 @@ const VetBio = ({ vet }) => {
             Βιογραφικό
         </Typography>
 
-        {/* 2. ΣΠΟΥΔΕΣ & ΕΜΠΕΙΡΙΑ (GRID) */}
-        <Grid container spacing={4} sx={{ mb: 6 }}>
+        <Grid container spacing={3} sx={{ width: '100%'}}>
             
-            {/* Αριστερά: Σπουδές */}
-            <Grid item xs={12} md={6}>
+            {/* --- ΣΠΟΥΔΕΣ --- */}
+            <Grid item md={6} sx={{ minWidth: 0 }}>
                 <Paper 
-                    elevation={0} 
+                    elevation={2} 
                     sx={{ 
-                        bgcolor: '#F3F6E0', // Το ανοιχτό πράσινο/μπεζ του screenshot
-                        p: 3, 
-                        borderRadius: 2,
-                        height: '100%' 
+                        borderRadius: 3, 
+                        overflow: 'hidden', // Για να κόβει τις γωνίες του Header
+                        height: '100%',
+                        display: 'flex', flexDirection: 'column',
+                        width: '100%',
+                        maxWidth: '520px' 
                     }}
                 >
-                    <Typography variant="subtitle1" fontWeight="bold" textAlign="center" gutterBottom>
-                        Σπουδές
-                    </Typography>
-                    <List dense>
-                        {/* Πτυχίο */}
-                        {vet.degreeInst && (
-                            <ListItem alignItems="flex-start" sx={{ px: 0 }}>
-                                <ListItemIcon sx={{ minWidth: '24px', mt: 1 }}>
-                                    <FiberManualRecordIcon sx={{ fontSize: 10, color: '#333' }} />
-                                </ListItemIcon>
-                                <ListItemText 
-                                    primary={
-                                        <span>
-                                            Πτυχίο Κτηνιατρικής από το <strong>{vet.degreeInst}</strong> ({vet.DgraduationYear})
-                                        </span>
-                                    } 
-                                />
-                            </ListItem>
-                        )}
-                        
-                        {/* Μεταπτυχιακό */}
-                        {vet.masterInst && (
-                            <ListItem alignItems="flex-start" sx={{ px: 0 }}>
-                                <ListItemIcon sx={{ minWidth: '24px', mt: 1 }}>
-                                    <FiberManualRecordIcon sx={{ fontSize: 10, color: '#333' }} />
-                                </ListItemIcon>
-                                <ListItemText 
-                                    primary={
-                                        <span>
-                                            Μεταπτυχιακές σπουδές στο <strong>{vet.masterInst}</strong> ({vet.MgraduationYear})
-                                        </span>
-                                    } 
-                                />
-                            </ListItem>
-                        )}
+                    {/* Header Κάρτας */}
+                    <Box sx={{ 
+                        bgcolor: '#6D5D4B', // Σκούρο καφέ (ίδιο με active tab)
+                        py: 2, px: 3, 
+                        display: 'flex', alignItems: 'center', gap: 2 
+                    }}>
+                        <SchoolIcon sx={{ color: '#E8D58E', fontSize: 28 }} /> {/* Χρυσό εικονίδιο */}
+                        <Typography variant="h6" fontWeight="bold" color="white">
+                            Σπουδές
+                        </Typography>
+                    </Box>
 
-                        {/* Διδακτορικό */}
-                        {vet.phdInst && (
-                            <ListItem alignItems="flex-start" sx={{ px: 0 }}>
-                                <ListItemIcon sx={{ minWidth: '24px', mt: 1 }}>
-                                    <FiberManualRecordIcon sx={{ fontSize: 10, color: '#333' }} />
-                                </ListItemIcon>
-                                <ListItemText 
-                                    primary={
-                                        <span>
-                                            Διδακτορικό στο <strong>{vet.phdInst}</strong>
-                                        </span>
-                                    } 
+                    {/* Περιεχόμενο */}
+                    <Box sx={{ p: 3, bgcolor: '#fff', flexGrow: 1 }}>
+                        <List>
+                            {vet.degreeInst && (
+                                <StyledListItem 
+                                    text={<span>Πτυχίο Κτηνιατρικής από <strong>{vet.degreeInst}</strong></span>}
+                                    subtext={`Έτος αποφοίτησης: ${vet.DgraduationYear}`}
                                 />
-                            </ListItem>
-                        )}
-                    </List>
+                            )}
+                            {vet.masterInst && (
+                                <>
+                                    <Divider variant="inset" component="li" sx={{ my: 1 }} />
+                                    <StyledListItem 
+                                        text={<span>Μεταπτυχιακό στο <strong>{vet.masterInst}</strong></span>}
+                                        subtext={`Έτος: ${vet.MgraduationYear}`}
+                                    />
+                                </>
+                            )}
+                            {vet.phdInst && (
+                                <>
+                                    <Divider variant="inset" component="li" sx={{ my: 1 }} />
+                                    <StyledListItem 
+                                        text={<span>Διδακτορικό στο <strong>{vet.phdInst}</strong></span>}
+                                    />
+                                </>
+                            )}
+                        </List>
+                    </Box>
                 </Paper>
             </Grid>
 
-            {/* Δεξιά: Επαγγελματική Εμπειρία */}
-            <Grid item xs={12} md={6}>
+            {/* --- ΕΠΑΓΓΕΛΜΑΤΙΚΗ ΕΜΠΕΙΡΙΑ --- */}
+            <Grid item md={6} sx={{ minWidth: 0 }}>
                 <Paper 
-                    elevation={0} 
+                    elevation={3} 
                     sx={{ 
-                        bgcolor: '#F3F6E0', 
-                        p: 3, 
-                        borderRadius: 2,
-                        height: '100%' 
+                        borderRadius: 3, 
+                        overflow: 'hidden',
+                        height: '100%',
+                        display: 'flex', flexDirection: 'column',
+                        width: '100%',
+                        maxWidth: '520px' 
                     }}
                 >
-                    <Typography variant="subtitle1" fontWeight="bold" textAlign="center" gutterBottom>
-                        Επαγγελματική εμπειρία
-                    </Typography>
-                    <List dense>
-                        {jobsArray.length > 0 ? (
-                            jobsArray.map((job, index) => (
-                                <ListItem key={index} alignItems="flex-start" sx={{ px: 0 }}>
-                                    <ListItemIcon sx={{ minWidth: '24px', mt: 1 }}>
-                                        <FiberManualRecordIcon sx={{ fontSize: 10, color: '#333' }} />
-                                    </ListItemIcon>
-                                    <ListItemText 
-                                        primary={
-                                            <span>
-                                                <strong>{job.role}</strong> στην {job.company}
-                                            </span>
-                                        }
-                                        secondary={`${job.startYear} - ${job.endYear}`}
-                                    />
-                                </ListItem>
-                            ))
-                        ) : (
-                            <Typography variant="body2" sx={{ mt: 2, textAlign: 'center' }}>
-                                Δεν έχουν καταχωρηθεί πληροφορίες.
-                            </Typography>
-                        )}
-                    </List>
+                    {/* Header Κάρτας */}
+                    <Box sx={{ 
+                        bgcolor: '#6D5D4B', 
+                        py: 2, px: 3, 
+                        display: 'flex', alignItems: 'center', gap: 2 
+                    }}>
+                        <WorkIcon sx={{ color: '#E8D58E', fontSize: 28 }} />
+                        <Typography variant="h6" fontWeight="bold" color="white">
+                            Επαγγελματική εμπειρία
+                        </Typography>
+                    </Box>
+
+                    {/* Περιεχόμενο */}
+                    <Box sx={{ p: 3, bgcolor: '#fff', flexGrow: 1 }}>
+                        <List>
+                            {jobsArray.length > 0 ? (
+                                jobsArray.map((job, index) => (
+                                    <React.Fragment key={index}>
+                                        {index > 0 && <Divider variant="inset" component="li" sx={{ my: 1 }} />}
+                                        <StyledListItem 
+                                            text={<span><strong>{job.role}</strong> στην {job.company}</span>}
+                                            subtext={`${job.startYear} - ${job.endYear}`}
+                                        />
+                                    </React.Fragment>
+                                ))
+                            ) : (
+                                <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic', textAlign: 'center', mt: 2 }}>
+                                    Δεν υπάρχουν καταχωρημένες πληροφορίες.
+                                </Typography>
+                            )}
+                        </List>
+                    </Box>
                 </Paper>
             </Grid>
         </Grid>
 
         {/* 3. ΥΠΗΡΕΣΙΕΣ (GRID 3 ΣΤΗΛΕΣ) */}
-        <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ mb: 3 }}>
-            Παρεχόμενες υπηρεσίες
-        </Typography>
+        <Box sx={{ mt: 6 }}>
+            <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ mb: 3 }}>
+                Παρεχόμενες υπηρεσίες
+            </Typography>
+        </Box>
         
         <Grid container spacing={3}>
             {/* Κάρτα 1: Προληπτική */}
@@ -182,6 +184,22 @@ const VetBio = ({ vet }) => {
     </Box>
   );
 };
+
+// --- Helper Component: Στυλιζαρισμένο Item Λίστας ---
+const StyledListItem = ({ text, subtext }) => (
+    <ListItem alignItems="flex-start" sx={{ px: 0 }}>
+        <ListItemIcon sx={{ minWidth: '30px', mt: 0.5 }}>
+            <CircleIcon sx={{ fontSize: 12, color: '#E8D58E' }} /> {/* Χρυσή τελεία */}
+        </ListItemIcon>
+        <ListItemText 
+            primary={<Typography variant="body1" sx={{ color: '#333' }}>{text}</Typography>}
+            secondary={subtext && (
+                <Typography variant="body2" sx={{ color: '#666', mt: 0.5, fontWeight: 500 , wordBreak: 'break-word'}}>
+                </Typography>
+            )}
+        />
+    </ListItem>
+);
 
 // --- HELPER COMPONENT: Κάρτα Υπηρεσιών ---
 const ServiceCard = ({ title, servicesObj }) => {

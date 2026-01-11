@@ -163,7 +163,7 @@ const VetDetails = () => {
         </Container>
 
         {/* --- 3. DYNAMIC CONTENT AREA --- */}
-        <Container maxWidth="md">
+        <Container maxWidth="lg">
             {activeTab === 'bio' && (
                 <VetBio vet={vet} />
             )}
