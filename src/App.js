@@ -70,14 +70,14 @@ function App() {
           <Route path="/vet/reviews" element={<VetReviews />} />
           <Route path="/vet/manage-pets" element={<VetManagePets />} />
           <Route path="/vet/manage-pets/register-pet" element={<RegisterPet />} />
-          <Route path="/vet/manage-pets/record-medical-action" element={<RegisterEvent />} />
+          <Route path="/vet/manage-pets/record-medical-action" element={<RegisterMedical />} />
           <Route path="/vet/manage-pets/record-medical-action/record-vaccine" element={<RecordVaccine />} />
           <Route path="/vet/manage-pets/record-medical-action/record-deworming" element={<RecordDeworming />} />
           <Route path="/vet/manage-pets/record-medical-action/record-diagnostic-test" element={<RecordDiagnosticTest />} />
           <Route path="/vet/manage-pets/record-medical-action/record-treatment" element={<RecordTreatment />} />
           <Route path="/vet/manage-pets/record-medical-action/record-surgery" element={<RecordSurgery />} />
           <Route path="/vet/manage-pets/view-health-record" element={<ViewHealth />} />
-          <Route path="/vet/manage-pets/record-life-event" element={<RegisterMedical />} />
+          <Route path="/vet/manage-pets/record-life-event" element={<RegisterEvent />} />
           <Route path="/vet/manage-appointments" element={<VetManageRdvz />} />
           <Route path="/vet/manage-appointments/manage-availability" element={<VetAvailability />} />
           <Route path="/vet/manage-appointments/manage-requests" element={<VetRequestRdvz />} />
