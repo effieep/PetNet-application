@@ -88,7 +88,7 @@ const RecordTreatment = () => {
         };
         
         const updatedMedication = [
-          ...(pet.health.medicalActs?.medication || []), newMedication
+          ...(pet.health.history.medicalActs?.medication || []), newMedication
         ];
   
         const payload = {
@@ -99,10 +99,10 @@ const RecordTreatment = () => {
             },
             history: {
               ...pet.health.history,
-            },
-            medicalActs: {
-              ...pet.health.medicalActs,
-              medication: updatedMedication,
+              medicalActs: {
+                ...pet.health.history.medicalActs,
+                medication: updatedMedication,
+              },
             },
           },
         };
@@ -122,13 +122,13 @@ const RecordTreatment = () => {
             ...prevPet.health,
             history: {
               ...prevPet.health.history,
+              medicalActs: {
+                ...prevPet.health.history.medicalActs,
+                medication: updatedMedication,
+              },
             },
             overview: {
               ...prevPet.health.overview,
-            },
-            medicalActs: {
-              ...prevPet.health.medicalActs,
-              medication: updatedMedication,
             },
           },
         }));

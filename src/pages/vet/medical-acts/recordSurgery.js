@@ -101,7 +101,7 @@ const RecordSurgery = () => {
       };
       
       const updatedSurgeries = [
-        ...(pet.health.medicalActs?.surgeries || []), newSurgery
+        ...(pet.health.history.medicalActs?.surgeries || []), newSurgery
       ];
 
       const payload = {
@@ -113,10 +113,10 @@ const RecordSurgery = () => {
           },
           history: {
             ...pet.health.history,
+            medicalActs: {
+              ...pet.health.history.medicalActs,
+              surgeries: updatedSurgeries,
           },
-          medicalActs: {
-            ...pet.health.medicalActs,
-            surgeries: updatedSurgeries,
           },
         },
       };
@@ -137,13 +137,13 @@ const RecordSurgery = () => {
           ...prevPet.health,
           history: {
             ...prevPet.health.history,
+            medicalActs: {
+              ...prevPet.health.history.medicalActs,
+              surgeries: updatedSurgeries,
+            },
           },
           overview: {
             ...prevPet.health.overview,
-          },
-          medicalActs: {
-            ...prevPet.health.medicalActs,
-            surgeries: updatedSurgeries,
           },
         },
       }));
