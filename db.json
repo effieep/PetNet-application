@@ -66,21 +66,21 @@
           "date": "2026-01-11T15:09:51.344Z",
           "appointmentId": "3"
         },
-         {
+        {
           "authorId": "u1",
           "rating": 5,
           "comment": "Εξεαιρετικός επιστήμονας",
           "date": "2026-01-11T15:09:51.344Z",
           "appointmentId": "3"
         },
-         {
+        {
           "authorId": "u1",
           "rating": 5,
           "comment": "Εξεαιρετικός επιστήμονας",
           "date": "2026-01-11T15:09:51.344Z",
           "appointmentId": "3"
         },
-         {
+        {
           "authorId": "u1",
           "rating": 4,
           "comment": "Εξεαιρετικός επιστήμονας",
@@ -687,6 +687,48 @@
       "birthDate": "2026-01-22",
       "ownerId": "c043",
       "health": {
+        "neutered": false,
+        "overview": {
+          "lastVaccine": {
+            "name": "",
+            "date": "",
+            "nextDate": ""
+          },
+          "lastDeworming": {
+            "internal": "",
+            "external": "",
+            "nextInternal": "",
+            "nextExternal": ""
+          },
+          "activeMedication": {
+            "name": "",
+            "instructions": "",
+            "endDate": ""
+          }
+        },
+        "history": {
+          "vaccinations": [],
+          "deworming": [],
+          "medicalActs": {
+            "tests": [],
+            "surgeries": [],
+            "medication": []
+          }
+        }
+      }
+    },
+    {
+      "id": "2d2c",
+      "microchip": "111111111111111",
+      "weight": "",
+      "name": "1",
+      "breed": "",
+      "color": "",
+      "species": "Γάτα",
+      "gender": "Αρσενικό",
+      "birthDate": "01-01-2026",
+      "ownerId": "FILOZ-Φιλοζωική Οργάνωση Χαλανδρίου",
+      "heath": {
         "neutered": false,
         "overview": {
           "lastVaccine": {

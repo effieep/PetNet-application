@@ -54,6 +54,7 @@ const ColorlibConnector = styled(StepConnector)(() => ({
 
 
 const RegisterPet = () => {
+  const [manualMode, setManualMode] = useState(false);
   const [formData, setFormData] = useState({
     microchip: '',
     weight: '',
@@ -317,7 +318,6 @@ const RegisterPet = () => {
       <Box sx={{ display: 'flex', flexDirection: 'row', gap: 8}}>
         <TextField label="Αριθμός Microchip" variant="outlined" fullWidth name="microchip" type="number" value={formData["microchip"]} onChange={handleChange} 
           sx={{
-            // Hide arrows in Chrome, Safari, Edge
             '& input[type=number]::-webkit-outer-spin-button': {
               '-webkit-appearance': 'none',
               margin: 0,
@@ -326,7 +326,6 @@ const RegisterPet = () => {
               '-webkit-appearance': 'none',
               margin: 0,
             },
-            // Hide arrows in Firefox
             '& input[type=number]': {
               '-moz-appearance': 'textfield',
             },
@@ -352,79 +351,121 @@ const RegisterPet = () => {
       </Box>
     </Box>,
     <>
-    <Autocomplete
+    <Box sx={{ mt: 2, flexDirection: 'column', display: 'flex', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
+      {!manualMode ? (
+        <>
+          <Autocomplete
+            noOptionsText="Δεν βρέθηκαν αποτελέσματα"
+            options={owners}
+            filterOptions={(options, { inputValue }) => {
+              const normalizedInput = removeTones(inputValue);
+              return options.filter(option =>
+                removeTones(`${option.name} ${option.surname} ${option.afm}`).includes(normalizedInput)
+              );
+            }}
+            getOptionLabel={(option) => `${option.name} ${option.surname} - ${option.afm}`}
+            value={owners.find(o => o.id === formData.ownerId) || null}
+            onChange={(event, newValue) => {
+              setFormData(prev => ({ ...prev, ownerId: newValue ? newValue.id : '', manualOwner: '' }));
+            }}
+            ListboxProps={{
+              sx: { maxHeight: '20vh', overflowY: 'auto' }
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Ιδιοκτήτης"
+                variant="outlined"
+                fullWidth
+                sx={{ '& .MuiInputBase-root': { width: '50vh' } }}
+              />
+            )}
+          />
+          <Button
+            variant="text"
+            sx={{ 
+                mt: 1,
+                borderRadius: 2,
+                border: '1px solid #1a7ab9',
+             }}
+            onClick={() => {
+              setManualMode(true);
+              setFormData(prev => ({ ...prev, ownerId: '' }));
+            }}
+          >
+            Ανάθεση σε Φιλοζωϊκή
+          </Button>
 
-      noOptionsText="Δεν βρέθηκαν αποτελέσματα"
-      options={owners}
-      filterOptions={(options, { inputValue }) => {
-        const normalizedInput = removeTones(inputValue);
-        return options.filter(option =>
-          removeTones(`${option.name} ${option.surname} ${option.afm}`).includes(normalizedInput)
-        );
-
-      }}
-      getOptionLabel={(option) => `${option.name} ${option.surname} - ${option.afm}`}
-      value={owners.find(o => o.id === formData.ownerId) || null}
-      onChange={(event, newValue) => {
-        setFormData(prev => ({ ...prev, ownerId: newValue ? newValue.id : '' }));
-      }}
-      ListboxProps={{
-        sx: {
-          maxHeight: '20vh', 
-          overflowY: 'auto', 
-        }
-      }}
-      renderInput={(params) => (
-        <TextField {...params} label="Ιδιοκτήτης" variant="outlined" fullWidth 
-        sx={{
-          '& .MuiInputBase-root': {
-            width: '50vh', 
-          }
-        }}
-        />
+          {/* Selected owner info */}
+          {formData.ownerId !== '' && (
+            <Box
+              sx={{
+                width: '45vw',
+                mt: 2,
+                backgroundColor: '#96a50b7c',
+                borderRadius: 3,
+                boxShadow: 3,
+                textAlign: 'center',
+              }}
+            >
+              <Fragment>
+                {(() => {
+                  const owner = owners.find(o => o.id === formData.ownerId);
+                  if (!owner) return null;
+                  return (
+                    <>
+                      <Typography variant="h5" sx={{ color: '#000000', fontWeight: 'bold', p: 2 }}>
+                        {owner.name} {owner.surname}
+                      </Typography>
+                      <Typography variant="h6" sx={{ color: '#535252' }}>
+                        Α.Φ.Μ.: {owner.afm}
+                      </Typography>
+                      <Typography variant="h6" sx={{ color: '#535252' }}>
+                        <MdAlternateEmail style={{ verticalAlign: 'middle', marginRight: '8px' }} /> {owner.email}
+                      </Typography>
+                      <Typography variant="h6" sx={{ color: '#535252' }}>
+                        <FaPhoneAlt style={{ verticalAlign: 'middle', marginRight: '8px' }} /> {owner.phone}
+                      </Typography>
+                      <Typography variant="h6" sx={{ color: '#535252', pb: 2 }}>
+                        <FaLocationDot style={{ verticalAlign: 'middle', marginRight: '8px' }} /> {owner.street} {owner.city}, {owner.postalCode}
+                      </Typography>
+                    </>
+                  );
+                })()}
+              </Fragment>
+            </Box>
+          )}
+        </>
+      ) : (
+        <>
+          {/* Manual input mode */}
+          <TextField
+            label="'Ονομα Φιλοζωϊκής Οργάνωσης"
+            variant="outlined"
+            fullWidth
+            sx = {{
+              width: "28vw"
+            }}
+            value={(formData.ownerId).split('FILOZ-')[1] || ''}
+            onChange={(e) => setFormData(prev => ({ ...prev, ownerId: 'FILOZ-' + e.target.value }))}
+          />
+          <Button
+            variant="text"
+            sx={{ 
+              mt: 1,
+              borderRadius: 2,
+              border: '1px solid #1a7ab9'
+            }}
+            onClick={() => {
+              setManualMode(false);
+              setFormData(prev => ({ ...prev, ownerId: '' }));
+            }}
+          >
+            Ανάθεση σε Υφιστάμενο Ιδιοκτήτη
+          </Button>
+        </>
       )}
-    >
-    </Autocomplete>
-    {formData.ownerId !== '' && (
-      <Box 
-        sx={{
-          width: '45vw',
-          mt: 2, 
-          backgroundColor: '#96a50b7c',
-          borderRadius: 3,
-          boxShadow: 3,
-          textAlign: 'center',
-        }}
-      >
-        <Fragment>
-          {(() => {
-            const owner = owners.find(o => o.id === formData.ownerId);
-            if (!owner) return null; 
-            return (
-              <>
-                <Typography variant="h5" sx={{ color: '#000000', fontWeight: 'bold', p: 2 }}>
-                  {owner.name} {owner.surname}
-                </Typography>  
-                <Typography variant="h6" sx={{ color: '#535252' }}>
-                  Α.Φ.Μ.: {owner.afm}
-                </Typography>
-                <Typography variant="h6" sx={{ color: '#535252' }}>
-                  <MdAlternateEmail style={{ verticalAlign: 'middle', marginRight: '8px' }} /> {owner.email}
-                </Typography>
-                <Typography variant="h6" sx={{ color: '#535252' }}>
-                  <FaPhoneAlt style={{ verticalAlign: 'middle', marginRight: '8px' }} /> {owner.phone}
-                </Typography>
-                <Typography variant="h6" sx={{ color: '#535252', pb: 2 }}>
-                  <FaLocationDot style={{ verticalAlign: 'middle', marginRight: '8px' }} /> {owner.street} {owner.city}, {owner.postalCode}
-                </Typography>
-
-              </>
-            );
-          })()}
-        </Fragment>
-      </Box>
-      )
-    }
+    </Box>
     </>
     ,
     <Fragment>
@@ -469,11 +510,15 @@ const RegisterPet = () => {
 
               {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΣΤΟΙΧΕΙΑ ΙΔΙΟΚΤΗΤΗ */}
               <Grid item xs={12} md={4}>
-                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 3 }}>Στοιχεία Ιδιοκτήτη</Typography>
-                <OwnerField label="Ονοματεπώνυμο" value={`${owner?.name || ""} ${owner?.surname || ""}`} />
-                <OwnerField label="Τηλέφωνο επικοινωνίας" value={owner?.phone || "-"} />
-                <OwnerField label="E-mail" value={owner?.email || "-"} />
-                <OwnerField label="Διεύθυνση κατοικίας" value={owner?.street ? `${owner.street} ${owner.city}, ${owner.postalCode}` : "Δεν έχει οριστεί"} />
+                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 3 }}>{!formData.ownerId.startsWith('FILOZ-') ? 'Στοιχεία Ιδιοκτήτη' : 'Στοιχεία Φιλοζωϊκής'}</Typography>
+                <OwnerField label={formData.ownerId.startsWith('FILOZ-') ? 'Όνομα Φιλοζωϊκής Οργάνωσης' : 'Ονοματεπώνυμο'} value={formData.ownerId.startsWith('FILOZ-') ? `${formData.ownerId.split('FILOZ-')[1]}` : `${owner?.name || ""} ${owner?.surname || ""}`} />
+                {!formData.ownerId.startsWith('FILOZ-') && (  
+                <>
+                  <OwnerField label="Τηλέφωνο επικοινωνίας" value={owner?.phone || "-"} />
+                  <OwnerField label="E-mail" value={owner?.email || "-"} />
+                  <OwnerField label="Διεύθυνση κατοικίας" value={owner?.street ? `${owner.street} ${owner.city}, ${owner.postalCode}` : "Δεν έχει οριστεί"} />
+                </>
+                )}
               </Grid>
             </Grid>
           </Paper>
