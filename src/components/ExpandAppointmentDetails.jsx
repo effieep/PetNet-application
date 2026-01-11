@@ -151,7 +151,7 @@ const ExpandedAppointmentDetails = ({ appointment, onCancelSuccess }) => {
               border: "none",
               borderRadius: "12px",
             }}
-            src={`https://maps.google.com/maps?q=${encodeURIComponent(vet?.clinicAddress)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+            src={`https://maps.google.com/maps?q=${encodeURIComponent(vet?.clinicAddress + " " + vet?.clinicCity + " " + vet?.clinicZip)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
           />
         </Box>
       </Box>

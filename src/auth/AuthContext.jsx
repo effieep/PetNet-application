@@ -51,6 +51,7 @@ export function AuthProvider({ children }) {
           password: formData.auth.password,
           ...formData.vet,
           role: formData.userType,
+          description: "",
           jobs: null,
           services: {
             general: true,
@@ -69,7 +70,8 @@ export function AuthProvider({ children }) {
             castration: false,
             emergency: false
           },
-          reviews: []
+          reviews: [],
+          availability: []
 
         })
       });

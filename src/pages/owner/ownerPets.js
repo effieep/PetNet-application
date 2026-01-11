@@ -28,6 +28,7 @@ const OwnerPets = () => {
   const handleOpenHealthRecord = (pet) => {
    
     localStorage.setItem("activePetId", pet.id);
+    localStorage.setItem("viewHealthRecordFrom", "ownerPets");
 
     navigate('/healthRecord', { 
       state: { pet: pet } 
