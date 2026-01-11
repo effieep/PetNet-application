@@ -14,10 +14,17 @@ const getTodayDate = () => {
   return date.toISOString().split('T')[0]; // Format to YYYY-MM-DD
 }
 
+const getTomorrowDate = () => {
+  const date = new Date();
+  date.setDate(date.getDate() + 1);
+  return date.toISOString().split('T')[0]; // Format to YYYY-MM-DD
+}
+
 const RecordTreatment = () => {
   const { isLoggedIn, user } = useAuth()
     const [data, setData] = useState({
       startDate: '',
+      endDate: '',
       name: '',
       issue: '',
       instructions: '',
@@ -96,6 +103,11 @@ const RecordTreatment = () => {
             ...pet.health,
             overview: {
               ...pet.health.overview,
+              activeMedication: {
+                name: newMedication.name,
+                instructions: newMedication.instructions,
+                endDate: data.endDate ? reverseDateString(data.endDate) : null,
+              }
             },
             history: {
               ...pet.health.history,
@@ -129,12 +141,18 @@ const RecordTreatment = () => {
             },
             overview: {
               ...prevPet.health.overview,
+              activeMedication: {
+                name: data.name,
+                instructions: data.instructions,
+                endDate: data.endDate ? reverseDateString(data.endDate) : null,
+              }
             },
           },
         }));
         
         setData({
           startDate: '',
+          endDate: '',
           name: '',
           issue: '',
           instructions: '',
@@ -234,6 +252,22 @@ const RecordTreatment = () => {
           }}
           value={data.instructions}
           name="instructions"
+          onChange={handleChange}
+          helperText={" "}
+          FormHelperTextProps={{ sx: { minHeight: '1.5em' } }}
+        />
+        <TextField
+          type="date"
+          label="Ημερομηνία Λήξης"
+          sx={{ 
+            '& .MuiInputBase-root': {
+              backgroundColor: '#fff',
+            }
+            }}
+          value={data.endDate}
+          name="endDate"
+          InputLabelProps={{ shrink: true }}
+          inputProps={{min: getTomorrowDate() }}
           onChange={handleChange}
           helperText={" "}
           FormHelperTextProps={{ sx: { minHeight: '1.5em' } }}

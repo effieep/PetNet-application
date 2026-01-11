@@ -227,12 +227,12 @@ const VaccinationsPage = () => {
                       <TableCell sx={{ whiteSpace: 'nowrap' }}>{deworm.date}</TableCell>
                       <TableCell>
                         <Chip 
-                          label={deworm.type === 'Internal' ? 'Ενδοπαράσιτα' : 'Εξωπαράσιτα'} 
+                          label={(deworm.type === 'Internal' || deworm.type === 'Εσωτερική') ? 'Ενδοπαράσιτα' : 'Εξωπαράσιτα'} 
                           size="small"
                           sx={{ 
                             fontWeight: 'bold',
-                            bgcolor: deworm.type === 'Internal' ? '#e3f2fd' : '#fff3e0',
-                            color: deworm.type === 'Internal' ? '#1976d2' : '#ed6c02'
+                            bgcolor: (deworm.type === 'Internal' || deworm.type === 'Εσωτερική') ? '#e3f2fd' : '#fff3e0',
+                            color: (deworm.type === 'Internal' || deworm.type === 'Εσωτερική') ? '#1976d2' : '#ed6c02'
                           }} 
                         />
                       </TableCell>

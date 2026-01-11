@@ -43,7 +43,7 @@ const RecordSurgery = () => {
 
   useEffect(() => {
     if(user) {
-      setData(prev => ({ ...prev, vet: user.name, vetId: user.id }) );
+      setData(prev => ({ ...prev, vet: user.name + ' ' + user.surname, vetId: user.id }) );
     }
     const petId = localStorage.getItem("activePetId");
     const fetchPet = async () => {
@@ -96,7 +96,7 @@ const RecordSurgery = () => {
         date: reverseDateString(data.date),
         title: data.title,
         notes: data.notes,
-        vet: user.name,
+        vet: data.vet,
         vetId: user.id,
       };
       
