@@ -4,6 +4,7 @@ import {
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import VetBio from '../../../components/VetBio';
 import { useLocation, useNavigate } from 'react-router-dom';
+import {Chip} from "@mui/material";
 import { useState, useEffect } from 'react';
 import { API_URL }from "../../../api";
 
@@ -74,9 +75,21 @@ const VetDetails = () => {
                 <Typography variant="h5" fontWeight="bold" sx={{ mb: 1 }}>
                     Dr. {vet.name} {vet.surname}
                 </Typography>
-
+                <Typography variant="body2" fontWeight="bold" color="text.secondary" sx={{ mt: 1 }}>
+                    Ειδικευμένος σε:
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 0.5 }}>
+                    {vet.specialization.map((spec, index) => (
+                    <Chip 
+                        key={index} 
+                        label={spec} 
+                        size="small" 
+                        sx={{ bgcolor: '#CFD8DC', fontWeight: 'bold', color: '#37474F' }} 
+                    />
+                    ))}
+                </Box>
                 {/* Αξιολόγηση */}
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2, justifyContent: { xs: 'center', md: 'flex-start' } }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2, mt:2, justifyContent: { xs: 'center', md: 'flex-start' } }}>
                     <Rating value={ratingValue} precision={0.5} readOnly />
                     <Typography fontWeight="bold">{ratingValue} / 5</Typography>
                     <Typography color="text.secondary">({reviewsCount} αξιολογήσεις)</Typography>
