@@ -298,6 +298,7 @@ const RegisterPet = () => {
                 surgeries: [],
                 medication: [],
               },
+              lifeEvents: [],
             }
           },
         });
@@ -366,7 +367,7 @@ const RegisterPet = () => {
             getOptionLabel={(option) => `${option.name} ${option.surname} - ${option.afm}`}
             value={owners.find(o => o.id === formData.ownerId) || null}
             onChange={(event, newValue) => {
-              setFormData(prev => ({ ...prev, ownerId: newValue ? newValue.id : '', manualOwner: '' }));
+              setFormData(prev => ({ ...prev, ownerId: newValue ? newValue.id : ''}));
             }}
             ListboxProps={{
               sx: { maxHeight: '20vh', overflowY: 'auto' }

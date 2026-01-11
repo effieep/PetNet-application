@@ -23,6 +23,7 @@ const RegisterEvent = () => {
 
   const handleClickButton = () => {
     if(action === '') return;
+    localStorage.setItem('selectedPetIdForEvent', selectedPet.id);
     if(action === 'adoption') {
       navigate('/vet/manage-pets/record-life-event/adoption', { state: { pet: selectedPet } });
       return;
@@ -181,7 +182,12 @@ const RegisterEvent = () => {
                         borderRadius: 1,
                       }}
                     >
-                      <MenuItem value="adoption">Υιοθεσία</MenuItem>
+                      <MenuItem 
+                        value="adoption"
+                        disabled={selectedPet.ownerId.startsWith('FILOZ-') ? false : true}
+                      >
+                        Υιοθεσία
+                      </MenuItem>
                       <MenuItem value="transfer">Μεταβίβαση</MenuItem>
                       <MenuItem value="foster">Αναδοχή</MenuItem>
                       <MenuItem value="death">Θάνατος</MenuItem>
