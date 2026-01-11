@@ -172,7 +172,7 @@
         };
 
         const updatedVaccinations = [
-          ...(pet.health.history.vaccinations || []),
+          ...(pet.health.history?.vaccinations || []),
           newVaccine
         ];
 

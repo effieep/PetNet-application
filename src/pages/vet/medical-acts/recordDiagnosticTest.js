@@ -9,12 +9,6 @@ const reverseDateString = (dateStr) => {
   return dateStr.split('-').reverse().join('-');
 }
 
-const getTomorrowDate = () => {
-  const date = new Date();
-  date.setDate(date.getDate() + 1); // Add 1 day
-  return date.toISOString().split('T')[0]; // Format to YYYY-MM-DD
-};
-
 const getTodayDate = () => {
   const date = new Date();
   return date.toISOString().split('T')[0]; // Format to YYYY-MM-DD
@@ -94,7 +88,7 @@ const RecordDiagnosticTest = () => {
         };
         
         const updatedTests = [
-          ...(pet.health.medicalActs.tests || []), newTest
+          ...(pet.health.medicalActs?.tests || []), newTest
         ];
   
         const payload = {
@@ -230,7 +224,6 @@ const RecordDiagnosticTest = () => {
             }}
             value={data.result}
             name="result"
-            inputProps={{min: getTomorrowDate() }}
             onChange={handleChange}
             helperText={" "}
             FormHelperTextProps={{ sx: { minHeight: '1.5em' } }}

@@ -95,7 +95,7 @@ const RecordDeworming = () => {
       };
       
       const updatedDewormings = [
-        ...(pet.health.history.deworming || []), newDeworming
+        ...(pet.health.history?.deworming || []), newDeworming
       ];
 
       const payload = {
