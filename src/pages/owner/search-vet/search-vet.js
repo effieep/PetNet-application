@@ -121,16 +121,9 @@ const SearchVet = () => {
     return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }
 
-  const handleChangeSpecialty = (event) => {
-    setSpecialty(event.target.value);
-  };
-
-   const handleChangeDayperiod = (event) => {
-    setDayperiod(event.target.value);
-  };
-
-   const handleChangeTimeperiod = (event) => {
-    setTimeperiod(event.target.value);
+  const toggleRadio = (name, setter) => {
+    const value = document.querySelector(`input[name="${name}"]:checked`)?.value;
+    setter(prev => (prev === value ? null : value));
   };
 
 
@@ -380,15 +373,14 @@ const SearchVet = () => {
             <RadioGroup
               name="radio-buttons-specialty"
               value={specialty}
-              onChange={handleChangeSpecialty}
             >
-              <FormControlLabel value="Γενική Κτηνιατρική" control={<Radio {...radioProps} />} label="Γενική Κτηνιατρική" />
-              <FormControlLabel value="Παθολογία" control={<Radio {...radioProps} />} label="Παθολογία" />
-              <FormControlLabel value="Χειρουργική" control={<Radio {...radioProps} />} label="Χειρουργική" />
-              <FormControlLabel value="Οδοντιατρική" control={<Radio {...radioProps} />} label="Οδοντιατρική" />
-              <FormControlLabel value="Δερματολογία" control={<Radio {...radioProps} />} label="Δερματολογία" />
-              <FormControlLabel value="Οφθαλμολογία" control={<Radio {...radioProps} />} label="Οφθαλμολογία" />
-              <FormControlLabel value="Διατροφολογία" control={<Radio {...radioProps} />} label="Διατροφολογία" />
+              <FormControlLabel value="Γενική Κτηνιατρική" control={<Radio {...radioProps} onClick={() => toggleRadio('radio-buttons-specialty' , setSpecialty)} />} label="Γενική Κτηνιατρική" />
+              <FormControlLabel value="Παθολογία" control={<Radio {...radioProps} onClick={() => toggleRadio('radio-buttons-specialty' , setSpecialty)} />} label="Παθολογία" />
+              <FormControlLabel value="Χειρουργική" control={<Radio {...radioProps} onClick={() => toggleRadio('radio-buttons-specialty' , setSpecialty)} />} label="Χειρουργική" />
+              <FormControlLabel value="Οδοντιατρική" control={<Radio {...radioProps} onClick={() => toggleRadio('radio-buttons-specialty' , setSpecialty)} />} label="Οδοντιατρική" />
+              <FormControlLabel value="Δερματολογία" control={<Radio {...radioProps} onClick={() => toggleRadio('radio-buttons-specialty' , setSpecialty)} />} label="Δερματολογία" />
+              <FormControlLabel value="Οφθαλμολογία" control={<Radio {...radioProps} onClick={() => toggleRadio('radio-buttons-specialty' , setSpecialty)} />} label="Οφθαλμολογία" />
+              <FormControlLabel value="Διατροφολογία" control={<Radio {...radioProps} onClick={() => toggleRadio('radio-buttons-specialty' , setSpecialty)} />} label="Διατροφολογία" />
             </RadioGroup>
           </FormControl>
         </Box>
@@ -479,13 +471,12 @@ const SearchVet = () => {
               <RadioGroup
                 name="radio-buttons-dayperiod"
                 value={dayperiod}
-                onChange={handleChangeDayperiod}
               >
-                <FormControlLabel value="today" control={<Radio {...radioProps} />} label="Σήμερα" />
-                <FormControlLabel value="tomorrow" control={<Radio {...radioProps} />} label="Αύριο" />
-                <FormControlLabel value="next3" control={<Radio {...radioProps} />} label="Επόμενες 3 ημέρες" />
-                <FormControlLabel value="nextweek" control={<Radio {...radioProps} />} label="Επόμενη εβδομάδα" />
-                <FormControlLabel value="nextmonth" control={<Radio {...radioProps} />} label="Επόμενος μήνας" />
+                <FormControlLabel value="today" control={<Radio {...radioProps} onClick={() => toggleRadio('radio-buttons-dayperiod', setDayperiod)}/>} label="Σήμερα" />
+                <FormControlLabel value="tomorrow" control={<Radio {...radioProps} onClick={() => toggleRadio('radio-buttons-dayperiod', setDayperiod)}/>} label="Αύριο" />
+                <FormControlLabel value="next3" control={<Radio {...radioProps} onClick={() => toggleRadio('radio-buttons-dayperiod', setDayperiod)}/>} label="Επόμενες 3 ημέρες" />
+                <FormControlLabel value="nextweek" control={<Radio {...radioProps} onClick={() => toggleRadio('radio-buttons-dayperiod', setDayperiod)}/>} label="Επόμενη εβδομάδα" />
+                <FormControlLabel value="nextmonth" control={<Radio {...radioProps} onClick={() => toggleRadio('radio-buttons-dayperiod', setDayperiod)}/>} label="Επόμενος μήνας" />
               </RadioGroup>
             </FormControl>
             <Divider orientation="vertical" flexItem sx={{ mx: 2, borderColor: 'black' }}/>
@@ -498,22 +489,13 @@ const SearchVet = () => {
               <RadioGroup
                 name="radio-buttons-timeperiod"
                 value={timeperiod}
-                onChange={handleChangeTimeperiod}
               >
-                <FormControlLabel value="early" control={<Radio {...radioProps} />} label="Πρωί (8:00-12:00)" />
-                <FormControlLabel value="noon" control={<Radio {...radioProps} />} label="Μεσημέρι (12:00-16:00)" />
-                <FormControlLabel value="afternoon" control={<Radio {...radioProps} />} label="Απόγευμα (16:00-20:00)" />
+                <FormControlLabel value="early" control={<Radio {...radioProps} onClick={() => toggleRadio('radio-buttons-timeperiod', setTimeperiod)}/>} label="Πρωί (8:00-12:00)" />
+                <FormControlLabel value="noon" control={<Radio {...radioProps} onClick={() => toggleRadio('radio-buttons-timeperiod', setTimeperiod)} />} label="Μεσημέρι (12:00-16:00)" />
+                <FormControlLabel value="afternoon" control={<Radio {...radioProps} onClick={() => toggleRadio('radio-buttons-timeperiod', setTimeperiod)} />} label="Απόγευμα (16:00-20:00)" />
               </RadioGroup>
             </FormControl>
           </Box>
-          {errorMessage && (
-            <Typography
-              variant="body1"
-              sx={{ color: 'red', mt: 2, fontWeight: 'bold', textAlign: 'center' }}
-            >
-              {errorMessage}
-            </Typography>
-          )}
         </Box>
         <Button 
           variant="contained" 
@@ -536,7 +518,7 @@ const SearchVet = () => {
               bgcolor: '#c4dff5ff',
             },
           }}
-        >
+          >
           <FaSearch style={{ marginRight: 8}}/>
           <Typography variant="h6" sx ={{ fontWeight: 'bold' }}>
           Αναζήτηση
@@ -545,7 +527,18 @@ const SearchVet = () => {
       </Box>
       
 
-      <Box sx={{ p: 4 }}>
+      {errorMessage && (
+        <Typography
+          variant="body1"
+          sx={{ color: 'red', mt: 5, fontWeight: 'bold', textAlign: 'center' }}
+        >
+          {errorMessage}
+        </Typography>
+      )}
+      <Box sx={{ 
+        p: 4,
+        pt: errorMessage ? 0 : 4
+       }}>
         {availableVets.searching && (
           <>
           <Divider sx={{ my: 4, color: 'black'}} />
