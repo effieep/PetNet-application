@@ -144,10 +144,10 @@
     const validateData = () => {
       const newErrors = {};
       if (data.name === '') {
-        newErrors.name = 'Το όνομα του εμβολίου είναι υποχρεωτικό.';
+        newErrors.name = 'Το όνομα είναι υποχρεωτικό.';
       }
       if( !data.date ) {
-        newErrors.date = 'Η ημερομηνία εμβολιασμού είναι υποχρεωτική.';
+        newErrors.date = 'Η ημερομηνία είναι υποχρεωτική.';
       }
       if( data.dose === '' ) {
         newErrors.dose = 'Η δόση είναι υποχρεωτική.';
@@ -278,23 +278,33 @@
         <Box sx={{mt: 4, gap: 2, flexDirection: 'row', display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
           <TextField
             label="Όνομα Εμβολίου"
-            sx={{ backgroundColor: '#fff' }}
+            sx={{ 
+              '& .MuiInputBase-root': {
+                backgroundColor: '#fff',
+              }
+            }}
             value={data.name}
             onChange={handleChange}
-            helperText={errors.name}
+            helperText={errors.name || " "}
             error={Boolean(errors.name)}
+            FormHelperTextProps={{ sx: { minHeight: '1.5em' } }}
             name="name"
           />
           <TextField
             label="Ημερομηνία Εμβολιασμού"
             type="date"
             variant="outlined"
-            sx={{ backgroundColor: '#fff' }}
+            sx={{ 
+              '& .MuiInputBase-root': {
+                backgroundColor: '#fff',
+              }
+             }}
             value={data.date}
             onChange={handleChange}
             name="date"
-            helperText={errors.date}
+            helperText={errors.date || " "}
             error={Boolean(errors.date)}
+            FormHelperTextProps={{ sx: { minHeight: '1.5em' } }}
             InputLabelProps={{ shrink: true }}
             inputProps={{ max: getTodayDate() }}
           />
@@ -304,14 +314,19 @@
               
               label={isRepeating ? "Συχνότητα" : "Αριθμός Δόσης"}
               variant="outlined"
-              sx={{ backgroundColor: '#fff', width: '20vw' }}
+              sx={{ 
+                '& .MuiInputBase-root': {
+                  backgroundColor: '#fff',
+                },
+                width: '20vw' 
+              }}
               value={data.dose}
               onChange={handleChange}
               name="dose"
               type={isRepeating ? "text" : "number"}
-              helperText={errors.dose}
+              helperText={errors.dose || " "}
               error={Boolean(errors.dose)} 
-              
+              FormHelperTextProps={{ sx: { minHeight: '1.5em' } }}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -349,12 +364,18 @@
             label="Επόμενη Ημερομηνία Εμβολιασμού"
             type="date"
             variant="outlined"
-            sx={{ backgroundColor: '#fff' }}
+            sx={{ 
+              '& .MuiInputBase-root': {
+                backgroundColor: '#fff',
+              }
+             }}
             value={data.nextDate}
             onChange={handleChange}
             name="nextDate"
+            helperText={" "}
             InputLabelProps={{ shrink: true }}
             inputProps={{ min: getTomorrowDate() }}
+            FormHelperTextProps={{ sx: { minHeight: '1.5em' } }}
           />
         </Box>
         <Box 
