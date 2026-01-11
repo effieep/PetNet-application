@@ -65,7 +65,7 @@ const RegisterPet = () => {
     gender: '',
     birthDate: '',
     ownerId: '',
-    heath: 
+    health: 
     { 
       neutered: false, 
       overview: {
@@ -94,6 +94,7 @@ const RegisterPet = () => {
           surgeries: [],
           medication: [],
         },
+        lifeEvents: [],
       }
     },
 
