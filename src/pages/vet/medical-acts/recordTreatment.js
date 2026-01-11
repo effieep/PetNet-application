@@ -113,8 +113,8 @@ const RecordTreatment = () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
         });
-        if (!response.ok) throw new Error('Failed to record deworming.');
-        openSnackbar('Η αποπαρασίτωση καταχωρήθηκε επιτυχώς!', 'success');
+        if (!response.ok) throw new Error('Failed to record treatment.');
+        openSnackbar('Η θεραπεία καταχωρήθηκε επιτυχώς!', 'success');
   
         setPet((prevPet) => ({
           ...prevPet,
@@ -141,8 +141,8 @@ const RecordTreatment = () => {
           vetId: data.vetId,
         });
       } catch (error) {
-        console.error('Error recording deworming:', error);
-        openSnackbar('Σφάλμα κατά την καταχώρηση της αποπαρασίτωσης.', 'error');
+        console.error('Error recording treatment:', error);
+        openSnackbar('Σφάλμα κατά την καταχώρηση της θεραπείας.', 'error');
       }
   
     };
