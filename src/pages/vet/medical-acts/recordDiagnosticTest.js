@@ -88,7 +88,7 @@ const RecordDiagnosticTest = () => {
         };
         
         const updatedTests = [
-          ...(pet.health.medicalActs?.tests || []), newTest
+          ...(pet.health.history.medicalActs?.tests || []), newTest
         ];
   
         const payload = {
@@ -99,10 +99,10 @@ const RecordDiagnosticTest = () => {
             },
             history: {
               ...pet.health.history,
-            },
-            medicalActs: {
-              ...pet.health.medicalActs,
-              tests: updatedTests,
+              medicalActs: {
+                ...pet.health.history.medicalActs,
+                tests: updatedTests,
+              },
             },
           },
         };
@@ -122,13 +122,13 @@ const RecordDiagnosticTest = () => {
             ...prevPet.health,
             history: {
               ...prevPet.health.history,
+              medicalActs: {
+                ...prevPet.health.history.medicalActs,
+                tests: updatedTests,
+              },
             },
             overview: {
               ...prevPet.health.overview,
-            },
-            medicalActs: {
-              ...prevPet.health.medicalActs,
-              tests: updatedTests,
             },
           },
         }));
