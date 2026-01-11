@@ -432,7 +432,8 @@
                 "instructions": "Τοπική χρήση για 7 μέρες"
               }
             ]
-          }
+          },
+          "lifeEvents": []
         }
       }
     },
@@ -568,7 +569,8 @@
                 "instructions": "5 σταγόνες σε κάθε αυτί για 5 μέρες (Ωτίτιδα)"
               }
             ]
-          }
+          },
+          "lifeEvents": []
         }
       }
     },
@@ -671,7 +673,8 @@
                 "instructions": "1 σταγόνα πρωί-βράδυ για 5 μέρες (Επεφυκίτιδα)"
               }
             ]
-          }
+          },
+          "lifeEvents": []
         }
       }
     },
@@ -713,7 +716,8 @@
             "tests": [],
             "surgeries": [],
             "medication": []
-          }
+          },
+          "lifeEvents": []
         }
       }
     },
@@ -728,7 +732,7 @@
       "gender": "Αρσενικό",
       "birthDate": "01-01-2026",
       "ownerId": "FILOZ-Φιλοζωική Οργάνωση Χαλανδρίου",
-      "heath": {
+      "health": {
         "neutered": false,
         "overview": {
           "lastVaccine": {
@@ -755,7 +759,8 @@
             "tests": [],
             "surgeries": [],
             "medication": []
-          }
+          },
+          "lifeEvents": []
         }
       }
     }
