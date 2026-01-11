@@ -41,7 +41,7 @@ const RecordDiagnosticTest = () => {
   
     useEffect(() => {
       if(user) {
-        setData(prev => ({ ...prev, vet: user.name, vetId: user.id }) );
+        setData(prev => ({ ...prev, vet: user.name + ' ' + user.surname, vetId: user.id }) );
       }
       const petId = localStorage.getItem("activePetId");
       const fetchPet = async () => {
