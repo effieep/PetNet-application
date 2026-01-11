@@ -54,13 +54,23 @@
       "clinicZip": "17070",
       "clinicCity": "SOLNA",
       "role": "vet",
-      "reviews": []
+      "reviews": [
+        {
+          "authorId": "u1",
+          "rating": 5,
+          "comment": "Εξεαιρετικός επιστήμονας",
+          "date": "2026-01-11T15:09:51.344Z",
+          "appointmentId": "3"
+        }
+      ]
     },
     {
-      "profilePic": null,
+      "profilePic": "https://bulzcydlenmnkhxahvwa.supabase.co/storage/v1/object/public/profile-pics/v1_1768144574483.jpg",
       "oldProfilePic": null,
       "specialization": [
-        "Γενική Κτηνιατρική"
+        "Γενική Κτηνιατρική",
+        "Δερματολογία",
+        "Οδοντιατρική"
       ],
       "id": "v1",
       "name": "Άγγελος",
@@ -73,7 +83,7 @@
       "postalCode": "15111",
       "password": "12345678",
       "degreeInst": "Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης",
-      "masterInst": "",
+      "masterInst": "Harvard",
       "phdInst": "",
       "registryNum": "111111",
       "practiceYears": 2,
@@ -89,18 +99,76 @@
       },
       "diagnostics": {
         "blood": false,
-        "xrays": false,
-        "odontology": false,
+        "xrays": true,
+        "odontology": true,
         "other": false
       },
       "surgeries": {
         "general": false,
-        "castration": false,
-        "emergency": false
+        "castration": true,
+        "emergency": true
       },
-      "reviews": [],
-      "jobs": null,
-      "availability": []
+      "reviews": [
+        {
+          "authorId": "u1",
+          "rating": 5,
+          "comment": "Φοβερός ο κ. Ζωάκης έκανε τα πάντα για να σώσει τον σκύλο μου",
+          "date": "2026-01-11T15:10:24.248Z",
+          "appointmentId": "4"
+        },
+        {
+          "authorId": "u1",
+          "rating": 4,
+          "comment": "Φοβερός ο κ. Ζωάκης έκανε τα πάντα για να σώσει τον σκύλο μου",
+          "date": "2026-01-11T15:10:24.248Z",
+          "appointmentId": "3"
+        },
+        {
+          "authorId": "u1",
+          "rating": 3,
+          "comment": "Φοβερός ο κ. Ζωάκης έκανε τα πάντα για να σώσει τον σκύλο μου",
+          "date": "2026-01-11T15:10:24.248Z",
+          "appointmentId": "2"
+        },
+        {
+          "authorId": "u1",
+          "rating": 2,
+          "comment": "Φοβερός ο κ. Ζωάκης έκανε τα πάντα για να σώσει τον σκύλο μου",
+          "date": "2026-01-11T15:10:24.248Z",
+          "appointmentId": "1"
+        }
+      ],
+      "jobs": {
+        "job-0": {
+          "role": "Υπεύθυνος Επείγοντων Περιστατικών",
+          "company": "Pet Clinic Glyfada",
+          "startYear": 2017,
+          "endYear": 2023
+        },
+        "job-1": {
+          "role": "Ιδιωτικό Ιατρείο",
+          "company": "Αγγελος Ζωάκης Κτηνιατρείο ",
+          "startYear": 2021,
+          "endYear": "Σήμερα"
+        }
+      },
+      "availability": [
+        {
+          "id": 1768144703596,
+          "date": "11/01/2026",
+          "time": "09:00",
+          "duration": 30
+        },
+        {
+          "id": 1768144708862,
+          "date": "18/01/2026",
+          "time": "09:00",
+          "duration": 30
+        }
+      ],
+      "DgraduationYear": 2004,
+      "MgraduationYear": 2010,
+      "description": "\"Η αγάπη μου για τα ζώα με οδήγησε στην Κτηνιατρική. Μετά τις σπουδές μου στο ΑΠΘ και με 2 χρόνια εμπειρίας, δημιούργησα έναν χώρο στη Θεσσαλονίκη όπου αντιμετωπίζουμε κάθε περιστατικό με φροντίδα και σεβασμό. Είμαι εδώ για να λύσω κάθε απορία σας και να φροντίσω τον μικρό σας φίλο σαν να ήταν δικός μου.\""
     }
   ],
   "pets": [
@@ -595,7 +663,7 @@
       "time": "14:30",
       "status": "COMPLETED",
       "reason": "Ετήσιος εμβολιασμός",
-      "reviewed": false
+      "reviewed": true
     },
     {
       "id": "2",
@@ -616,7 +684,7 @@
       "date": "10-01-2024",
       "time": "10:00",
       "status": "COMPLETED",
-      "reviewed": false
+      "reviewed": true
     },
     {
       "id": "4",
