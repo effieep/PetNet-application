@@ -543,7 +543,7 @@ const SearchVet = () => {
           <>
           <Divider sx={{ my: 4, color: 'black'}} />
           <Typography variant="body1" sx={{ mb: 2, fontWeight: 'bold' }}>
-            {`Βρέθηκαν ${availableVets.list.length} κτηνίατροι που πληρούν τα κριτήρια αναζήτησής σας.`}
+            {`${availableVets.list.length === 1 ? 'Βρέθηκε' : 'Βρέθηκαν'} ${availableVets.list.length} ${availableVets.list.length === 1 ? 'κτηνίατρος' : 'κτηνίατροι'} που ${availableVets.list.length === 1 ? 'πληροί' : 'πληρούν'} τα κριτήρια αναζήτησής σας.`}
           </Typography>
           </>
           )
