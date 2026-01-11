@@ -83,6 +83,8 @@ const Adoption = () => {
                 {
                   type: 'adoption',
                   date: formData.date,
+                  previousOwnerId: pet.ownerId,
+                  newOwnerId: formData.newOwnerId
                 }
               ],
             }
@@ -106,6 +108,8 @@ const Adoption = () => {
                   {
                     type: 'adoption',
                     date: formData.date,
+                    previousOwnerId: pet.ownerId,
+                    newOwnerId: formData.newOwnerId
                   }
                 ]
               }
