@@ -329,7 +329,7 @@ const BookAppointment = () => {
                     selected={selectedPetId === pet.id}
                     onCardClick={() => handleSelectPet(pet)}
                     onPreview={() => handlePreviewPet(pet)}
-                    cardSx={{ outline: selectedPetId === pet.id ? '5px solid #1c960c' : 'none', mx: 1 }}
+                    cardSx={{ outline: selectedPetId === pet.id ? '5px solid #1c960c' : 'none', mx: 1, transition: "transform 150ms ease","&:hover": { transform: "translateY(-10px)" } }}
                   />
                 </Box>
               ))}
