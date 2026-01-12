@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { API_URL } from '../../../api';
 import { useAuth } from '../../../auth/AuthContext';
 import SubMenu from '../../../components/SubMenu.jsx';
-import { Autocomplete, TextField, Box, Typography, Grid } from '@mui/material';
+import { Autocomplete, TextField, Box, Typography } from '@mui/material';
 import PetDetailsCard from '../../../components/PetDetailsCard.js';
 import AppointmentHistoryCard from '../../../components/AppointmentHistoryCard.jsx';
 
