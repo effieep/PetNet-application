@@ -18,6 +18,13 @@ const statusBg = {
   CANCELLED: "rgba(244, 67, 54, 0.18)",
 };
 
+const statusMap = {
+  PENDING: "Εκκρεμεί Έπιβεβαίωση",
+  CONFIRMED: "Επιβεβαιωμένο",
+  COMPLETED: "Ολοκληρωμένο",
+  CANCELLED: "Ακυρωμένο",
+};
+
 const AppointmentCard = ({ appointment, open, onToggle, onCancelSuccess }) => {
   if (!appointment) return null;
 
@@ -60,7 +67,7 @@ const AppointmentCard = ({ appointment, open, onToggle, onCancelSuccess }) => {
             )}
           </Box>
 
-          <Chip label={status} />
+          <Chip sx={{fontWeight: "bold", fontSize: 14}} label={statusMap[status]} />
 
           {/* 🔽 ΒΕΛΟΣ */}
           <IconButton
