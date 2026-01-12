@@ -37,6 +37,10 @@ const breadcrumbMap = {
   'record-diagnostic-test': 'Καταγραφή Διαγνωστικής Εξέτασης',
   'record-treatment': 'Καταγραφή Θεραπείας',
   'record-surgery': 'Καταγραφή Χειρουργικής Επέμβασης',
+  'adoption': 'Καταγραφή Υιοθεσίας',
+  'transfer': 'Καταγραφή Μεταβίβασης',
+  'foster': 'Καταγραφή Αναδοχής',
+  'death': 'Καταγραφή Θανάτου'
 };
 
 function AppBreadcrumbs() {

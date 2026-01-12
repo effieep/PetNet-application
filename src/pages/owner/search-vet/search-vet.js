@@ -1,5 +1,5 @@
 import Hero from '../../../components/Hero.jsx';
-import { Box, Typography, FormControl, RadioGroup, FormControlLabel, Radio, Button, Autocomplete, TextField, Popper, InputAdornment } from '@mui/material';
+import { Box, Typography, FormControl, RadioGroup, FormControlLabel, Radio, Button, Autocomplete, TextField, Popper, InputAdornment, Divider } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { API_URL } from '../../../api.js';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -121,33 +121,11 @@ const SearchVet = () => {
     return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }
 
-  const handleChangeSpecialty = (event) => {
-    setSpecialty(event.target.value);
+  const toggleRadio = (name, setter) => {
+    const value = document.querySelector(`input[name="${name}"]:checked`)?.value;
+    setter(prev => (prev === value ? null : value));
   };
 
-   const handleChangeDayperiod = (event) => {
-    setDayperiod(event.target.value);
-  };
-
-   const handleChangeTimeperiod = (event) => {
-    setTimeperiod(event.target.value);
-  };
-
-  const handleSearch = () => {
-  if (!specialty || !area || !dayperiod || !timeperiod) {
-    setErrorMessage('Παρακαλώ συμπληρώστε όλα τα πεδία πριν την αναζήτηση!');
-    return;
-  }
-
-
-  console.log({
-    specialty,
-    area,
-    dayperiod,
-    timeperiod,
-  });
-  setErrorMessage(null);
-};
 
   const radioProps = {
     icon: <CheckBoxOutlineBlankIcon />,
@@ -163,32 +141,196 @@ const SearchVet = () => {
     }
   };
 
-  const [vet, setVet] = useState(null);
+  const [vets, setVets] = useState([]);
+  const [availableVets, setAvailableVets] = useState({list:[], searching: false});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fetch τον κτηνίατρο με το συγκεκριμένο ID που έχεις στη βάση (π.χ. "v1")
-    const fetchVet = async () => {
+    const fetchVets = async () => {
       try {
-        const response = await fetch(`${API_URL}/users/v1`);
-        
+        const response = await fetch(`${API_URL}/users?role=vet`);
         if (!response.ok) {
-          throw new Error('Ο κτηνίατρος δεν βρέθηκε');
-        }
-
+          throw new Error('Σφάλμα κατά την ανάκτηση των κτηνιάτρων');
+        } 
         const data = await response.json();
-        setVet(data);
+        setVets(data);
         setLoading(false);
       } catch (err) {
-        console.error("Error fetching vet:", err);
+        console.error("Error fetching all vets:", err);
         setError(err.message);
         setLoading(false);
-      }
+      } 
     };
-
-    fetchVet();
+    fetchVets();
   }, []);
+
+  const handleSearch = () => {
+    if (!specialty && !area && !dayperiod && !timeperiod) {
+      setErrorMessage('Παρακαλώ συμπληρώστε τουλάχιστον ένα κριτήριο αναζήτησης.');
+      return;
+    }
+    setAvailableVets({list: [], searching: true}); 
+    setErrorMessage(null); 
+    for (let i = 0; i < vets.length; i++) {
+      const vet = vets[i];
+      if(!vet.availability || vet.availability.length === 0) {
+        continue; 
+      }
+      if (specialty && vet.specialization.includes(specialty) === false) {
+        continue; 
+      }
+      if(area) {
+        let areaFilter = area.area;
+        let cityFilter = area.city;
+        if(areaFilter.includes("(Κέντρο)")) {
+          areaFilter = areaFilter.split(" ")[0];
+        } 
+        areaFilter = removeTones(areaFilter.toLowerCase());
+        cityFilter = removeTones(cityFilter.toLowerCase());
+        const vetCity = removeTones(vet.clinicCity.toLowerCase());
+        if(areaFilter !== vetCity && cityFilter !== vetCity) {
+          continue;
+        }
+      }
+      const todayDate = new Date();
+      let filteredSlots = vet.availability?.filter(slot => {
+
+
+        let slotDate = slot.date.replace('/', '-').replace('/', '-');
+        const day = slotDate.split('-')[0];
+        const month = slotDate.split('-')[1];
+        const year = slotDate.split('-')[2]; 
+        const hour = slot.time.split(':')[0];
+        const minute = slot.time.split(':')[1];
+
+        slotDate = new Date(year, month - 1, day, hour, minute, 0);
+        const compareDates = slotDate - todayDate
+        if(compareDates >= 0) {
+          return true;
+        }
+        return false;
+      });
+      if(filteredSlots?.length === 0) {
+        continue;
+      }
+      if(dayperiod) {
+        if(dayperiod === 'today') {
+          if(!filteredSlots?.some(slot => {
+            const slotDate = slot.date.replace('/', '-').replace('/', '-');
+            const day = slotDate.split('-')[0];
+            const month = slotDate.split('-')[1];
+            const year = slotDate.split('-')[2];
+            const nowDay = todayDate.getDate().toString().padStart(2, '0');
+            const nowMonth = (todayDate.getMonth() + 1).toString().padStart(2, '0');
+            const nowYear = todayDate.getFullYear().toString();
+            if(day === nowDay && month === nowMonth && year === nowYear){
+              return true;
+            }
+            return false;
+          })){
+            continue;
+          }
+        }
+        if(dayperiod === 'tomorrow') {
+          const tomorrow = new Date(todayDate);
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          if(!filteredSlots?.some(slot => {
+            const slotDate = slot.date.replace('/', '-').replace('/', '-');
+            const day = slotDate.split('-')[0];
+            const month = slotDate.split('-')[1];
+            const year = slotDate.split('-')[2];
+            const tomDay = tomorrow.getDate().toString().padStart(2, '0');
+            const tomMonth = (tomorrow.getMonth() + 1).toString().padStart(2, '0');
+            const tomYear = tomorrow.getFullYear().toString();
+
+            if(day === tomDay && month === tomMonth && year === tomYear){
+              return true;
+            }
+            return false;
+          })){
+            continue;
+          }
+        }
+        if(dayperiod === 'next3') {
+          const next3 = new Date(todayDate);
+          next3.setDate(next3.getDate() + 3);
+          if(!filteredSlots?.some(slot => {
+            let slotDate = slot.date.replace('/', '-').replace('/', '-');
+            const day = slotDate.split('-')[0];
+            const month = slotDate.split('-')[1];
+            const year = slotDate.split('-')[2];
+            slotDate = new Date(year, month - 1, day);
+            if(slotDate <= next3){
+              return true;
+            }
+            return false;
+          })){
+            continue;
+          }
+        }
+        if(dayperiod === 'nextweek') {
+          const nextweek = new Date(todayDate);
+          nextweek.setDate(nextweek.getDate() + 7);
+          if(!filteredSlots?.some(slot => {
+            let slotDate = slot.date.replace('/', '-').replace('/', '-');
+            const day = slotDate.split('-')[0];
+            const month = slotDate.split('-')[1];
+            const year = slotDate.split('-')[2];
+            slotDate = new Date(year, month - 1, day);
+            if(slotDate <= nextweek){
+              return true;
+            }
+            return false;
+          })){
+            continue;
+          }
+        }
+        if(dayperiod === 'nextmonth') {
+          const nextmonth = new Date(todayDate);
+          nextmonth.setMonth(nextmonth.getMonth() + 1);
+          if(!filteredSlots?.some(slot => {
+            let slotDate = slot.date.replace('/', '-').replace('/', '-');
+            const day = slotDate.split('-')[0];
+            const month = slotDate.split('-')[1];
+            const year = slotDate.split('-')[2];
+            slotDate = new Date(year, month - 1, day);
+            if(slotDate <= nextmonth){
+              return true;
+            }
+            return false;
+          })){
+            continue;
+          }
+        }
+      }
+      if(timeperiod) {
+        if(timeperiod === 'early') {
+          filteredSlots = filteredSlots?.filter(slot => {
+            const hour = parseInt(slot.time.split(':')[0], 10);
+            return hour >= 8 && hour < 12;
+          });
+        }
+        if(timeperiod === 'noon') {
+          filteredSlots = filteredSlots?.filter(slot => {
+            const hour = parseInt(slot.time.split(':')[0], 10);
+            return hour >= 12 && hour < 16;
+          });
+        }
+        if(timeperiod === 'afternoon') {
+          filteredSlots = filteredSlots?.filter(slot => {
+            const hour = parseInt(slot.time.split(':')[0], 10);
+            return hour >= 16 && hour < 20;
+          });
+        }
+      }
+      if(filteredSlots?.length === 0) {
+        continue;
+      }
+      setAvailableVets(prev => ({list: [...prev.list, vet], searching: true}) );
+    }
+  };
+
 
   if (loading) {
     return (
@@ -231,15 +373,14 @@ const SearchVet = () => {
             <RadioGroup
               name="radio-buttons-specialty"
               value={specialty}
-              onChange={handleChangeSpecialty}
             >
-              <FormControlLabel value="general" control={<Radio {...radioProps} />} label="Γενική Κτηνιατρική" />
-              <FormControlLabel value="pathology" control={<Radio {...radioProps} />} label="Παθολογία" />
-              <FormControlLabel value="surgery" control={<Radio {...radioProps} />} label="Χειρουργική" />
-              <FormControlLabel value="odontiology" control={<Radio {...radioProps} />} label="Οδοντιατρική" />
-              <FormControlLabel value="dermatology" control={<Radio {...radioProps} />} label="Δερματολογία" />
-              <FormControlLabel value="ophthalmology" control={<Radio {...radioProps} />} label="Οφθαλμολογία" />
-              <FormControlLabel value="nutrition" control={<Radio {...radioProps} />} label="Διατροφολογία" />
+              <FormControlLabel value="Γενική Κτηνιατρική" control={<Radio {...radioProps} onClick={() => toggleRadio('radio-buttons-specialty' , setSpecialty)} />} label="Γενική Κτηνιατρική" />
+              <FormControlLabel value="Παθολογία" control={<Radio {...radioProps} onClick={() => toggleRadio('radio-buttons-specialty' , setSpecialty)} />} label="Παθολογία" />
+              <FormControlLabel value="Χειρουργική" control={<Radio {...radioProps} onClick={() => toggleRadio('radio-buttons-specialty' , setSpecialty)} />} label="Χειρουργική" />
+              <FormControlLabel value="Οδοντιατρική" control={<Radio {...radioProps} onClick={() => toggleRadio('radio-buttons-specialty' , setSpecialty)} />} label="Οδοντιατρική" />
+              <FormControlLabel value="Δερματολογία" control={<Radio {...radioProps} onClick={() => toggleRadio('radio-buttons-specialty' , setSpecialty)} />} label="Δερματολογία" />
+              <FormControlLabel value="Οφθαλμολογία" control={<Radio {...radioProps} onClick={() => toggleRadio('radio-buttons-specialty' , setSpecialty)} />} label="Οφθαλμολογία" />
+              <FormControlLabel value="Διατροφολογία" control={<Radio {...radioProps} onClick={() => toggleRadio('radio-buttons-specialty' , setSpecialty)} />} label="Διατροφολογία" />
             </RadioGroup>
           </FormControl>
         </Box>
@@ -322,38 +463,39 @@ const SearchVet = () => {
           </Typography>
           <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
             <FormControl>
+              <FormControlLabel
+                control={<Typography variant="subtitle1" sx={{ mb: 1 }}>Ημέρα</Typography>}
+                label=""
+                sx={{ mb: 1 }}
+              />
               <RadioGroup
                 name="radio-buttons-dayperiod"
                 value={dayperiod}
-                onChange={handleChangeDayperiod}
               >
-                <FormControlLabel value="today" control={<Radio {...radioProps} />} label="Σήμερα" />
-                <FormControlLabel value="tomorrow" control={<Radio {...radioProps} />} label="Αύριο" />
-                <FormControlLabel value="next3" control={<Radio {...radioProps} />} label="Επόμενες 3 ημέρες" />
-                <FormControlLabel value="nextweek" control={<Radio {...radioProps} />} label="Επόμενη εβδομάδα" />
-                <FormControlLabel value="nextmonth" control={<Radio {...radioProps} />} label="Επόμενος μήνας" />
+                <FormControlLabel value="today" control={<Radio {...radioProps} onClick={() => toggleRadio('radio-buttons-dayperiod', setDayperiod)}/>} label="Σήμερα" />
+                <FormControlLabel value="tomorrow" control={<Radio {...radioProps} onClick={() => toggleRadio('radio-buttons-dayperiod', setDayperiod)}/>} label="Αύριο" />
+                <FormControlLabel value="next3" control={<Radio {...radioProps} onClick={() => toggleRadio('radio-buttons-dayperiod', setDayperiod)}/>} label="Επόμενες 3 ημέρες" />
+                <FormControlLabel value="nextweek" control={<Radio {...radioProps} onClick={() => toggleRadio('radio-buttons-dayperiod', setDayperiod)}/>} label="Επόμενη εβδομάδα" />
+                <FormControlLabel value="nextmonth" control={<Radio {...radioProps} onClick={() => toggleRadio('radio-buttons-dayperiod', setDayperiod)}/>} label="Επόμενος μήνας" />
               </RadioGroup>
             </FormControl>
+            <Divider orientation="vertical" flexItem sx={{ mx: 2, borderColor: 'black' }}/>
             <FormControl>
+              <FormControlLabel
+                control={<Typography variant="subtitle1" sx={{ mb: 1 }}>Ώρα</Typography>}
+                label=""
+                sx={{ mb: 1 }}
+              />
               <RadioGroup
                 name="radio-buttons-timeperiod"
                 value={timeperiod}
-                onChange={handleChangeTimeperiod}
               >
-                <FormControlLabel value="early" control={<Radio {...radioProps} />} label="Πρωί (8:00-12:00)" />
-                <FormControlLabel value="noon" control={<Radio {...radioProps} />} label="Μεσημέρι (12:00-16:00)" />
-                <FormControlLabel value="afternoon" control={<Radio {...radioProps} />} label="Απόγευμα (16:00-20:00)" />
+                <FormControlLabel value="early" control={<Radio {...radioProps} onClick={() => toggleRadio('radio-buttons-timeperiod', setTimeperiod)}/>} label="Πρωί (8:00-12:00)" />
+                <FormControlLabel value="noon" control={<Radio {...radioProps} onClick={() => toggleRadio('radio-buttons-timeperiod', setTimeperiod)} />} label="Μεσημέρι (12:00-16:00)" />
+                <FormControlLabel value="afternoon" control={<Radio {...radioProps} onClick={() => toggleRadio('radio-buttons-timeperiod', setTimeperiod)} />} label="Απόγευμα (16:00-20:00)" />
               </RadioGroup>
             </FormControl>
           </Box>
-          {errorMessage && (
-            <Typography
-              variant="body1"
-              sx={{ color: 'red', mt: 2, fontWeight: 'bold', textAlign: 'center' }}
-            >
-              {errorMessage}
-            </Typography>
-          )}
         </Box>
         <Button 
           variant="contained" 
@@ -376,7 +518,7 @@ const SearchVet = () => {
               bgcolor: '#c4dff5ff',
             },
           }}
-        >
+          >
           <FaSearch style={{ marginRight: 8}}/>
           <Typography variant="h6" sx ={{ fontWeight: 'bold' }}>
           Αναζήτηση
@@ -385,18 +527,57 @@ const SearchVet = () => {
       </Box>
       
 
-      <Box sx={{ minHeight: '100vh', p: 4 }}>
-        <Typography variant="h4" align="center" sx={{ mb: 4, fontWeight: 'bold' }}>
-          Preview Κάρτας Κτηνίατρου
+      {errorMessage && (
+        <Typography
+          variant="body1"
+          sx={{ color: 'red', mt: 5, fontWeight: 'bold', textAlign: 'center' }}
+        >
+          {errorMessage}
         </Typography>
+      )}
+      <Box sx={{ 
+        p: 4,
+        pt: errorMessage ? 0 : 4
+       }}>
+        {availableVets.searching && (
+          <>
+          <Divider sx={{ my: 4, color: 'black'}} />
+          <Typography variant="body1" sx={{ mb: 2, fontWeight: 'bold' }}>
+            {`${availableVets.list.length === 1 ? 'Βρέθηκε' : 'Βρέθηκαν'} ${availableVets.list.length} ${availableVets.list.length === 1 ? 'κτηνίατρος' : 'κτηνίατροι'} που ${availableVets.list.length === 1 ? 'πληροί' : 'πληρούν'} τα κριτήρια αναζήτησής σας.`}
+          </Typography>
+          </>
+          )
+        }
+        {availableVets.list.length > 0 && (
+            availableVets.list.map((vet) => (
+              <>
+              <VetCard
+                key={vet.id}
+                vet={{...vet, availability: vet.availability?.filter(slot => {
 
-        {/* Εδώ εμφανίζεται η κάρτα */}
-        {vet && (
-          <VetCard 
-              vet={vet} 
-              onBookAppointment={(id) => alert(`Πάτησες κράτηση για τον γιατρό με ID: ${id}`)} 
-          />
-        )}
+                  const todayDate = new Date();
+
+                  let slotDate = slot.date.replace('/', '-').replace('/', '-');
+                  const day = slotDate.split('-')[0];
+                  const month = slotDate.split('-')[1];
+                  const year = slotDate.split('-')[2]; 
+                  const hour = slot.time.split(':')[0];
+                  const minute = slot.time.split(':')[1];
+
+                  slotDate = new Date(year, month - 1, day, hour, minute, 0);
+                  const compareDates = slotDate - todayDate
+                  if(compareDates >= 0) {
+                    return true;
+                  }
+                  return false;
+                })}}
+                onBookAppointment={(id) => alert(`Πάτησες κράτηση για τον γιατρό με ID: ${id}`)}
+              />
+              </>
+
+            ))
+          ) 
+        }
       </Box>
     </>
   );

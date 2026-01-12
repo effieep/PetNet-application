@@ -75,11 +75,15 @@ const PetDetailsCard = ({ petId }) => {
 
         {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: ΣΤΟΙΧΕΙΑ ΙΔΙΟΚΤΗΤΗ */}
         <Grid item xs={12} md={4}>
-          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 3 }}>Στοιχεία Ιδιοκτήτη</Typography>
-          <OwnerField label="Ονοματεπώνυμο" value={`${owner?.name} ${owner?.surname}`} />
-          <OwnerField label="Τηλέφωνο επικοινωνίας" value={owner?.phone} />
-          <OwnerField label="Εmail" value={owner?.email} />
-          <OwnerField label="Διεύθυνση κατοικίας" value={owner?.street || "Δεν έχει οριστεί"} />
+          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 3 }}>{!pet.ownerId.startsWith('FILOZ-') ? 'Στοιχεία Ιδιοκτήτη' : 'Στοιχεία Φιλοζωϊκής'}</Typography>
+          <OwnerField label={pet.ownerId.startsWith('FILOZ-') ? 'Όνομα Φιλοζωϊκής Οργάνωσης' : 'Ονοματεπώνυμο'} value={pet.ownerId.startsWith('FILOZ-') ? `${pet.ownerId.split('FILOZ-')[1]}` : `${owner?.name || ""} ${owner?.surname || ""}`} />
+          {!pet.ownerId.startsWith('FILOZ-') && (  
+          <>
+            <OwnerField label="Τηλέφωνο επικοινωνίας" value={owner?.phone || "-"} />
+            <OwnerField label="E-mail" value={owner?.email || "-"} />
+            <OwnerField label="Διεύθυνση κατοικίας" value={owner?.street ? `${owner.street} ${owner.city}, ${owner.postalCode}` : "Δεν έχει οριστεί"} />
+          </>
+          )}
         </Grid>
       </Grid>
     </Paper>

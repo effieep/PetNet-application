@@ -70,10 +70,10 @@ const HealthRecordLayout = ( {petData, children }) => {
           
           <Button
             startIcon={<ArrowBackIcon />}
-            onClick={(() => (localStorage.getItem("viewHealthRecordFrom") === "ownerPets") ? navigate('/owner/pets') : navigate('/vet/manage-pets/record-medical-action'))}
+            onClick={(() => (localStorage.getItem("viewHealthRecordFrom") === "ownerPets") ? navigate('/owner/pets') : localStorage.getItem("viewHealthRecordFrom") === "viewHealth" ? navigate('/vet/manage-pets/view-health-record') : navigate('/vet/manage-pets/record-medical-action'))}
             sx={{ mb: 2, color: 'text.secondary', textTransform: 'none', fontWeight: 'bold' }}
           >
-            {(localStorage.getItem("viewHealthRecordFrom") === "ownerPets") ? 'Πίσω στα Κατοικίδιά μου' : 'Πίσω στην Καταγραφή Ιατρικής Πράξης'}
+            {(localStorage.getItem("viewHealthRecordFrom") === "ownerPets") ? 'Πίσω στα Κατοικίδιά μου' : localStorage.getItem("viewHealthRecordFrom") === "viewHealth" ? 'Πίσω στην Προβολή Βιβλιαρίου Υγείας' : 'Πίσω στην Καταγραφή Ιατρικής Πράξης'}
           </Button>
           
           {/* Πληροφορίες Ζώου */}

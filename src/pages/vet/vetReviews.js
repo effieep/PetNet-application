@@ -4,6 +4,11 @@ import { useAuth } from "../../auth/AuthContext";
 import { Box, Typography, CircularProgress, Alert } from "@mui/material";
 import { API_URL } from "../../api";
 
+const reverseAndAddSlashes = (dateStr) => {
+  const parts = dateStr.split('-');
+  return parts.reverse().join('/');
+};
+
 const VetHistory = () => {
   const { user } = useAuth();
   const [userData, setUserData] = useState(null);
@@ -81,7 +86,7 @@ const VetHistory = () => {
             {review.comment}
           </Typography>
           <Typography variant="caption" sx={{ color: "#555" }}>
-            {new Date(review.date).toLocaleDateString()}
+            {reverseAndAddSlashes(new Date(review.date).toISOString().split('T')[0])}
           </Typography>
         </Box>
       );

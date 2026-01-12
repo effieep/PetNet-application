@@ -39,7 +39,10 @@ import RecordDeworming from './pages/vet/medical-acts/recordDeworming.js';
 import RecordDiagnosticTest from './pages/vet/medical-acts/recordDiagnosticTest.js';
 import RecordTreatment from './pages/vet/medical-acts/recordTreatment.js';
 import RecordSurgery from './pages/vet/medical-acts/recordSurgery.js';
-
+import Adoption from './pages/vet/Happenings/Adoption.js';
+import Transfer from './pages/vet/Happenings/Transfer.js';
+import Foster from './pages/vet/Happenings/Foster.js';
+import Death from './pages/vet/Happenings/Death.js';
 import { Box } from "@mui/material";
 
 function App() {
@@ -76,6 +79,10 @@ function App() {
           <Route path="/vet/manage-pets/record-medical-action/record-diagnostic-test" element={<RecordDiagnosticTest />} />
           <Route path="/vet/manage-pets/record-medical-action/record-treatment" element={<RecordTreatment />} />
           <Route path="/vet/manage-pets/record-medical-action/record-surgery" element={<RecordSurgery />} />
+          <Route path="/vet/manage-pets/record-life-event/adoption" element={<Adoption />} />
+          <Route path="/vet/manage-pets/record-life-event/transfer" element={<Transfer />} />
+          <Route path="/vet/manage-pets/record-life-event/foster" element={<Foster />} />
+          <Route path = "/vet/manage-pets/record-life-event/death" element={<Death />} />
           <Route path="/vet/manage-pets/view-health-record" element={<ViewHealth />} />
           <Route path="/vet/manage-pets/record-life-event" element={<RegisterEvent />} />
           <Route path="/vet/manage-appointments" element={<VetManageRdvz />} />
