@@ -150,7 +150,7 @@ const Adoption = () => {
   return (
     <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 2, alignSelf: 'center' }}>
-        Υιοθεσίες Κατοικιδίων
+        Υιοθεσία Κατοικιδίου
       </Typography>
       <Typography variant="body1" sx={{ alignSelf: 'center' }}>
         Το κατοικίδιο μεταβιβάζεται από μία φιλοζωική/καταφύγιο σε έναν ιδιοκτήτη

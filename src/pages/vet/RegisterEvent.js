@@ -25,7 +25,19 @@ const RegisterEvent = () => {
     if(action === '') return;
     localStorage.setItem('selectedPetIdForEvent', selectedPet.id);
     if(action === 'adoption') {
-      navigate('/vet/manage-pets/record-life-event/adoption', { state: { pet: selectedPet } });
+      navigate('/vet/manage-pets/record-life-event/adoption');
+      return;
+    }
+    if(action === 'transfer') {
+      navigate('/vet/manage-pets/record-life-event/transfer');
+      return;
+    }
+    if(action === 'foster') {
+      navigate('/vet/manage-pets/record-life-event/foster');
+      return;
+    }
+    if(action === 'death') {
+      navigate('/vet/manage-pets/record-life-event/death');
       return;
     }
   };
@@ -87,7 +99,7 @@ const RegisterEvent = () => {
         <Autocomplete
           disablePortal
           id="combo-box-pets"
-          options={pets}
+          options={pets.filter(pet => pet.dateOfDeath === null || pet.dateOfDeath === undefined || pet.dateOfDeath === '')}
           onChange={handleChange}
           getOptionLabel={(option) => `${option.microchip} ${option.name}`}
           sx={{ width: 300, mt: 4 }}
@@ -188,7 +200,10 @@ const RegisterEvent = () => {
                       >
                         Υιοθεσία
                       </MenuItem>
-                      <MenuItem value="transfer">Μεταβίβαση</MenuItem>
+                      <MenuItem 
+                        value="transfer"
+                        disabled={selectedPet.ownerId.startsWith('FILOZ-') ? true : false}
+                      >Μεταβίβαση</MenuItem>
                       <MenuItem value="foster">Αναδοχή</MenuItem>
                       <MenuItem value="death">Θάνατος</MenuItem>
                     </TextField>

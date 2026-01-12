@@ -109,7 +109,7 @@ const RegisterMedical = () => {
         <Autocomplete
           disablePortal
           id="combo-box-pets"
-          options={pets}
+          options={pets.filter(pet => pet.dateOfDeath === null || pet.dateOfDeath === undefined || pet.dateOfDeath === '')}
           onChange={handleChange}
           getOptionLabel={(option) => `${option.microchip} ${option.name}`}
           sx={{ width: 300, mt: 4 }}
