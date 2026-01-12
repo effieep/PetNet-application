@@ -40,7 +40,8 @@ const breadcrumbMap = {
   'adoption': 'Καταγραφή Υιοθεσίας',
   'transfer': 'Καταγραφή Μεταβίβασης',
   'foster': 'Καταγραφή Αναδοχής',
-  'death': 'Καταγραφή Θανάτου'
+  'death': 'Καταγραφή Θανάτου',
+  'book-appointment': 'Κράτηση Ραντεβού',
 };
 
 function AppBreadcrumbs() {

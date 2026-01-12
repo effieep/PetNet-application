@@ -11,15 +11,20 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import 'dayjs/locale/el';
+import { useAuth } from '../auth/AuthContext.jsx';
 
 dayjs.extend(customParseFormat);
 dayjs.locale('el');
 
-const VetCard = ({ vet, onBookAppointment }) => {
+const VetCard = ({ vet, openSnackbar }) => {
+  const { isLoggedIn, user } = useAuth();
+
   const navigate = useNavigate();
   
   // State για την πλοήγηση στις μέρες
   const [startIndex, setStartIndex] = useState(0);
+  const [slotSelected, setSlotSelected] = useState(null);
+
   const DAYS_TO_SHOW = 4; // Πόσες μέρες να δείχνει ταυτόχρονα
 
   const ratingValue = vet.reviews && vet.reviews.length > 0
@@ -44,7 +49,10 @@ const VetCard = ({ vet, onBookAppointment }) => {
     sortedSlots.forEach(slot => {
         if (!grouped[slot.date]) grouped[slot.date] = [];
         // Εδώ ΔΕΝ κόβουμε τα slots (τα αφήνουμε όλα για να κάνουμε scroll)
-        grouped[slot.date].push(slot.time);
+        grouped[slot.date].push({
+            id: slot.id,
+            time: slot.time
+        });
     });
 
     // 3. Map σε array αντικειμένων
@@ -67,6 +75,21 @@ const VetCard = ({ vet, onBookAppointment }) => {
   
   // Ο μήνας που θα δείχνουμε πάνω (παίρνουμε τον μήνα της πρώτης ορατής μέρας)
   const displayMonth = visibleDays.length > 0 ? visibleDays[0].month : 'ΔΙΑΘΕΣΙΜΟΤΗΤΑ';
+  
+  const onBookAppointment = async () => {
+    if(!isLoggedIn || user.role !== 'owner') {
+      openSnackbar('Πρέπει να είστε συνδεδεμένος/η ως ιδιοκτήτης κατοικιδίου για να κλείσετε ραντεβού.', 'error');
+      return;
+    }
+    if(slotSelected) { 
+      navigate('/owner/search-vet/book-appointment', {
+        state: {
+          vetId: vet.id,
+          slotId: slotSelected,
+        }
+      });
+    }
+  }
 
   // Handlers για τα βελάκια
   const handleNext = () => {
@@ -187,7 +210,7 @@ const VetCard = ({ vet, onBookAppointment }) => {
           </Grid>
 
           {/* --- ΔΕΞΙΑ ΠΛΕΥΡΑ (ΔΙΑΘΕΣΙΜΟΤΗΤΑ) --- */}
-          <Grid item xs={5}>
+          <Grid item xs={5} sx={{ position: 'relative' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
               <CalendarMonthIcon sx={{ fontSize: 30 }} />
               <Box>
@@ -261,12 +284,14 @@ const VetCard = ({ vet, onBookAppointment }) => {
                             '&::-webkit-scrollbar': { width: '4px' },
                             '&::-webkit-scrollbar-thumb': { backgroundColor: '#ccc', borderRadius: '4px' }
                         }}>
-                            {day.slots.map((time, tIndex) => (
+                            {day.slots.map(slot => (
                                 <Chip 
-                                    key={tIndex} 
-                                    label={time} 
-                                    variant="outlined"
-                                    onClick={() => console.log(`Selected: ${day.dateStr} ${time}`)}
+                                    key={slot.id} 
+                                    label={slot.time} 
+                                    variant="filled"
+                                    onClick={() =>
+                                      setSlotSelected(prev => (prev === slot.id ? null : slot.id))
+                                    }
                                     sx={{ 
                                         // ΑΛΛΑΓΗ 2: width: '100%' για να απλώσει και fontSize
                                         width: '100%', 
@@ -274,9 +299,9 @@ const VetCard = ({ vet, onBookAppointment }) => {
                                         borderRadius: '4px', 
                                         border: '1px solid #ccc', 
                                         fontWeight: 'bold', 
-                                        bgcolor: '#fff',
+                                        bgcolor: slotSelected === slot.id ? '#1976d2' : '#fff',
                                         height: '30px', // Λίγο πιο ψηλό για να αναπνέει
-                                        '&:hover': { bgcolor: '#90caf9', cursor: 'pointer', borderColor: '#1976d2' },
+                                        '&:hover': { bgcolor: slotSelected === slot.id ? '#3792ee' : '#ffffff', cursor: 'pointer', borderColor: '#1976d2' },
                                         '& .MuiChip-label': { paddingLeft: 1, paddingRight: 1 } // Μικρότερο padding για να χωράει το κείμενο
                                     }} 
                                 />
@@ -308,9 +333,12 @@ const VetCard = ({ vet, onBookAppointment }) => {
 
             <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
               <Button 
+                  disabled={slotSelected === null}
                   variant="contained" 
-                  onClick={onBookAppointment}
+                  onClick={() => onBookAppointment(visibleDays)}
                   sx={{ 
+                      position: 'absolute',
+                      bottom: 20,
                       bgcolor: '#6200EA', 
                       color: 'white', 
                       fontWeight: 'bold', 

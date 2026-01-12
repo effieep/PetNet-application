@@ -43,6 +43,7 @@ import Adoption from './pages/vet/Happenings/Adoption.js';
 import Transfer from './pages/vet/Happenings/Transfer.js';
 import Foster from './pages/vet/Happenings/Foster.js';
 import Death from './pages/vet/Happenings/Death.js';
+import BookAppointment from './pages/owner/search-vet/BookAppointment.js';
 import { Box } from "@mui/material";
 
 function App() {
@@ -91,6 +92,7 @@ function App() {
           <Route path="/vet/manage-appointments/scheduled-appointments" element={<VetScheduledRdvz />} />
           <Route path="/owner/search-vet" element={<SearchVet />} />
           <Route path="/owner/search-vet/vet-details" element={<VetDetails />} />
+          <Route path="/owner/search-vet/book-appointment" element={<BookAppointment />} />
           <Route path="/lost-found" element={<LostFound />} />
           <Route path="/lost-found/lost_pet" element={<ReportLost />} />
           <Route path="/help" element={<Help />} />
