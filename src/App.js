@@ -27,9 +27,9 @@ import VetReviews from './pages/vet/vetReviews.js';
 import VetPublic from './pages/vet/vetPublic.js';
 import VetManagePets from './pages/vet/VetManagePets.js';
 import VetManageRdvz from './pages/vet/VetManageRdvz.js';
-import VetAvailability from './pages/vet/vetAvailability.js';
-import VetRequestRdvz from './pages/vet/vetRequestRdvz.js';
-import VetScheduledRdvz from './pages/vet/vetScheduledRdvz.js'; 
+import VetAvailability from './pages/vet/Appointments/vetAvailability.js';
+import VetRequestRdvz from './pages/vet/Appointments/vetRequestRdvz.js';
+import VetScheduledRdvz from './pages/vet/Appointments/vetScheduledRdvz.js'; 
 import RegisterPet from './pages/vet/RegisterPet.js';
 import RegisterMedical from './pages/vet/RegisterMedical.js';
 import RegisterEvent from './pages/vet/RegisterEvent.js';
@@ -43,6 +43,8 @@ import Adoption from './pages/vet/Happenings/Adoption.js';
 import Transfer from './pages/vet/Happenings/Transfer.js';
 import Foster from './pages/vet/Happenings/Foster.js';
 import Death from './pages/vet/Happenings/Death.js';
+import BookAppointment from './pages/owner/search-vet/BookAppointment.js';
+import AppointmentsHistory from './pages/vet/Appointments/vetAppointmentHistory.js';
 import { Box } from "@mui/material";
 
 function App() {
@@ -89,8 +91,10 @@ function App() {
           <Route path="/vet/manage-appointments/manage-availability" element={<VetAvailability />} />
           <Route path="/vet/manage-appointments/manage-requests" element={<VetRequestRdvz />} />
           <Route path="/vet/manage-appointments/scheduled-appointments" element={<VetScheduledRdvz />} />
+          <Route path="/vet/manage-appointments/appointment-history" element={<AppointmentsHistory />} />
           <Route path="/owner/search-vet" element={<SearchVet />} />
           <Route path="/owner/search-vet/vet-details" element={<VetDetails />} />
+          <Route path="/owner/search-vet/book-appointment" element={<BookAppointment />} />
           <Route path="/lost-found" element={<LostFound />} />
           <Route path="/lost-found/lost_pet" element={<ReportLost />} />
           <Route path="/help" element={<Help />} />

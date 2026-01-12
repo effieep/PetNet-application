@@ -1,5 +1,5 @@
 import Hero from '../../../components/Hero.jsx';
-import { Box, Typography, FormControl, RadioGroup, FormControlLabel, Radio, Button, Autocomplete, TextField, Popper, InputAdornment, Divider } from '@mui/material';
+import { Box, Typography, FormControl, RadioGroup, FormControlLabel, Radio, Button, Autocomplete, TextField, Popper, InputAdornment, Divider, Snackbar, Alert } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { API_URL } from '../../../api.js';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -145,6 +145,15 @@ const SearchVet = () => {
   const [availableVets, setAvailableVets] = useState({list:[], searching: false});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState({ open: false, message: '', severity: 'success' });
+
+  const openSnackbar = (message, severity='success') => {
+    setSnackbarOpen({ open: true, message, severity });
+  };
+
+  const closeSnackbar = () => {
+    setSnackbarOpen({ open: false, message: '', severity: 'success' });
+  };
 
   useEffect(() => {
     const fetchVets = async () => {
@@ -571,7 +580,7 @@ const SearchVet = () => {
                   }
                   return false;
                 })}}
-                onBookAppointment={(id) => alert(`Πάτησες κράτηση για τον γιατρό με ID: ${id}`)}
+                openSnackbar={openSnackbar}
               />
               </>
 
@@ -579,6 +588,21 @@ const SearchVet = () => {
           ) 
         }
       </Box>
+      <Snackbar
+        open={snackbarOpen.open}
+        autoHideDuration={3000} // 3 seconds
+        onClose={closeSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert
+          onClose={closeSnackbar}
+          severity={snackbarOpen.severity}
+          sx={{ width: '100%' }}
+        >
+          {snackbarOpen.message}
+        </Alert>
+      </Snackbar>
+
     </>
   );
 };

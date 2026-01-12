@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'; 
-import { useAuth } from "../../auth/AuthContext";
+import { useAuth } from "../../../auth/AuthContext.jsx";
 import { 
   Box, Typography, Grid, TextField, Button, Paper, CircularProgress, 
   Switch, FormControlLabel, IconButton
@@ -8,11 +8,11 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import SubMenu from '../../components/SubMenu.jsx';
+import SubMenu from '../../../components/SubMenu.jsx';
 import { Snackbar, Alert } from '@mui/material';
 import dayjs from 'dayjs';
 import 'dayjs/locale/el';
-import { API_URL } from '../../api.js';
+import { API_URL } from '../../../api.js';
 
 // Plugins
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
@@ -40,6 +40,7 @@ const VetAvailability = () => {
     { label: "Διαχείριση Διαθεσιμότητας", path: "/vet/manage-appointments/manage-availability" },
     { label: "Διαχείριση Αιτημάτων Ραντεβού", path: "/vet/manage-appointments/manage-requests" },
     { label: "Προγραμμάτισμένα Ραντεβού", path: "/vet/manage-appointments/scheduled-appointments" },
+    { label: "Ιστορικό Ραντεβού", path: "/vet/manage-appointments/appointment-history" },
   ];
 
   // --- STATE ---

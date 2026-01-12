@@ -796,6 +796,7 @@
       "date": "10-01-2024",
       "time": "10:00",
       "status": "COMPLETED",
+      "reason": "",
       "reviewed": true
     },
     {
@@ -806,15 +807,18 @@
       "date": "10-01-2024",
       "time": "13:00",
       "status": "CANCELLED",
+      "reason": "",
       "reviewed": false
     },
     {
       "id": "5",
       "ownerId": "u1",
+      "petId": "p1",
       "vetId": "v1",
       "date": "10-01-2024",
       "time": "13:00",
       "status": "CANCELLED",
+      "reason": "",
       "reviewed": false
     }
   ],
