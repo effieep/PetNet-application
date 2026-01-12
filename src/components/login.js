@@ -94,20 +94,6 @@ export default function LoginDialog({ open, onClose }) {
         sx={{ padding: 3, justifyContent: "center", backgroundColor: "#f9f9f9" }}
       >
         <Button
-          onClick={onClose}
-          sx={{
-            color: "#373721",
-            mr: 2,
-            backgroundColor: "#e2824bff",
-            px: 4,
-            fontWeight: "bold",
-          }}
-          variant="outlined"
-        >
-          ΑΚΥΡΩΣΗ
-        </Button>
-
-        <Button
           type="submit"
           onClick={handleLogin}
           variant="contained"
@@ -122,6 +108,20 @@ export default function LoginDialog({ open, onClose }) {
         >
           {loading ? "..." : "ΣΥΝΔΕΣΗ"}
         </Button>
+        <Button
+          onClick={onClose}
+          sx={{
+            color: "#373721",
+            mr: 2,
+            backgroundColor: "#e2824bff",
+            px: 4,
+            fontWeight: "bold",
+          }}
+          variant="outlined"
+        >
+          ΑΚΥΡΩΣΗ
+        </Button>
+
       </DialogActions>
     </Dialog>
   );
