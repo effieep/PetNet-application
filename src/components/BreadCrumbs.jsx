@@ -30,7 +30,7 @@ const breadcrumbMap = {
   'view-health-record': 'Προβολή Βιβλιαρίου Υγείας',
   'manage-availability': 'Διαχείριση Διαθεσιμότητας',
   'manage-requests': 'Διαχείριση Αιτημάτων Ραντεβού',
-  'scheduled-appointments': 'Προγραμμάτιστα Ραντεβού',
+  'scheduled-appointments': 'Προγραμματισμένα Ραντεβού',
   'vet-details': 'Πληροφορίες Κτηνιάτρου',
   'record-vaccine': 'Καταγραφή Εμβολιασμού',
   'record-deworming': 'Καταγραφή Αποπαρασίτωσης',
