@@ -129,7 +129,7 @@ const BookAppointment = () => {
             ownerId: user.id,
             petId: selectedPetId,
             vetId: vetId,
-            date: slotData.date,
+            date: slotData.date.replace(/\//g, '-'),
             time: slotData.time,
             status: 'PENDING',
             reason: appointmentType,
