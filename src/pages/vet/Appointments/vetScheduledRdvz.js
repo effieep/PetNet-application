@@ -11,6 +11,7 @@ const submenuItems = [
   { label: "Διαχείριση Διαθεσιμότητας", path: "/vet/manage-appointments/manage-availability" },
   { label: "Διαχείριση Αιτημάτων Ραντεβού", path: "/vet/manage-appointments/manage-requests" },
   { label: "Προγραμμάτισμένα Ραντεβού", path: "/vet/manage-appointments/scheduled-appointments" },
+  { label: "Ιστορικό Ραντεβού", path: "/vet/manage-appointments/appointment-history" },
 ];
 
 const VetScheduledRdvz = () => {

@@ -42,6 +42,7 @@ const breadcrumbMap = {
   'foster': 'Καταγραφή Αναδοχής',
   'death': 'Καταγραφή Θανάτου',
   'book-appointment': 'Κράτηση Ραντεβού',
+  'appointment-history': 'Ιστορικό Ραντεβού',
 };
 
 function AppBreadcrumbs() {
