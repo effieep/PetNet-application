@@ -18,6 +18,8 @@ import { API_URL } from '../../../api.js';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import weekday from 'dayjs/plugin/weekday';
 import localeData from 'dayjs/plugin/localeData';
+import customParseFormat from 'dayjs/plugin/customParseFormat'; // <-- ΝΕΟ
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'; // <-- ΝΕΟ
 
 // Icons
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
@@ -27,11 +29,13 @@ import UpdateIcon from '@mui/icons-material/Update';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 
-
+// ... extensions
 dayjs.extend(isSameOrBefore);
 dayjs.extend(weekday);
 dayjs.extend(localeData);
-dayjs.locale('el'); 
+dayjs.extend(customParseFormat); 
+dayjs.extend(isSameOrAfter);
+dayjs.locale('el');
 
 const VetAvailability = () => {
   const { user, isLoggedIn } = useAuth();
@@ -83,14 +87,40 @@ const VetAvailability = () => {
     setSnackbar(prev => ({ ...prev, open: false }));
   };
 
-  // --- FETCH DATA ---
+// --- FETCH DATA & AUTO CLEANUP ---
   useEffect(() => {
     if (user?.id) {
       fetch(`${API_URL}/users/${user.id}`)
         .then(res => res.json())
         .then(data => {
-          setAvailabilities(data.availability || []);
+          const allSlots = data.availability || [];
+          
+          // Τρέχουσα ημερομηνία (χωρίς ώρα, για σύγκριση ημερών)
+          const today = dayjs().startOf('day');
+
+          // Φιλτράρισμα: Κρατάμε μόνο όσα είναι ΣΗΜΕΡΑ ή στο ΜΕΛΛΟΝ
+          const validSlots = allSlots.filter(slot => {
+            // Μετατροπή του string "DD/MM/YYYY" σε dayjs object
+            const slotDate = dayjs(slot.date, 'DD/MM/YYYY');
+            // Κρατάμε το slot αν η ημερομηνία είναι ίδια ή μεταγενέστερη του "σήμερα"
+            return slotDate.isSameOrAfter(today, 'day');
+          });
+
+          // Ενημερώνουμε το State με τα καθαρά slots
+          setAvailabilities(validSlots);
           setLoading(false);
+
+          // Αν βρέθηκαν και αφαιρέθηκαν παλιά slots, ενημερώνουμε τη βάση αυτόματα
+          if (validSlots.length < allSlots.length) {
+            console.log("Cleaning up old slots...");
+            fetch(`${API_URL}/users/${user.id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ availability: validSlots })
+              })
+              .then(() => console.log("Old slots removed from database."))
+              .catch(err => console.error("Auto-cleanup failed:", err));
+          }
         })
         .catch(err => {
           console.error("Error fetching availability:", err);

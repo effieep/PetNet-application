@@ -72,7 +72,7 @@ const AppointmentCard = ({ appointment, open, onToggle, onCancelSuccess }) => {
           {/* 🔽 ΒΕΛΟΣ */}
           <IconButton
             onClick={(e) => {
-              e.stopPropagation(); // 👈 για να μη διπλο-κάνει toggle
+              e.stopPropagation(); 
               onToggle();
             }}
           >

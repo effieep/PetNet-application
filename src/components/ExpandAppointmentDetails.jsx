@@ -167,7 +167,7 @@ const ExpandedAppointmentDetails = ({ appointment, onCancelSuccess }) => {
         flexWrap: "wrap"
       }}
     >
-    {status === "PENDING" && (
+    {(status === "PENDING" || status === "CONFIRMED") && (
       <Button
         variant="contained"
         color="error"

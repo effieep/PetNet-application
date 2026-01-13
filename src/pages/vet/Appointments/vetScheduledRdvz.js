@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Box, Paper, Button, Collapse } from '@mui/material';
+import { Typography, Box, Paper, Button, Collapse, Chip } from '@mui/material'; // Πρόσθεσα το Chip για πιο ωραία εμφάνιση
 import { useAuth } from "../../../auth/AuthContext";
 import SubMenu from '../../../components/SubMenu.jsx';
 import { API_URL } from '../../../api.js';
@@ -44,6 +44,7 @@ const VetScheduledRdvz = () => {
       });
       if(!response.ok) throw new Error('Failed to decline appointment');
       
+      // Το αφαιρούμε από την λίστα "ενεργειών" μόλις το ακυρώσει ο γιατρός
       setAppointments(prev => prev.filter(app => app.id !== appointmentId));
     }
     catch (error) {
@@ -58,13 +59,18 @@ const VetScheduledRdvz = () => {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' },
         });
-        if (!response.ok) throw new Error('Failed to fetch confirmed appointments');
+        if (!response.ok) throw new Error('Failed to fetch appointments');
         
         const data = await response.json();
-        const confirmedApps = data.filter(appointment => appointment.vetId === user.id && appointment.status === 'CONFIRMED');
+        
+        // ΑΛΛΑΓΗ 1: Φιλτράρουμε ώστε να παίρνουμε τα CONFIRMED ΑΛΛΑ ΚΑΙ τα CANCELLED
+        const confirmedApps = data.filter(appointment => 
+          appointment.vetId === user.id && 
+          (appointment.status === 'CONFIRMED' || appointment.status === 'CANCELLED')
+        );
         setAppointments(sortAppointments(confirmedApps));
       } catch (error) {
-        console.error("Error fetching confirmed appointments:", error);
+        console.error("Error fetching appointments:", error);
       }
     };
 
@@ -126,8 +132,8 @@ const VetScheduledRdvz = () => {
             <Box sx={{ display: 'flex', bgcolor: '#F9FAFB', p: 2, borderBottom: '1px solid #e0e0e0' }}>
               <Box sx={{ flex: 1, ...headerStyle }}>Ημερομηνία</Box>
               <Box sx={{ flex: 1, ...headerStyle }}>Ώρα</Box>
-              <Box sx={{ flex: 2, ...headerStyle }}>Στοιχεία Πελάτη</Box>
-              <Box sx={{ flex: 1, ...headerStyle, textAlign: 'right' }}>Ενέργειες</Box>
+              <Box sx={{ flex: 2, ...headerStyle }}>Στοιχεια Πελατη</Box>
+              <Box sx={{ flex: 1, ...headerStyle, textAlign: 'right' }}>ΚΑΤΑΣΤΑΣΗ / ΕΝΕΡΓΕΙΕΣ</Box>
             </Box>
 
             <TransitionGroup>
@@ -135,7 +141,10 @@ const VetScheduledRdvz = () => {
                 const owner = owners.find(owner => owner.id === app.ownerId);
                 return (
                   <Collapse key={app.id}>
-                    <Box sx={rowStyle}>
+                    <Box sx={{
+                       ...rowStyle,
+                       backgroundColor: app.status === 'CANCELLED' ? '#fff0f0' : 'inherit' // Προαιρετικά: ελαφρύ κόκκινο φόντο αν ακυρώθηκε
+                    }}>
                       <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Calendar size={18} color="#666" />
                         <Typography fontWeight={500}>{app.date}</Typography>
@@ -149,17 +158,30 @@ const VetScheduledRdvz = () => {
                       <Box sx={{ flex: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
                         <User size={18} color="#666" />
                         <Typography>
-                          {owner ? `${owner.name} ${owner.surname}` : 'Άγνωστος Πελάτης'}
+                          {owner ? `${owner.name} ${owner.surname} - ${owner.phone}` : 'Άγνωστος Πελάτης'}
                         </Typography>
                       </Box>
 
                       <Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-                        <Button variant="contained" color="success" size="small" sx={{ minWidth: '40px', px: 1 }} onClick={() => handleAccept(app.id)}>
-                          <Check size={18} />
-                        </Button>
-                        <Button variant="contained" color="error" size="small" sx={{ minWidth: '40px', px: 1 }} onClick={() => handleDecline(app.id)}>
-                          <X size={18} />
-                        </Button>
+                        {/* ΑΛΛΑΓΗ 2: Έλεγχος Status για εμφάνιση κουμπιών ή κειμένου */}
+                        {app.status === 'CANCELLED' ? (
+                          <Chip 
+                            label="ΑΚΥΡΩΘΗΚΕ" 
+                            color="error" 
+                            variant="outlined" 
+                            size="small" 
+                            sx={{ fontWeight: 'bold' }}
+                          />
+                        ) : (
+                          <>
+                            <Button variant="contained" color="success" size="small" sx={{ minWidth: '40px', px: 1 }} onClick={() => handleAccept(app.id)}>
+                              <Check size={18} />
+                            </Button>
+                            <Button variant="contained" color="error" size="small" sx={{ minWidth: '40px', px: 1 }} onClick={() => handleDecline(app.id)}>
+                              <X size={18} />
+                            </Button>
+                          </>
+                        )}
                       </Box>
                     </Box>
                   </Collapse>
