@@ -373,7 +373,7 @@ const StepSummary = () => (
       Έτοιμο!
     </Typography>
     <Typography>
-      (Placeholder) Η δήλωση απώλειας θα αποθηκευτεί όταν συνδέσουμε τη βάση.
+      Η δήλωση απώλειας καταχωρήθηκε επιτυχώς.
     </Typography>
   </Box>
 );
