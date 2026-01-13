@@ -86,11 +86,13 @@ const RegisterEvent = () => {
     fetchPets();
     if(location.state && location.state.successMessage) {
       openSnackbar(location.state.successMessage, 'success');
+      navigate(location.pathname, { replace: true, state: {} });
     }
     if(location.state && location.state.errorMessage) {
       openSnackbar(location.state.errorMessage, 'error');
+      navigate(location.pathname, { replace: true, state: {} });
     }
-  }, [location.state]);
+  }, [location, navigate]);
 
   const { isLoggedIn, user } = useAuth();
 
