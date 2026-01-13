@@ -329,6 +329,11 @@ const StepConfirmation = ({ formData, submitError }) => (
         <li>
           <strong>Ημερομηνία:</strong> {formData.loss.date}
         </li>
+        {formData.loss.time && (
+          <li>
+            <strong>Ώρα:</strong> {formData.loss.time}
+          </li>
+        )}
         <li>
           <strong>Τηλέφωνο:</strong> {formData.contact.phone}
         </li>
@@ -583,6 +588,13 @@ export default function ReportLostStepper() {
     return `${dd}-${mm}-${yyyy}`;
   };
 
+  const nowHHMM = () => {
+    const d = new Date();
+    const hh = String(d.getHours()).padStart(2, "0");
+    const min = String(d.getMinutes()).padStart(2, "0");
+    return `${hh}:${min}`;
+  };
+
   const handleSubmit = async () => {
     if (submitting) return;
     setSubmitError("");
@@ -603,9 +615,11 @@ export default function ReportLostStepper() {
       type: "LOSS",
       status: "SUBMITTED",
       createdAt: todayDDMMYYYY(),
+      createdTime: nowHHMM(),
       petId: String(selectedPetId),
       ownerId: String(user.id),
       lostDate: formatDateToDDMMYYYY(formData.loss.date),
+      lostTime: formData.loss.time || "",
       location: {
         address: formData.loss.area,
         ...(formData.loss.lat != null && formData.loss.lon != null
