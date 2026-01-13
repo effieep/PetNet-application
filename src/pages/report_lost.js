@@ -303,11 +303,18 @@ const StepContactDetails = ({ formData, updateField, errors, user, contactPreset
   </Box>
 );
 
-const StepConfirmation = ({ formData }) => (
+const StepConfirmation = ({ formData, submitError }) => (
   <Box>
     <Typography variant="h6" gutterBottom>
       Παρακαλώ ελέγξτε τα στοιχεία σας:
     </Typography>
+
+    {submitError && (
+      <Typography color="error" sx={{ fontWeight: 700, mb: 2 }}>
+        {submitError}
+      </Typography>
+    )}
+
     <Box sx={{ bgcolor: "#f5f5f5", p: 3, borderRadius: 2 }}>
       <ul style={{ listStyle: "none", padding: 0, margin: 0, lineHeight: "2" }}>
         <li>
@@ -322,6 +329,11 @@ const StepConfirmation = ({ formData }) => (
         <li>
           <strong>Ημερομηνία:</strong> {formData.loss.date}
         </li>
+        {formData.loss.time && (
+          <li>
+            <strong>Ώρα:</strong> {formData.loss.time}
+          </li>
+        )}
         <li>
           <strong>Τηλέφωνο:</strong> {formData.contact.phone}
         </li>
@@ -361,7 +373,7 @@ const StepSummary = () => (
       Έτοιμο!
     </Typography>
     <Typography>
-      (Placeholder) Η δήλωση απώλειας θα αποθηκευτεί όταν συνδέσουμε τη βάση.
+      Η δήλωση απώλειας καταχωρήθηκε επιτυχώς.
     </Typography>
   </Box>
 );
@@ -385,6 +397,7 @@ export default function ReportLostStepper() {
 
   const [formData, setFormData] = useState({
     pet: {
+      id: "",
       microchip: "",
       species: "",
       breed: "",
@@ -415,8 +428,12 @@ export default function ReportLostStepper() {
   const [contactPreset, setContactPreset] = useState("manual");
   const [showAltContact, setShowAltContact] = useState(false);
 
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+
   useEffect(() => {
     setErrors({});
+    setSubmitError("");
   }, [activeStep]);
 
   useEffect(() => {
@@ -551,11 +568,97 @@ export default function ReportLostStepper() {
 
   const handleBack = () => setActiveStep((prev) => prev - 1);
 
+  const formatDateToDDMMYYYY = (dateStr) => {
+    if (!dateStr) return "";
+    // Already matches db.json style
+    if (/^\d{2}-\d{2}-\d{4}$/.test(dateStr)) return dateStr;
+    // From <input type="date"> (YYYY-MM-DD)
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+      const [yyyy, mm, dd] = dateStr.split("-");
+      return `${dd}-${mm}-${yyyy}`;
+    }
+    return dateStr;
+  };
+
+  const todayDDMMYYYY = () => {
+    const d = new Date();
+    const dd = String(d.getDate()).padStart(2, "0");
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const yyyy = String(d.getFullYear());
+    return `${dd}-${mm}-${yyyy}`;
+  };
+
+  const nowHHMM = () => {
+    const d = new Date();
+    const hh = String(d.getHours()).padStart(2, "0");
+    const min = String(d.getMinutes()).padStart(2, "0");
+    return `${hh}:${min}`;
+  };
+
   const handleSubmit = async () => {
-    // Placeholder: later connect to db/api
-    // eslint-disable-next-line no-console
-    console.log("Lost report submit (placeholder)", formData);
-    setActiveStep((prev) => prev + 1);
+    if (submitting) return;
+    setSubmitError("");
+
+    // Extra guards (should already be enforced by the wizard gating)
+    if (!isLoggedIn || !user?.id) {
+      setSubmitError("Απαιτείται σύνδεση.");
+      setActiveStep(0);
+      return;
+    }
+    if (!selectedPetId) {
+      setSubmitError("Επιλέξτε κατοικίδιο πριν την ολοκλήρωση.");
+      setActiveStep(1);
+      return;
+    }
+
+    const payload = {
+      type: "LOSS",
+      status: "SUBMITTED",
+      createdAt: todayDDMMYYYY(),
+      createdTime: nowHHMM(),
+      petId: String(selectedPetId),
+      ownerId: String(user.id),
+      lostDate: formatDateToDDMMYYYY(formData.loss.date),
+      lostTime: formData.loss.time || "",
+      location: {
+        address: formData.loss.area,
+        ...(formData.loss.lat != null && formData.loss.lon != null
+          ? { lat: formData.loss.lat, lon: formData.loss.lon }
+          : {}),
+      },
+      description: formData.loss.notes || "",
+      contact: {
+        name: formData.contact.name,
+        phone: formData.contact.phone,
+        email: formData.contact.email,
+        ...(formData.contact.altName || formData.contact.altPhone || formData.contact.altEmail
+          ? {
+              alt: {
+                name: formData.contact.altName,
+                phone: formData.contact.altPhone,
+                email: formData.contact.altEmail,
+              },
+            }
+          : {}),
+      },
+    };
+
+    setSubmitting(true);
+    try {
+      const res = await fetch(`${API_URL}/declarations`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error("Αποτυχία αποθήκευσης δήλωσης.");
+
+      // Success: go to "Ολοκλήρωση"
+      setActiveStep((prev) => prev + 1);
+    } catch (e) {
+      setSubmitError(e?.message || "Παρουσιάστηκε σφάλμα κατά την αποθήκευση.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleSelectPet = (pet) => {
@@ -565,6 +668,7 @@ export default function ReportLostStepper() {
       ...prev,
       pet: {
         ...prev.pet,
+        id: pet.id,
         microchip: pet.microchip || "",
         species: pet.species || "",
         breed: pet.breed || "",
@@ -610,7 +714,7 @@ export default function ReportLostStepper() {
           />
         );
       case 4:
-        return <StepConfirmation formData={formData} />;
+        return <StepConfirmation formData={formData} submitError={submitError} />;
       case 5:
         return <StepSummary />;
       default:
@@ -768,8 +872,14 @@ export default function ReportLostStepper() {
                     ΕΠΙΣΤΡΟΦΗ
                   </Button>
                 ) : isConfirmStep ? (
-                  <Button variant="contained" color="success" onClick={handleSubmit} sx={{ px: 4, py: 1, fontWeight: "bold", ml: "auto" }}>
-                    ΟΛΟΚΛΗΡΩΣΗ
+                  <Button
+                    variant="contained"
+                    color="success"
+                    onClick={handleSubmit}
+                    disabled={submitting}
+                    sx={{ px: 4, py: 1, fontWeight: "bold", ml: "auto" }}
+                  >
+                    {submitting ? "..." : "ΟΛΟΚΛΗΡΩΣΗ"}
                   </Button>
                 ) : (
                   <Button variant="contained" onClick={handleNext} sx={{ px: 4, py: 1, fontWeight: "bold", ml: "auto" }}>
