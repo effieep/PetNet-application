@@ -204,6 +204,7 @@ const RegisterPet = () => {
           variant="outlined"
           name={name}
           fullWidth
+          inputProps={{ max: (new Date()).toISOString().split("T")[0] }}
           helperText={errors[name]} error={Boolean(errors[name])}
           onChange={handleChange}
           InputLabelProps={{

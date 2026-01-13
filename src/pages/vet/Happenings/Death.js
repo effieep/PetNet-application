@@ -1,4 +1,4 @@
-import { Box, Typography, TextField, Button, Snackbar, Alert, CircularProgress } from '@mui/material';
+import { Box, Typography, TextField, Button, CircularProgress } from '@mui/material';
 import { MdAlternateEmail } from 'react-icons/md';
 import { FaPhoneAlt  } from 'react-icons/fa';
 import { FaLocationDot } from 'react-icons/fa6';
@@ -11,7 +11,6 @@ const getTodayDate = () => {
   const date = new Date();
   return date.toISOString().split('T')[0];
 }
-const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 const reverseDate = (dateStr) => {
   const [year, month, day] = dateStr.split('-');
@@ -28,7 +27,6 @@ const Death = () => {
   const [pet, setPet] = useState(null);
   const [loading, setLoading] = useState(false);
   const [owners, setOwners] = useState([]);
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const [formData, setFormData] = useState({
     type: 'death',
     date: reverseDate(new Date().toISOString().split('T')[0],),
@@ -66,15 +64,6 @@ const Death = () => {
     }
   }, [owners, pet]);
 
-  const closeSnackbar = () => {
-    setSnackbar({ ...snackbar, open: false });
-  }
-
-  const openSnackbar = (message, severity) => {
-    setSnackbar({ open: true, message, severity });
-  }
-
-
   const handleSubmit = async () => {
     try {
       setLoading(true);
@@ -102,9 +91,7 @@ const Death = () => {
         }),
       });
       if(response.ok) {
-        openSnackbar('Η δήλωση θανάτου καταχωρήθηκε με επιτυχία!', 'success');
-        await wait(5000);
-        navigate('/vet/manage-pets/record-life-event');
+        navigate('/vet/manage-pets/record-life-event', { state: { successMessage: 'Η δήλωση θανάτου καταχωρήθηκε με επιτυχία!' } });
         setLoading(false);
         setPet(
           { ...pet, 
@@ -127,7 +114,8 @@ const Death = () => {
           }
         )
       } else {
-        openSnackbar('Σφάλμα κατά την καταχώρηση της δήλωσης θανάτου. Παρακαλώ δοκιμάστε ξανά.', 'error');
+        navigate('/vet/manage-pets/record-life-event', { state: { errorMessage: 'Σφάλμα κατά την καταχώρηση της δήλωσης θανάτου. Παρακαλώ δοκιμάστε ξανά.' } });
+        setLoading(false);
       }
     } catch (error) {
       console.error('Error submitting death:', error);
@@ -140,20 +128,6 @@ const Death = () => {
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
         <CircularProgress />
       </Box>
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={4000}
-        onClose={closeSnackbar}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      >
-        <Alert
-          onClose={closeSnackbar}
-          severity={snackbar.severity}
-          variant="filled"
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
     </>
   );
 }
@@ -270,20 +244,6 @@ const Death = () => {
           Καταχώρηση Θανάτου
         </Button>
         </Box>
-        <Snackbar
-          open={snackbar.open}
-          autoHideDuration={4000}
-          onClose={closeSnackbar}
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        >
-          <Alert
-            onClose={closeSnackbar}
-            severity={snackbar.severity}
-            variant="filled"
-          >
-            {snackbar.message}
-          </Alert>
-        </Snackbar>
       </Box>
   );
 }

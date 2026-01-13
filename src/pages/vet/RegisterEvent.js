@@ -1,11 +1,11 @@
 import Submenu from '../../components/SubMenu';
 import { useState, useEffect, Fragment } from 'react';
-import { Box, Typography, Autocomplete, TextField, Grid, Divider, Stack, Paper, MenuItem, Button } from '@mui/material';
+import { Box, Typography, Autocomplete, TextField, Grid, Divider, Stack, Paper, MenuItem, Button, Snackbar, Alert } from '@mui/material';
 import { useAuth } from '../../auth/AuthContext';
 import { API_URL } from '../../api';
 import { OwnerField, DetailRow } from '../../components/PetDetailsCard';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const submenuItems = [
   { label: "Καταγραφή νέου Κατοικιδίου", path: "/vet/manage-pets/register-pet" },
@@ -16,10 +16,20 @@ const submenuItems = [
 
 const RegisterEvent = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [pets, setPets] = useState([]);
   const [action, setAction] = useState('');
   const [owners, setOwners] = useState([]);
   const [selectedPet, setSelectedPet] = useState(null);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+  
+  const openSnackbar = (message, severity) => {
+    setSnackbar({ open: true, message, severity });
+  }
+  
+  const closeSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  }
 
   const handleClickButton = () => {
     if(action === '') return;
@@ -74,7 +84,13 @@ const RegisterEvent = () => {
     };
     fetchOwners();
     fetchPets();
-  }, []);
+    if(location.state && location.state.successMessage) {
+      openSnackbar(location.state.successMessage, 'success');
+    }
+    if(location.state && location.state.errorMessage) {
+      openSnackbar(location.state.errorMessage, 'error');
+    }
+  }, [location.state]);
 
   const { isLoggedIn, user } = useAuth();
 
@@ -235,6 +251,16 @@ const RegisterEvent = () => {
           })()}
         </Fragment>
       </Box>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={closeSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert onClose={closeSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

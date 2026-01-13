@@ -1,4 +1,4 @@
-import { Box, Typography, Autocomplete, TextField, Button, Snackbar, Alert, CircularProgress } from '@mui/material';
+import { Box, Typography, Autocomplete, TextField, Button, CircularProgress } from '@mui/material';
 import { MdAlternateEmail } from 'react-icons/md';
 import { FaPhoneAlt  } from 'react-icons/fa';
 import { FaLocationDot } from 'react-icons/fa6';
@@ -7,7 +7,6 @@ import { API_URL } from '../../../api';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../auth/AuthContext';
 
-const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 const reverseDate = (dateStr) => {
   const [year, month, day] = dateStr.split('-');
@@ -27,7 +26,6 @@ const Adoption = () => {
   const [pet, setPet] = useState(null);
   const [loading, setLoading] = useState(false);
   const [owners, setOwners] = useState([]);
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const [formData, setFormData] = useState({
     newOwnerId: '',
     type: 'adoption',
@@ -57,14 +55,6 @@ const Adoption = () => {
     };
     fetchOwners();
   }, []);
-
-  const closeSnackbar = () => {
-    setSnackbar({ ...snackbar, open: false });
-  }
-
-  const openSnackbar = (message, severity) => {
-    setSnackbar({ open: true, message, severity });
-  }
 
   const nameForeas = pet && pet.ownerId.startsWith('FILOZ-') ? pet.ownerId.split('FILOZ-')[1] : '';
 
@@ -97,9 +87,7 @@ const Adoption = () => {
         }),
       });
       if(response.ok) {
-        openSnackbar('Η υιοθεσία καταχωρήθηκε με επιτυχία!', 'success');
-        await wait(5000);
-        navigate('/vet/manage-pets/record-life-event');
+        navigate('/vet/manage-pets/record-life-event', { state: { successMessage: 'Η υιοθεσία καταχωρήθηκε με επιτυχία!' } });
         setLoading(false);
         setPet(
           { ...pet, 
@@ -123,7 +111,8 @@ const Adoption = () => {
           }
         )
       } else {
-        openSnackbar('Σφάλμα κατά την καταχώρηση της υιοθεσίας. Παρακαλώ δοκιμάστε ξανά.', 'error');
+        navigate('/vet/manage-pets/record-life-event', { state: { errorMessage: 'Σφάλμα κατά την καταχώρηση της υιοθεσίας. Παρακαλώ δοκιμάστε ξανά.' } });
+        setLoading(false);
       }
     } catch (error) {
       console.error('Error submitting adoption:', error);
@@ -136,20 +125,6 @@ const Adoption = () => {
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
         <CircularProgress />
       </Box>
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={4000}
-        onClose={closeSnackbar}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      >
-        <Alert
-          onClose={closeSnackbar}
-          severity={snackbar.severity}
-          variant="filled"
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
     </>
   );
 }
@@ -275,20 +250,6 @@ const Adoption = () => {
         Καταχώρηση Υιοθεσίας
       </Button>
       </Box>
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={4000}
-        onClose={closeSnackbar}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      >
-        <Alert
-          onClose={closeSnackbar}
-          severity={snackbar.severity}
-          variant="filled"
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 }
