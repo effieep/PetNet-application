@@ -22,7 +22,7 @@ import Footer from './components/footer.jsx';
 import SearchVet from './pages/owner/search-vet/search-vet.js';
 import VetDetails from './pages/owner/search-vet/vetDetails.js';
 import VetProfile from './pages/vet/vetProfile.js';
-import VetRandezvousHistory from './pages/vet/vetHistory.js';
+import VetActionsHistory from './pages/vet/VetActionsHistory.js';
 import VetReviews from './pages/vet/vetReviews.js';
 import VetPublic from './pages/vet/vetPublic.js';
 import VetManagePets from './pages/vet/VetManagePets.js';
@@ -71,7 +71,7 @@ function App() {
           <Route path="/vet" element={<Vet />} />
           <Route path="/vet/info" element={<VetProfile />} />
           <Route path="/vet/public-profile" element={<VetPublic />} />
-          <Route path="/vet/randezvous-history" element={<VetRandezvousHistory />} />
+          <Route path="/vet/actions-history" element={<VetActionsHistory />} />
           <Route path="/vet/reviews" element={<VetReviews />} />
           <Route path="/vet/manage-pets" element={<VetManagePets />} />
           <Route path="/vet/manage-pets/register-pet" element={<RegisterPet />} />

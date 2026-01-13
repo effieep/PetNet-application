@@ -5,6 +5,7 @@ import { FaLocationDot } from 'react-icons/fa6';
 import { useEffect, useState, Fragment } from 'react';
 import { API_URL } from '../../../api';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../auth/AuthContext';
 
 const getTodayDate = () => {
   const date = new Date();
@@ -18,6 +19,7 @@ const reverseDate = (dateStr) => {
 }
 
 const Death = () => {
+  const { user } = useAuth();
 
   const navigate = useNavigate();
 
@@ -91,7 +93,8 @@ const Death = () => {
                 {
                   type: 'death',
                   date: formData.date,
-                  reason: formData.reason
+                  reason: formData.reason,
+                  vetId: user.id
                 }
               ],
             }
@@ -115,7 +118,8 @@ const Death = () => {
                   {
                     type: 'death',
                     date: formData.dateOfDeath,
-                    reason: formData.reason
+                    reason: formData.reason,
+                    vetId: user.id
                   }
                 ]
               }

@@ -273,129 +273,150 @@
               "id": "v115",
               "date": "15-09-2025",
               "name": "Nobivac Tricat",
-              "dose": "1"
+              "dose": "1",
+              "vetId": "v1"
             },
             {
               "id": "v114",
               "date": "15-09-2025",
               "name": "Nobivac Rabies (Λύσσας)",
-              "dose": "1"
+              "dose": "1",
+              "vetId": "v1"
             },
             {
               "id": "v113",
               "date": "10-09-2024",
               "name": "Purevax RCP",
-              "dose": "Εφάπαξ"
+              "dose": "Εφάπαξ",
+              "vetId": "v1"
             },
             {
               "id": "v112",
               "date": "10-09-2024",
               "name": "Purevax FeLV (Λευχαιμίας)",
-              "dose": "Εφάπαξ"
+              "dose": "Εφάπαξ",
+              "vetId": "v1"
             },
             {
               "id": "v111",
               "date": "12-09-2023",
               "name": "Purevax RCP",
-              "dose": "1"
+              "dose": "1",
+              "vetId": "v1"
             },
             {
               "id": "v110",
               "date": "12-09-2023",
               "name": "Rabisin (Λύσσας)",
-              "dose": "1"
+              "dose": "1",
+              "vetId": "v1"
             },
             {
               "id": "v109",
               "date": "05-06-2022",
               "name": "Feligen CRP",
-              "dose": "Εφάπαξ"
+              "dose": "Εφάπαξ",
+              "vetId": "v1"
             },
             {
               "id": "v108",
               "date": "05-06-2022",
               "name": "Leucogen (Λευχαιμίας)",
-              "dose": "Εφάπαξ"
+              "dose": "Εφάπαξ",
+              "vetId": "v1"
             },
             {
               "id": "v107",
               "date": "15-05-2021",
               "name": "Nobivac Tricat",
-              "dose": "2"
+              "dose": "2",
+              "vetId": "v1"
             },
             {
               "id": "v106",
               "date": "20-06-2020",
               "name": "Nobivac Rabies (Λύσσας)",
-              "dose": "1"
+              "dose": "1",
+              "vetId": "v1"
             },
             {
               "id": "v105",
               "date": "20-06-2020",
               "name": "Nobivac Tricat",
-              "dose": "3"
+              "dose": "3",
+              "vetId": "v1"
             },
             {
               "id": "v104",
               "date": "20-06-2020",
               "name": "Leucogen (Λευχαιμίας)",
-              "dose": "2"
+              "dose": "2",
+              "vetId": "v1"
             },
             {
               "id": "v103",
               "date": "20-05-2020",
               "name": "Nobivac Tricat",
-              "dose": "2"
+              "dose": "2",
+              "vetId": "v1"
             },
             {
               "id": "v102",
               "date": "20-05-2020",
               "name": "Leucogen (Λευχαιμίας)",
-              "dose": "1"
+              "dose": "1",
+              "vetId": "v1"
             },
             {
               "id": "v101",
               "date": "20-04-2020",
               "name": "Nobivac Tricat",
-              "dose": "1"
+              "dose": "1",
+              "vetId": "v1"
             }
           ],
           "deworming": [
             {
               "id": "d106",
               "date": "10-11-2025",
-              "type": "Internal",
-              "product": "Milbemax"
+              "type": "Εσωτερική",
+              "product": "Milbemax",
+              "vetId": "v1"
             },
             {
               "id": "d105",
               "date": "15-09-2025",
-              "type": "Internal",
-              "product": "Milbemax"
+              "type": "Εσωτερική",
+              "product": "Milbemax",
+              "vetId": "v1"
             },
             {
               "id": "d104",
               "date": "15-10-2024",
-              "type": "External",
-              "product": "Advocate"
+              "type": "Εξωτερική",
+              "product": "Advocate",
+              "vetId": "v1"
             },
             {
               "id": "d103",
               "date": "15-06-2024",
-              "type": "External",
-              "product": "Advocate"
+              "type": "Εξωτερική",
+              "product": "Advocate",
+              "vetId": "v1"
             },
             {
               "id": "d102",
               "date": "15-09-2021",
-              "type": "External",
-              "product": "Advocate"
+              "type": "Εξωτερική",
+              "product": "Advocate",
+              "vetId": "v1"
             },
             {
               "id": "d101",
               "date": "15-06-2020",
-              "type": "Internal",
-              "product": "Milbemax"
+              "type": "Εσωτερική",
+              "product": "Milbemax",
+              "vetId": "v1"
             }
           ],
           "medicalActs": {
@@ -405,14 +426,16 @@
                 "date": "10-06-2025",
                 "title": "Εξετάσεις Αίματος (Leishmania)",
                 "vet": "Αποστόλης Χριστοδουλόπουλος",
-                "result": "Αρνητικό"
+                "result": "Αρνητικό",
+                "vetId": "v2"
               },
               {
                 "id": "t202",
                 "date": "10-06-2025",
                 "title": "Γενική Αίματος",
                 "vet": "Αποστόλης Χριστοδουλόπουλος",
-                "result": "Φυσιολογική"
+                "result": "Φυσιολογική",
+                "vetId": "v2"
               }
             ],
             "surgeries": [
@@ -421,7 +444,8 @@
                 "date": "20-01-2021",
                 "title": "Στείρωση (Ουδετεροποίηση)",
                 "vet": "Άγγελος Ζωάκης",
-                "notes": "Ολική αφαίρεση"
+                "notes": "Ολική αφαίρεση",
+                "vetId": "v1"
               }
             ],
             "medication": [
@@ -429,7 +453,8 @@
                 "id": "m1",
                 "startDate": "15-09-2025",
                 "name": "Zymox",
-                "instructions": "Τοπική χρήση για 7 μέρες"
+                "instructions": "Τοπική χρήση για 7 μέρες",
+                "vetId": "v1"
               }
             ]
           },
@@ -469,63 +494,73 @@
               "id": "v205",
               "date": "10-06-2025",
               "name": "Vanguard 7",
-              "dose": "Ετήσιος"
+              "dose": "Ετήσιος",
+              "vetId": "v1"
             },
             {
               "id": "v204",
               "date": "10-06-2025",
               "name": "Rabisin (Λύσσας)",
-              "dose": "Ετήσιος"
+              "dose": "Ετήσιος",
+              "vetId": "v1"
             },
             {
               "id": "v203",
               "date": "05-06-2024",
               "name": "Vanguard 7",
-              "dose": "Ετήσιος"
+              "dose": "Ετήσιος",
+              "vetId": "v1"
             },
             {
               "id": "v202",
               "date": "05-06-2023",
               "name": "Vanguard 7",
-              "dose": "Ετήσιος"
+              "dose": "Ετήσιος",
+              "vetId": "v1"
             },
             {
               "id": "v201",
               "date": "15-10-2019",
               "name": "Vanguard 7 (Puppy)",
-              "dose": "3"
+              "dose": "3",
+              "vetId": "v1"
             },
             {
               "id": "v200",
               "date": "15-09-2019",
               "name": "Vanguard 7 (Puppy)",
-              "dose": "2"
+              "dose": "2",
+              "vetId": "v1"
             }
           ],
           "deworming": [
             {
               "id": "d204",
               "date": "01-06-2025",
-              "type": "Internal",
-              "product": "Drontal Plus"
+              "type": "Εσωτερική",
+              "product": "Drontal Plus",
+              "vetId": "v1"
             },
             {
               "id": "d203",
               "date": "01-06-2025",
-              "type": "External",
-              "product": "Seresto Collar"
+              "type": "Εξωτερική",
+              "product": "Seresto Collar",
+              "vetId": "v1"
             },
             {
               "id": "d202",
               "date": "01-03-2025",
-              "type": "Internal",
-              "product": "Milbemax"
+              "type": "Εσωτερική",
+              "product": "Milbemax",
+              "vetId": "v1"
             },
             {
               "id": "d201",
               "date": "15-01-2025",
-              "type": "External",
-              "product": "Advantix"
+              "type": "Εξωτερική",
+              "product": "Advantix",
+              "vetId": "v1"
             }
           ],
           "medicalActs": {
@@ -535,21 +570,24 @@
                 "date": "10-06-2025",
                 "title": "Εξετάσεις Αίματος (Leishmania)",
                 "vet": "Αποστόλης Χριστοδουλόπουλος",
-                "result": "Αρνητικό"
+                "result": "Αρνητικό",
+                "vetId": "v2"
               },
               {
                 "id": "t202",
                 "date": "10-06-2025",
                 "title": "Γενική Αίματος & Βιοχημικές",
                 "vet": "Αποστόλης Χριστοδουλόπουλος",
-                "result": "Φυσιολογική"
+                "result": "Φυσιολογική",
+                "vetId": "v2"
               },
               {
                 "id": "t203",
                 "date": "15-02-2021",
                 "title": "Ακτινογραφία Ισχίων (Δυσπλασία)",
                 "vet": "Άγγελος Ζωάκης",
-                "result": "Καθαρή (Grade A)"
+                "result": "Καθαρή (Grade A)",
+                "vetId": "v1"
               }
             ],
             "surgeries": [
@@ -558,7 +596,8 @@
                 "date": "20-05-2021",
                 "title": "Στείρωση (Ορχεκτομή)",
                 "vet": "Άγγελος Ζωάκης",
-                "notes": "Ομαλή ανάνηψη, αφαίρεση ραμμάτων σε 10 μέρες"
+                "notes": "Ομαλή ανάνηψη, αφαίρεση ραμμάτων σε 10 μέρες",
+                "vetId": "v1"
               }
             ],
             "medication": [
@@ -566,7 +605,8 @@
                 "id": "m201",
                 "startDate": "10-04-2023",
                 "name": "Otipax",
-                "instructions": "5 σταγόνες σε κάθε αυτί για 5 μέρες (Ωτίτιδα)"
+                "instructions": "5 σταγόνες σε κάθε αυτί για 5 μέρες (Ωτίτιδα)",
+                "vetId": "v1"
               }
             ]
           },
@@ -606,45 +646,52 @@
               "id": "v304",
               "date": "20-03-2025",
               "name": "Purevax RCP",
-              "dose": "Ετήσιος"
+              "dose": "Ετήσιος",
+              "vetId": "v1"
             },
             {
               "id": "v303",
               "date": "20-03-2024",
               "name": "Purevax RCP",
-              "dose": "Ετήσιος"
+              "dose": "Ετήσιος",
+              "vetId": "v1"
             },
             {
               "id": "v302",
               "date": "15-06-2021",
               "name": "Purevax RCP (Kitten)",
-              "dose": "2"
+              "dose": "2",
+              "vetId": "v1"
             },
             {
               "id": "v301",
               "date": "15-05-2021",
               "name": "Purevax RCP (Kitten)",
-              "dose": "1"
+              "dose": "1",
+              "vetId": "v1"
             }
           ],
           "deworming": [
             {
               "id": "d303",
               "date": "20-03-2025",
-              "type": "External",
-              "product": "Stronghold Plus"
+              "type": "Εξωτερική",
+              "product": "Stronghold Plus",
+              "vetId": "v1"
             },
             {
               "id": "d302",
               "date": "20-01-2025",
-              "type": "Internal",
-              "product": "Milbemax"
+              "type": "Εσωτερική",
+              "product": "Milbemax",
+              "vetId": "v1"
             },
             {
               "id": "d301",
               "date": "20-11-2024",
-              "type": "External",
-              "product": "Broadline"
+              "type": "Εξωτερική",
+              "product": "Broadline",
+              "vetId": "v1"
             }
           ],
           "medicalActs": {
@@ -654,14 +701,16 @@
                 "date": "15-03-2022",
                 "title": "Υπέρηχος Καρδιάς (HCM Screen)",
                 "vet": "Αποστόλης Χριστοδουλόπουλος",
-                "result": "Καθαρό / Αρνητικό για HCM"
+                "result": "Καθαρό / Αρνητικό για HCM",
+                "vetId": "v2"
               },
               {
                 "id": "t302",
                 "date": "20-03-2025",
                 "title": "Γενική Εξέταση Κοπράνων",
                 "vet": "Αποστόλης Χριστοδουλόπουλος",
-                "result": "Καθαρή"
+                "result": "Καθαρή",
+                "vetId": "v2"
               }
             ],
             "surgeries": [],
@@ -670,7 +719,8 @@
                 "id": "m301",
                 "startDate": "05-12-2023",
                 "name": "Tobradex (Κολλύριο)",
-                "instructions": "1 σταγόνα πρωί-βράδυ για 5 μέρες (Επεφυκίτιδα)"
+                "instructions": "1 σταγόνα πρωί-βράδυ για 5 μέρες (Επεφυκίτιδα)",
+                "vetId": "v1"
               }
             ]
           },

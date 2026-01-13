@@ -5,6 +5,7 @@ import { FaLocationDot } from 'react-icons/fa6';
 import { useEffect, useState, Fragment } from 'react';
 import { API_URL } from '../../../api';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../auth/AuthContext';
 
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -14,6 +15,8 @@ const reverseDate = (dateStr) => {
 }
 
 const Adoption = () => {
+
+  const { user } = useAuth();
 
   const navigate = useNavigate();
 
@@ -84,7 +87,9 @@ const Adoption = () => {
                   type: 'adoption',
                   date: formData.date,
                   previousOwnerId: pet.ownerId,
-                  newOwnerId: formData.newOwnerId
+                  newOwnerId: formData.newOwnerId,
+                  vetId: user.id
+
                 }
               ],
             }
@@ -109,7 +114,8 @@ const Adoption = () => {
                     type: 'adoption',
                     date: formData.date,
                     previousOwnerId: pet.ownerId,
-                    newOwnerId: formData.newOwnerId
+                    newOwnerId: formData.newOwnerId,
+                    vetId: user.id
                   }
                 ]
               }

@@ -16,7 +16,7 @@ const breadcrumbMap = {
   found_pet: 'Δήλωση Εύρεσης',
   'lost-found': 'Χάθηκε/Βρέθηκε Ζώο',
   'public-profile': 'Δημόσιο Προφίλ Κτηνιάτρου',
-  'randezvous-history': 'Ιστορικό Ραντεβού',
+  'actions-history': 'Ιστορικό Ενεργειών',
   reviews: 'Αξιολογήσεις Κτηνιάτρου',
   review: 'Αξιολόγηση Ραντεβού',
   healthRecord: 'Βιβλιάριο Υγείας',
