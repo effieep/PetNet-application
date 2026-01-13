@@ -14,8 +14,9 @@ import {
   MenuItem,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 import AddressPicker from "../components/AddressPicker";
-import { API_URL } from "../api";
+import { API_URL, supabase } from "../api";
 
 // ==============================================
 // SUB-COMPONENTS (STEP CONTENT)
@@ -187,9 +188,9 @@ const StepAnimalDetails = ({ formData, updateField, errors, onAddPhotos, onRemov
 
           {formData.animal.photos.length > 0 && (
             <Box sx={{ mt: 1.5, display: "flex", gap: 1.5, flexWrap: "wrap" }}>
-              {formData.animal.photos.map((src, idx) => (
+              {formData.animal.photos.map((photo, idx) => (
                 <Box
-                  key={`${idx}-${src.slice(0, 16)}`}
+                  key={`${idx}-${(photo?.url || "").slice(0, 16)}`}
                   sx={{
                     width: 92,
                     height: 92,
@@ -201,7 +202,7 @@ const StepAnimalDetails = ({ formData, updateField, errors, onAddPhotos, onRemov
                   }}
                 >
                   <img
-                    src={src}
+                    src={photo?.url}
                     alt={`photo-${idx + 1}`}
                     style={{ width: "100%", height: "100%", objectFit: "cover" }}
                   />
@@ -245,7 +246,17 @@ const StepAnimalDetails = ({ formData, updateField, errors, onAddPhotos, onRemov
   </Box>
 );
 
-const StepContactDetails = ({ formData, updateField, errors, showAltContact, onToggleAltContact }) => (
+const StepContactDetails = ({
+  formData,
+  updateField,
+  errors,
+  isLoggedIn,
+  user,
+  contactPreset,
+  onContactPresetChange,
+  showAltContact,
+  onToggleAltContact,
+}) => (
   <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
     <Box>
       <Typography variant="h6" sx={{ fontWeight: "bold", color: "#9a9b6a", mb: 2 }}>
@@ -253,6 +264,33 @@ const StepContactDetails = ({ formData, updateField, errors, showAltContact, onT
       </Typography>
 
       <Grid container spacing={2}>
+        {isLoggedIn && (
+          <Grid item xs={12}>
+            <TextField
+              select
+              fullWidth
+              label="Επιλογή στοιχείων επικοινωνίας"
+              variant="outlined"
+              size="small"
+              value={contactPreset}
+              onChange={(e) => onContactPresetChange(e.target.value)}
+              helperText={
+                contactPreset === "account"
+                  ? "Θα χρησιμοποιηθούν τα στοιχεία του λογαριασμού σας."
+                  : contactPreset === "empty"
+                    ? "Θα καθαριστούν τα πεδία. Συμπληρώστε χειροκίνητα για να συνεχίσετε."
+                    : "Συμπληρώστε χειροκίνητα τα στοιχεία επικοινωνίας."
+              }
+            >
+              <MenuItem value="empty">Κενό</MenuItem>
+              <MenuItem value="account" disabled={!user}>
+                Στοιχεία χρήστη
+              </MenuItem>
+              <MenuItem value="manual">Άλλα στοιχεία</MenuItem>
+            </TextField>
+          </Grid>
+        )}
+
         <Grid item xs={12}>
           <TextField
             fullWidth
@@ -261,6 +299,7 @@ const StepContactDetails = ({ formData, updateField, errors, showAltContact, onT
             size="small"
             value={formData.contact.name}
             onChange={(e) => updateField("contact", "name", e.target.value)}
+            disabled={isLoggedIn && contactPreset === "account"}
             error={!!errors["contact.name"]}
             helperText={errors["contact.name"]}
           />
@@ -273,6 +312,7 @@ const StepContactDetails = ({ formData, updateField, errors, showAltContact, onT
             size="small"
             value={formData.contact.phone}
             onChange={(e) => updateField("contact", "phone", e.target.value)}
+            disabled={isLoggedIn && contactPreset === "account"}
             error={!!errors["contact.phone"]}
             helperText={errors["contact.phone"]}
           />
@@ -285,6 +325,7 @@ const StepContactDetails = ({ formData, updateField, errors, showAltContact, onT
             size="small"
             value={formData.contact.email}
             onChange={(e) => updateField("contact", "email", e.target.value)}
+            disabled={isLoggedIn && contactPreset === "account"}
             error={!!errors["contact.email"]}
             helperText={errors["contact.email"]}
           />
@@ -337,125 +378,133 @@ const StepContactDetails = ({ formData, updateField, errors, showAltContact, onT
   </Box>
 );
 
-const StepOverview = ({ formData, submitError }) => (
-  <Box>
-    <Typography variant="h6" gutterBottom>
-      Παρακαλώ ελέγξτε τα στοιχεία σας:
-    </Typography>
+const StepOverview = ({ formData, submitError }) => {
+  const sectionStyle = { marginTop: 10, opacity: 0.9 };
+  const subItemStyle = { paddingLeft: 18 };
 
-    {submitError && (
-      <Typography color="error" sx={{ fontWeight: 700, mb: 2 }}>
-        {submitError}
+  return (
+    <Box>
+      <Typography variant="h6" gutterBottom>
+        Παρακαλώ ελέγξτε τα στοιχεία σας:
       </Typography>
-    )}
 
-    <Box sx={{ bgcolor: "#f5f5f5", p: 3, borderRadius: 2 }}>
-      <ul style={{ listStyle: "none", padding: 0, margin: 0, lineHeight: "2" }}>
-        <li>
-          <strong>Ημερομηνία εύρεσης:</strong> {formData.found.date || "-"}
-        </li>
-        {formData.found.time && (
-          <li>
-            <strong>Ώρα εύρεσης:</strong> {formData.found.time}
-          </li>
-        )}
-        <li>
-          <strong>Περιοχή:</strong> {formData.found.area || "-"}
-        </li>
-        <li style={{ marginTop: 8, opacity: 0.9 }}>
-          <strong>Ζώο:</strong>
-        </li>
-        <li>
-          <strong>Είδος:</strong> {formData.animal.species || "-"}
-        </li>
-        <li>
-          <strong>Φυλή:</strong> {formData.animal.breed || "-"}
-        </li>
-        <li>
-          <strong>Φύλο:</strong> {formData.animal.gender || "-"}
-        </li>
-        <li>
-          <strong>Χρώμα:</strong> {formData.animal.color || "-"}
-        </li>
-        <li>
-          <strong>Μέγεθος:</strong> {formData.animal.size || "-"}
-        </li>
-        <li>
-          <strong>Φωτογραφίες:</strong> {formData.animal.photos.length}
-        </li>
-        {formData.animal.description && (
-          <li>
-            <strong>Περιγραφή:</strong> {formData.animal.description}
-          </li>
-        )}
-        <li style={{ marginTop: 8, opacity: 0.9 }}>
-          <strong>Επικοινωνία:</strong>
-        </li>
-        <li>
-          <strong>Όνομα:</strong> {formData.contact.name || "-"}
-        </li>
-        <li>
-          <strong>Τηλέφωνο:</strong> {formData.contact.phone || "-"}
-        </li>
-        <li>
-          <strong>Email:</strong> {formData.contact.email || "-"}
-        </li>
-        {(formData.contact.altName || formData.contact.altPhone || formData.contact.altEmail) && (
-          <>
-            <li style={{ marginTop: 8, opacity: 0.9 }}>
-              <strong>Επιπλέον επαφή:</strong>
-            </li>
-            {formData.contact.altName && (
-              <li>
-                <strong>Όνομα:</strong> {formData.contact.altName}
-              </li>
-            )}
-            {formData.contact.altPhone && (
-              <li>
-                <strong>Τηλέφωνο:</strong> {formData.contact.altPhone}
-              </li>
-            )}
-            {formData.contact.altEmail && (
-              <li>
-                <strong>Email:</strong> {formData.contact.altEmail}
-              </li>
-            )}
-          </>
-        )}
-      </ul>
-    </Box>
-
-    {formData.animal.photos.length > 0 && (
-      <Box sx={{ mt: 2 }}>
-        <Divider sx={{ mb: 2 }} />
-        <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
-          Φωτογραφίες
+      {submitError && (
+        <Typography color="error" sx={{ fontWeight: 700, mb: 2 }}>
+          {submitError}
         </Typography>
-        <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap" }}>
-          {formData.animal.photos.map((src, idx) => (
-            <Box
-              key={`ov-${idx}-${src.slice(0, 16)}`}
-              sx={{
-                width: 110,
-                height: 110,
-                borderRadius: 2,
-                overflow: "hidden",
-                border: "1px solid rgba(0,0,0,0.15)",
-                backgroundColor: "#fff",
-              }}
-            >
-              <img
-                src={src}
-                alt={`overview-photo-${idx + 1}`}
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
-            </Box>
-          ))}
-        </Box>
+      )}
+
+      <Box sx={{ bgcolor: "#f5f5f5", p: 3, borderRadius: 2 }}>
+        <ul style={{ listStyle: "none", padding: 0, margin: 0, lineHeight: "2" }}>
+          <li>
+            <strong>Ημερομηνία εύρεσης:</strong> {formData.found.date || "-"}
+          </li>
+          {formData.found.time && (
+            <li>
+              <strong>Ώρα εύρεσης:</strong> {formData.found.time}
+            </li>
+          )}
+          <li>
+            <strong>Περιοχή:</strong> {formData.found.area || "-"}
+          </li>
+
+          <li style={sectionStyle}>
+            <strong>Ζώο:</strong>
+          </li>
+          <li style={subItemStyle}>
+            <strong>Είδος:</strong> {formData.animal.species || "-"}
+          </li>
+          <li style={subItemStyle}>
+            <strong>Φυλή:</strong> {formData.animal.breed || "-"}
+          </li>
+          <li style={subItemStyle}>
+            <strong>Φύλο:</strong> {formData.animal.gender || "-"}
+          </li>
+          <li style={subItemStyle}>
+            <strong>Χρώμα:</strong> {formData.animal.color || "-"}
+          </li>
+          <li style={subItemStyle}>
+            <strong>Μέγεθος:</strong> {formData.animal.size || "-"}
+          </li>
+          <li style={subItemStyle}>
+            <strong>Φωτογραφίες:</strong> {formData.animal.photos.length}
+          </li>
+          {formData.animal.description && (
+            <li style={subItemStyle}>
+              <strong>Περιγραφή:</strong> {formData.animal.description}
+            </li>
+          )}
+
+          <li style={sectionStyle}>
+            <strong>Επικοινωνία:</strong>
+          </li>
+          <li style={subItemStyle}>
+            <strong>Όνομα:</strong> {formData.contact.name || "-"}
+          </li>
+          <li style={subItemStyle}>
+            <strong>Τηλέφωνο:</strong> {formData.contact.phone || "-"}
+          </li>
+          <li style={subItemStyle}>
+            <strong>Email:</strong> {formData.contact.email || "-"}
+          </li>
+
+          {(formData.contact.altName || formData.contact.altPhone || formData.contact.altEmail) && (
+            <>
+              <li style={sectionStyle}>
+                <strong>Επιπλέον επαφή:</strong>
+              </li>
+              {formData.contact.altName && (
+                <li style={subItemStyle}>
+                  <strong>Όνομα:</strong> {formData.contact.altName}
+                </li>
+              )}
+              {formData.contact.altPhone && (
+                <li style={subItemStyle}>
+                  <strong>Τηλέφωνο:</strong> {formData.contact.altPhone}
+                </li>
+              )}
+              {formData.contact.altEmail && (
+                <li style={subItemStyle}>
+                  <strong>Email:</strong> {formData.contact.altEmail}
+                </li>
+              )}
+            </>
+          )}
+        </ul>
       </Box>
-    )}
-  </Box>
-);
+
+      {formData.animal.photos.length > 0 && (
+        <Box sx={{ mt: 2 }}>
+          <Divider sx={{ mb: 2 }} />
+          <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
+            Φωτογραφίες
+          </Typography>
+          <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap" }}>
+            {formData.animal.photos.map((photo, idx) => (
+              <Box
+                key={`ov-${idx}-${(photo?.url || "").slice(0, 16)}`}
+                sx={{
+                  width: 110,
+                  height: 110,
+                  borderRadius: 2,
+                  overflow: "hidden",
+                  border: "1px solid rgba(0,0,0,0.15)",
+                  backgroundColor: "#fff",
+                }}
+              >
+                <img
+                  src={photo?.url}
+                  alt={`overview-photo-${idx + 1}`}
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+              </Box>
+            ))}
+          </Box>
+        </Box>
+      )}
+    </Box>
+  );
+};
 
 const StepSummary = () => (
   <Box sx={{ textAlign: "center", py: 5 }}>
@@ -474,8 +523,10 @@ export default function ReportFoundStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const { user, isLoggedIn } = useAuth();
 
   const [showAltContact, setShowAltContact] = useState(false);
+  const [contactPreset, setContactPreset] = useState("manual");
 
   const [formData, setFormData] = useState({
     found: {
@@ -491,6 +542,8 @@ export default function ReportFoundStepper() {
       gender: "",
       color: "",
       size: "",
+      // Photos are stored as Supabase public URLs + storage path (for optional deletion).
+      // [{ url: string, path: string }]
       photos: [],
       description: "",
     },
@@ -506,11 +559,79 @@ export default function ReportFoundStepper() {
 
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [photosCleanupEnabled, setPhotosCleanupEnabled] = useState(true);
+
+  // Reuse the known-working bucket from VetPublic.
+  // We upload under a folder-like prefix to avoid mixing with profile pictures.
+  const FOUND_PHOTOS_BUCKET = "profile-pics";
+  const FOUND_PHOTOS_PREFIX = "found-reports";
 
   useEffect(() => {
     setErrors({});
     setSubmitError("");
   }, [activeStep]);
+
+  useEffect(() => {
+    // Cleanup uploaded photos if user abandons the flow (refresh/navigate away) before submitting.
+    return () => {
+      if (!photosCleanupEnabled) return;
+      const paths = (formData.animal.photos || []).map((p) => p?.path).filter(Boolean);
+      if (paths.length === 0) return;
+      supabase.storage.from(FOUND_PHOTOS_BUCKET).remove(paths).catch(() => {
+        // best-effort cleanup
+      });
+    };
+    // Intentionally do NOT depend on the full photos array to avoid re-registering cleanup on every change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [photosCleanupEnabled]);
+
+  useEffect(() => {
+    // When entering the contact step, default to account details (only if fields are empty).
+    if (activeStep !== 2) return;
+    if (!isLoggedIn || !user) return;
+    const isEmpty =
+      !formData.contact.name.trim() &&
+      !formData.contact.phone.trim() &&
+      !formData.contact.email.trim();
+    if (!isEmpty) return;
+
+    const fullName = `${user.name || ""} ${user.surname || ""}`.trim();
+    setContactPreset("account");
+    setFormData((prev) => ({
+      ...prev,
+      contact: {
+        ...prev.contact,
+        name: fullName,
+        phone: user.phone || "",
+        email: user.email || "",
+      },
+    }));
+  }, [activeStep, isLoggedIn, user, formData.contact.email, formData.contact.name, formData.contact.phone]);
+
+  const handleContactPresetChange = (nextPreset) => {
+    setContactPreset(nextPreset);
+
+    if (nextPreset === "empty") {
+      setFormData((prev) => ({
+        ...prev,
+        contact: { ...prev.contact, name: "", phone: "", email: "" },
+      }));
+      return;
+    }
+
+    if (nextPreset === "account") {
+      const fullName = `${user?.name || ""} ${user?.surname || ""}`.trim();
+      setFormData((prev) => ({
+        ...prev,
+        contact: {
+          ...prev.contact,
+          name: fullName,
+          phone: user?.phone || "",
+          email: user?.email || "",
+        },
+      }));
+    }
+  };
 
   const steps = useMemo(
     () => ["Στοιχεία Εύρεσης", "Στοιχεία Ζώου", "Επικοινωνία", "Σύνοψη", "Ολοκλήρωση"],
@@ -607,13 +728,27 @@ export default function ReportFoundStepper() {
     return Array.from(fileList);
   };
 
-  const readFileAsDataUrl = (file) =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result || ""));
-      reader.onerror = () => reject(new Error("Αποτυχία ανάγνωσης αρχείου"));
-      reader.readAsDataURL(file);
-    });
+  const uploadPhotoAndGetUrl = async (file) => {
+    const fileExt = String(file?.name || "").split(".").pop() || "jpg";
+    const safeExt = fileExt.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
+    const ownerPart = user?.id ? String(user.id) : "guest";
+    const rand = Math.random().toString(16).slice(2);
+    const path = `${FOUND_PHOTOS_PREFIX}/${ownerPart}_${Date.now()}_${rand}.${safeExt}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from(FOUND_PHOTOS_BUCKET)
+      .upload(path, file);
+
+    if (uploadError) throw uploadError;
+
+    const { data: urlData } = supabase.storage
+      .from(FOUND_PHOTOS_BUCKET)
+      .getPublicUrl(path);
+
+    const url = urlData?.publicUrl;
+    if (!url) throw new Error("Δεν ήταν δυνατή η δημιουργία URL για τη φωτογραφία");
+    return { url, path };
+  };
 
   const handleAddPhotos = async (fileList) => {
     const files = fileListToArray(fileList);
@@ -623,12 +758,12 @@ export default function ReportFoundStepper() {
     const nextFiles = files.slice(0, 6);
 
     try {
-      const urls = await Promise.all(nextFiles.map(readFileAsDataUrl));
+      const uploaded = await Promise.all(nextFiles.map(uploadPhotoAndGetUrl));
       setFormData((prev) => ({
         ...prev,
         animal: {
           ...prev.animal,
-          photos: [...prev.animal.photos, ...urls],
+          photos: [...prev.animal.photos, ...uploaded],
         },
       }));
       setErrors((prev) => {
@@ -637,18 +772,30 @@ export default function ReportFoundStepper() {
         return copy;
       });
     } catch {
-      setErrors((prev) => ({ ...prev, "animal.photos": "Δεν ήταν δυνατή η φόρτωση φωτογραφιών" }));
+      setErrors((prev) => ({ ...prev, "animal.photos": "Δεν ήταν δυνατή η μεταφόρτωση φωτογραφιών" }));
     }
   };
 
   const handleRemovePhoto = (index) => {
-    setFormData((prev) => ({
-      ...prev,
-      animal: {
-        ...prev.animal,
-        photos: prev.animal.photos.filter((_, i) => i !== index),
-      },
-    }));
+    setFormData((prev) => {
+      const target = prev.animal.photos[index];
+      const next = prev.animal.photos.filter((_, i) => i !== index);
+
+      const path = target?.path;
+      if (path) {
+        supabase.storage.from(FOUND_PHOTOS_BUCKET).remove([path]).catch(() => {
+          // best-effort deletion
+        });
+      }
+
+      return {
+        ...prev,
+        animal: {
+          ...prev.animal,
+          photos: next,
+        },
+      };
+    });
   };
 
   const handleSubmit = async () => {
@@ -679,7 +826,7 @@ export default function ReportFoundStepper() {
         gender: formData.animal.gender,
         color: formData.animal.color,
         size: formData.animal.size,
-        photos: formData.animal.photos,
+        photos: (formData.animal.photos || []).map((p) => p?.url).filter(Boolean),
       },
       description: formData.animal.description || "",
       contact: {
@@ -706,6 +853,9 @@ export default function ReportFoundStepper() {
         body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error("Αποτυχία αποθήκευσης δήλωσης.");
+
+      // Mark uploaded photos as kept (don't delete on unmount).
+      setPhotosCleanupEnabled(false);
 
       setActiveStep((prev) => prev + 1);
     } catch (e) {
@@ -735,6 +885,10 @@ export default function ReportFoundStepper() {
             formData={formData}
             updateField={updateField}
             errors={errors}
+            isLoggedIn={isLoggedIn}
+            user={user}
+            contactPreset={contactPreset}
+            onContactPresetChange={handleContactPresetChange}
             showAltContact={showAltContact}
             onToggleAltContact={handleToggleAltContact}
           />
