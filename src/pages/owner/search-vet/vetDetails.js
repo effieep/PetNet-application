@@ -7,6 +7,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import {Chip} from "@mui/material";
 import { useState, useEffect } from 'react';
 import { API_URL }from "../../../api";
+import VetReviews from '../../../components/VetReviewsCard';
 
 const VetDetails = () => {
     const location = useLocation();
@@ -14,6 +15,7 @@ const VetDetails = () => {
 
     const [vet, setVet] = useState(location.state?.vet || null);
     const [activeTab, setActiveTab] = useState('bio');
+    const [authorsMap, setAuthorsMap] = useState({});
 
     useEffect(() => {
     if (!vet) {
@@ -30,6 +32,36 @@ const VetDetails = () => {
         }
     }
     }, [vet, navigate]);
+
+    useEffect(() => {
+        const fetchAuthors = async () => {
+        if (!vet || !vet.reviews || vet.reviews.length === 0) return;
+
+        try {
+            // Μαζεύουμε όλα τα μοναδικά authorIds από τα reviews
+            const uniqueAuthorIds = [...new Set(vet.reviews.map(r => r.authorId))];
+
+            // Fetch όλους τους χρήστες (ή αν το API υποστηρίζει φίλτρο: ?id=u1&id=u2...)
+            // Εδώ κάνω fetch all για απλότητα με JSON server
+            const res = await fetch(`${API_URL}/users`);
+            const allUsers = await res.json();
+
+            // Φτιάχνουμε ένα λεξικό: { "u1": "Μαρία Παπ.", "u2": "Γιάννης Κ." }
+            const map = {};
+            allUsers.forEach(u => {
+                if (uniqueAuthorIds.includes(u.id)) {
+                    map[u.id] = `${u.name} ${u.surname}`;
+                }
+            });
+
+            setAuthorsMap(map);
+        } catch (err) {
+            console.error("Failed to fetch review authors:", err);
+        }
+        };
+
+        fetchAuthors();
+    }, [vet]); // Τρέχει κάθε φορά που φορτώνει νέος vet
 
     const ratingValue = vet.reviews && vet.reviews.length > 0
     ? vet.reviews.reduce((acc, rev) => acc + rev.rating, 0) / vet.reviews.length
@@ -189,9 +221,11 @@ const VetDetails = () => {
             )}
 
             {activeTab === 'reviews' && (
-                <Box sx={{ p: 2 }}>
-                    <Typography variant="h5" fontWeight="bold">Εδώ θα μπουν τα Reviews</Typography>
-                    <Typography>Λίστα κριτικών...</Typography>
+                <Box sx={{ mt: 4, px: 2 }}>
+                    <VetReviews 
+                        vet={vet} 
+                        authors={authorsMap} // Περνάμε το map με τα ονόματα
+                    />
                 </Box>
             )}
         </Container>
