@@ -13,6 +13,7 @@ import { Snackbar, Alert } from '@mui/material';
 import dayjs from 'dayjs';
 import 'dayjs/locale/el';
 import { API_URL } from '../../../api.js';
+import ConfirmDialog from '../../../components/ConfirmDialog.jsx';
 
 // Plugins
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
@@ -52,6 +53,15 @@ const VetAvailability = () => {
   // Εύρος Ημερομηνιών 
   const [rangeStart, setRangeStart] = useState(dayjs());
   const [rangeEnd, setRangeEnd] = useState(dayjs().add(1, 'month')); 
+  const [ConfirmDial, setConfirmOpen] = useState(false);
+
+  const confirmClose = () => {
+    setConfirmOpen(false);
+  }
+
+  const confirmOpen = () => {
+    setConfirmOpen(true);
+  }
 
   // Single Slot States (Για τη μεμονωμένη προσθήκη)
   const [singleDate, setSingleDate] = useState(dayjs());
@@ -263,7 +273,6 @@ const VetAvailability = () => {
   };
 
   const handleDeleteAll = async () => { // 👈 Βάλε async εδώ
-    if(window.confirm("Είστε σίγουροι; Αυτό θα διαγράψει ΟΛΕΣ τις μελλοντικές διαθεσιμότητες.")) {
         
         setLoading(true); // 1. Βάζουμε loading για να μην πατήσει τίποτα άλλο ο χρήστης
         
@@ -279,7 +288,6 @@ const VetAvailability = () => {
         } finally {
             setLoading(false); // 4. Βγάζουμε το loading
         }
-    }
   }
 
   const handleDelete = (id) => {
@@ -512,7 +520,7 @@ const VetAvailability = () => {
                         📅 Τρέχουσες Διαθεσιμότητες
                     </Typography>
                     {availabilities.length > 0 && (
-                        <Button startIcon={<DeleteSweepIcon />} color="error" size="small" onClick={handleDeleteAll}>
+                        <Button startIcon={<DeleteSweepIcon />} color="error" size="small" onClick={confirmOpen}>
                             Καθαρισμος
                         </Button>
                     )}
@@ -605,6 +613,13 @@ const VetAvailability = () => {
           {snackbar.message}
         </Alert>
       </Snackbar>
+      <ConfirmDialog 
+        open={ConfirmDial}
+        onClose={confirmClose}
+        onConfirm={handleDeleteAll}
+        title="Επιβεβαίωση καθαρισμού"
+        message="Επιβεβαιώνετε ότι θέλετε να καθαρίσετε όλες τις διαθεσιμότητες;"
+      />
     </Box>
   ) : ( 
     <Typography variant="h6" color="error" textAlign="center" sx={{ mt: 10 }}>

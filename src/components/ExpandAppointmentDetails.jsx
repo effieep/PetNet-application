@@ -1,9 +1,31 @@
 import { Box, Typography, Card, Divider, Button} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../api";
+import { useState } from "react";
+import ConfirmDialog from "./ConfirmDialog";
 
 const ExpandedAppointmentDetails = ({ appointment, onCancelSuccess }) => {
   const { pet, vet, date, time, status, reason, reviewed } = appointment;
+  const [confirmDial, setConfirmDial] = useState(false);
+
+  const handleConfirmClose = () => {
+    setConfirmDial(false);
+  }
+
+  const handleCancelClick = async () => {
+    setConfirmDial(true);
+  }
+
+  const cancelApp = async () => {
+
+    await fetch(`${API_URL}/appointments/${appointment.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: "CANCELLED" }),
+    });
+
+    onCancelSuccess(appointment.id);
+  }
 
   const navigate = useNavigate();
 
@@ -182,18 +204,7 @@ const ExpandedAppointmentDetails = ({ appointment, onCancelSuccess }) => {
       <Button
         variant="contained"
         color="error"
-        onClick={async () => {
-          const ok = window.confirm("Θέλετε σίγουρα να ακυρώσετε το ραντεβού;");
-          if (!ok) return;
-
-          await fetch(`${API_URL}/appointments/${appointment.id}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ status: "CANCELLED" }),
-          });
-
-          onCancelSuccess(appointment.id);
-        }}
+        onClick={handleCancelClick}
       >
         ΑΚΥΡΩΣΗ ΡΑΝΤΕΒΟΥ
       </Button>)}
@@ -223,6 +234,14 @@ const ExpandedAppointmentDetails = ({ appointment, onCancelSuccess }) => {
 
       </Box>
     </Box>
+    <ConfirmDialog 
+      open={confirmDial}
+      onClose={handleConfirmClose}
+      onConfirm={cancelApp}
+      title="Ακύρωση Ραντεβού"
+      message="Επιβεβαιώνετε ότι θέλετε να ακυρώσετε το ραντεβού;"
+    />
+        
     </Card>
     
   );
