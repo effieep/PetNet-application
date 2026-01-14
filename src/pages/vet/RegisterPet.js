@@ -207,7 +207,7 @@ const RegisterPet = () => {
       const response = await fetch(`${API_URL}/temp-saved-vet-form?vetId=${user.id}`);
       const myDrafts = await response.json();
 
-      const existingDraft = myDrafts.find(item => item.id === tempSavedDataId);
+      let existingDraft = myDrafts.find(item => ((item.id === tempSavedDataId) || (item.formData.microchip === formData.microchip)));
       if (existingDraft) {
 
         await fetch(`${API_URL}/temp-saved-vet-form/${existingDraft.id}`, {
@@ -220,7 +220,7 @@ const RegisterPet = () => {
 
         openSnackbar('Η ενημέρωση της προσωρινής αποθήκευσης ολοκληρώθηκε', 'success');
         setTempSavedData(prevData => prevData.map(draft =>
-          draft.id === tempSavedDataId
+          ((draft.id === tempSavedDataId) || (draft.formData.microchip === formData.microchip))
             ? { ...draft, formData: formData }
             : draft
         ));
