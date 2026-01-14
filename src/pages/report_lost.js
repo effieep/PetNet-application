@@ -25,20 +25,28 @@ import { API_URL } from "../api";
 // SUB-COMPONENTS (ΤΟ ΠΕΡΙΕΧΟΜΕΝΟ ΤΩΝ ΒΗΜΑΤΩΝ)
 // ==============================================
 
-const StepLogin = ({ isLoggedIn, onOpenLogin }) => (
+const StepLogin = ({ isLoggedIn, user, onOpenLogin, logout }) => (
   <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-    {!isLoggedIn && (
+    {(!isLoggedIn || user.role !== 'owner') && (
       <>
         <Typography variant="h6" color="error" textAlign="center" sx={{ fontWeight: "bold" }}>
-          Απαιτείται σύνδεση για να κάνετε δήλωση απώλειας κατοικιδίου.
+          Απαιτείται σύνδεση {!isLoggedIn ? '' : 'ως ιδιοκτήτης'} για να κάνετε δήλωση απώλειας κατοικιδίου.
         </Typography>
         <Box sx={{ display: "flex", justifyContent: "center" }}>
           <Button
             variant="contained"
-            onClick={onOpenLogin}
-            sx={{ px: 4, py: 1, fontWeight: "bold" }}
+            onClick={onOpenLogin} 
+            sx={{ px: 4, py: 1, fontWeight: "bold", display: !isLoggedIn ? 'block' : 'none' }}
           >
             Σύνδεση
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={logout}
+            sx={{ px: 4, py: 1, fontWeight: "bold", display: isLoggedIn ? 'block' : 'none', ml:2 }}
+          >
+            Αποσύνδεση
           </Button>
         </Box>
       </>
@@ -387,7 +395,7 @@ export default function ReportLostStepper() {
   const [errors, setErrors] = useState({});
   const [loginOpen, setLoginOpen] = useState(false);
   const navigate = useNavigate();
-  const { user, isLoggedIn } = useAuth();
+  const { user, isLoggedIn, logout } = useAuth();
 
   const [pets, setPets] = useState([]);
   const [petsLoading, setPetsLoading] = useState(false);
@@ -437,14 +445,14 @@ export default function ReportLostStepper() {
   }, [activeStep]);
 
   useEffect(() => {
-    if (activeStep === 0 && isLoggedIn) {
+    if (activeStep === 0 && ( isLoggedIn && user.role === 'owner') ) {
       setLoginOpen(false);
       setActiveStep(1);
     }
-    if (activeStep > 0 && !isLoggedIn) {
+    if (activeStep > 0 && (!isLoggedIn || user.role !== 'owner') ) {
       setActiveStep(0);
     }
-  }, [activeStep, isLoggedIn]);
+  }, [activeStep, isLoggedIn, user]);
 
   useEffect(() => {
     // When entering the contact step, default to account details (only if fields are empty).
@@ -685,7 +693,7 @@ export default function ReportLostStepper() {
   const getStepContent = (stepIndex) => {
     switch (stepIndex) {
       case 0:
-        return <StepLogin isLoggedIn={isLoggedIn} onOpenLogin={() => setLoginOpen(true)} />;
+        return <StepLogin isLoggedIn={isLoggedIn} user={user} onOpenLogin={() => setLoginOpen(true)} logout={logout} />;
       case 1:
         return (
           <StepSelectPet
