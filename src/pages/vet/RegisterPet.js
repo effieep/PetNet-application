@@ -133,9 +133,15 @@ const RegisterPet = () => {
     };
     const fetchAllTempSavedData = async () => {
       try {
-        const response = await fetch(`${API_URL}/temp-saved-vet-form?vetId=${user.id}`);
+        const response = await fetch(`${API_URL}/temp-saved-vet-form`);
         const data = await response.json();
-        setTempSavedData(data.length > 0 ? data : []);
+        if(data.length > 0) {
+          const myData = data.filter(item => item.vetId === user.id);
+          setTempSavedData(myData);
+        }
+        else {
+          setTempSavedData([]);
+        }
 
       } catch (error) {
         console.error('Error fetching temp saved data:', error);
@@ -385,6 +391,13 @@ const RegisterPet = () => {
           body: JSON.stringify({ ...formData, birthDate: reverseDateString(formData.birthDate) }),
         });
         openSnackbar('Το κατοικίδιο καταχωρήθηκε επιτυχώς!', 'success');
+        const findExisting = tempSavedData.find(item => item.formData.microchip === formData.microchip);
+        if(findExisting) {
+          await fetch(`${API_URL}/temp-saved-vet-form/${findExisting.id}`, {
+            method: 'DELETE',
+          });
+        }
+        setTempSavedData(prevData => prevData.filter(item => item.formData.microchip !== formData.microchip));
         setActiveStep(0);
         setFormData({
           microchip: '',

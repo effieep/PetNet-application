@@ -69,7 +69,7 @@ const OwnerPets = () => {
                 ΒΙΒΛΙΑΡΙΟ ΥΓΕΙΑΣ
             </Button>
           </Box>
-          <PetDetailsCard petId={selectedId} />
+          <PetDetailsCard petId={selectedId} edit={true} />
         </Box>
       )}
     </ProfileLayout>
