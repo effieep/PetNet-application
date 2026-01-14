@@ -5,9 +5,17 @@ import { useAuth } from "../../auth/AuthContext";
 import ProfileLayout from "../../components/profileLayout";
 import DeclarationCard from "../../components/DeclarationCard";
 import DeclarationPreview from "../../components/DeclarationPreview";
+import ConfirmDialog from "../../components/ConfirmDialog";
 
 const OwnerDeclarations = () => {
   const { user, isLoggedIn } = useAuth();
+
+  const [confirmOpen, setConfirmOpen] = useState(false);
+
+
+  const handleConfirmClose = () => {
+    setConfirmOpen(false);
+  }
 
   const [declarations, setDeclarations] = useState([]);
   const [pets, setPets] = useState([]);
@@ -19,9 +27,13 @@ const OwnerDeclarations = () => {
   // 2. STATE ΓΙΑ ΤΟ MODAL
   const [selectedDeclaration, setSelectedDeclaration] = useState(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  
+  const ButtonClick = () => {
+    setConfirmOpen(true);
+  }
 
   const foundOnClick = () => {
-    if(!window.confirm("Επιβεβαιώνετε ότι το κατοικίδιο έχει βρεθεί;")) return;
+    
     try {
       const updateDeclaration = async () => {
         if (!selectedDeclaration) return;
@@ -155,6 +167,7 @@ const OwnerDeclarations = () => {
   if (error) return <Alert severity="error">{error}</Alert>;
 
   return (
+    <>
     <ProfileLayout role="owner">
       <Typography variant="h5" sx={{ mb: 4, fontWeight: "bold", color: "#373721" }}>
         Οι δηλώσεις μου
@@ -218,10 +231,18 @@ const OwnerDeclarations = () => {
         open={isPreviewOpen}
         onClose={handleClosePreview}
         declaration={selectedDeclaration}
-        foundOnClick={foundOnClick}
+        foundOnClick={ButtonClick}
       />  
 
     </ProfileLayout>
+    <ConfirmDialog 
+        open={confirmOpen}
+        onClose={handleConfirmClose}
+        onConfirm={foundOnClick}
+        title="Επιβεβαίωση Εύρεσης"
+        message="Επιβεβαιώνετε ότι το κατοικίδιο έχει βρεθεί;"
+    />
+    </>
   );
 };
 
