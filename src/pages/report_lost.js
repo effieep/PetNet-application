@@ -152,6 +152,7 @@ const StepLossDetails = ({ formData, updateField, errors }) => (
             variant="outlined"
             size="small"
             InputLabelProps={{ shrink: true }}
+            inputProps={{ max: new Date().toISOString().split("T")[0] }}
             value={formData.loss.date}
             onChange={(e) => updateField("loss", "date", e.target.value)}
             error={!!errors["loss.date"]}

@@ -1666,7 +1666,7 @@
     {
       "id": "25",
       "type": "LOSS",
-      "status": "PENDING",
+      "status": "SUBMITTED",
       "createdAt": "20-11-2024",
       "petId": "p2",
       "ownerId": "u1",
@@ -1682,7 +1682,7 @@
     {
       "id": "15",
       "type": "LOSS",
-      "status": "PENDING",
+      "status": "SUBMITTED",
       "createdAt": "20-11-2023",
       "petId": "p1",
       "ownerId": "u1",
@@ -1698,7 +1698,7 @@
     {
       "id": "12",
       "type": "LOSS",
-      "status": "PENDING",
+      "status": "SUBMITTED",
       "createdAt": "20-11-2025",
       "petId": "p3",
       "ownerId": "u1",
@@ -1714,7 +1714,7 @@
     {
       "id": "14",
       "type": "FOUND",
-      "status": "PENDING",
+      "status": "SUBMITTED",
       "createdAt": "22-11-2022",
       "petType": "Σκύλος",
       "microchip": "123456789012346",
@@ -1834,7 +1834,7 @@
     {
       "id": "loss_003",
       "type": "LOSS",
-      "status": "PENDING",
+      "status": "SUBMITTED",
       "createdAt": "08-01-2026",
       "createdTime": "14:20",
       "petId": "p3",

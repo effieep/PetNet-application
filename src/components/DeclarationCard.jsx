@@ -11,10 +11,8 @@ import PetsIcon from "@mui/icons-material/Pets";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 const statusMap = {
-  PENDING: { label: "Εκκρεμεί", color: "warning" },
   SUBMITTED: { label: "Υποβλήθηκε", color: "info" },
-  RESOLVED: { label: "Επιλυμένη", color: "success" },
-  REJECTED: { label: "Απορριφθείσα", color: "error" },
+  FOUND: { label: "Βρέθηκε", color: "success" },
 };
 
 const DeclarationCard = ({ declaration, onClick }) => {
@@ -87,7 +85,7 @@ const DeclarationCard = ({ declaration, onClick }) => {
             </Typography>
           </Box>
 
-          <Chip label={st.label} color={st.color} size="small" />
+          <Chip label={st.label} color={st.color} size="small" sx={{display: type === "LOSS" ? "inline-flex" : "none"}}/>
 
           <IconButton>
             <ChevronRightIcon />

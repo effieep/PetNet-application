@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Box, IconButton, Typography, Backdrop } from '@mui/material';
+import { Modal, Box, IconButton, Typography, Backdrop, Button } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 
@@ -22,7 +22,7 @@ const DataBox = ({ text, bgColor = "#f1e9c9", height = 34 }) => (
     </Box>
 );
 
-const DeclarationPreview = ({ open, onClose, declaration }) => {
+const DeclarationPreview = ({ open, onClose, declaration, foundOnClick }) => {
     // Αν δεν υπάρχει δήλωση, δεν δείχνουμε τίποτα (για ασφάλεια)
     if (!declaration) return null;
 
@@ -218,7 +218,7 @@ const DeclarationPreview = ({ open, onClose, declaration }) => {
                             </Box>
 
                             {/* Στοιχεία Επικοινωνίας */}
-                            <Box>
+                            <Box sx={{display: "flex", flexDirection: "column"}}>
                                 <Typography sx={{ fontWeight: 900, fontSize: 18, mb: 2, borderBottom: '2px solid #eef0d2', display: 'inline-block' }}>
                                     Στοιχεία Επικοινωνίας
                                 </Typography>
@@ -233,6 +233,13 @@ const DeclarationPreview = ({ open, onClose, declaration }) => {
 
                                 <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.5 }}>Email</Typography>
                                 <DataBox text={contact.email} bgColor="#eef0d2" />
+                                <Button
+                                  variant='contained'
+                                  onClick={foundOnClick}
+                                  sx={{display: (isLoss && declaration.status === "SUBMITTED") ? 'block' : 'none', mt: 3, alignSelf: 'center', textTransform: 'none', backgroundColor: '#4caf50', '&:hover': {backgroundColor: '#45a040'}, borderRadius: 2}}
+                                >
+                                    Το κατοικίδιο βρέθηκε
+                                </Button>
                             </Box>
                         </Box>
 

@@ -20,6 +20,34 @@ const OwnerDeclarations = () => {
   const [selectedDeclaration, setSelectedDeclaration] = useState(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
+  const foundOnClick = () => {
+    if(!window.confirm("Επιβεβαιώνετε ότι το κατοικίδιο έχει βρεθεί;")) return;
+    try {
+      const updateDeclaration = async () => {
+        if (!selectedDeclaration) return;
+        const res = await fetch(`${API_URL}/declarations/${selectedDeclaration.id}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ status: "FOUND" }),
+        });
+        if (!res.ok) throw new Error("Σφάλμα κατά την ενημέρωση της δήλωσης");
+        const updatedDecl = await res.json();
+        setDeclarations((prevDecls) =>
+          prevDecls.map((decl) =>
+            decl.id === updatedDecl.id ? updatedDecl : decl
+          )
+        );
+        setSelectedDeclaration(updatedDecl);
+      };
+      updateDeclaration();
+    } 
+    catch (e) {
+      console.error(e.message);
+    }
+  };
+
   useEffect(() => {
     if (!isLoggedIn || !user?.id) return;
 
@@ -93,7 +121,7 @@ const OwnerDeclarations = () => {
       });
     }
     if (sortKey === "status") {
-      const order = { PENDING: 0, SUBMITTED: 1 };
+      const order = { FOUND: 0, SUBMITTED: 1 };
       return copy.sort((a, b) => (order[a.status] ?? 99) - (order[b.status] ?? 99));
     }
     if (sortKey === "petName") {
@@ -144,7 +172,7 @@ const OwnerDeclarations = () => {
           >
             <MenuItem value="newest">Πιο πρόσφατες</MenuItem>
             <MenuItem value="oldest">Πιο παλιές</MenuItem>
-            <MenuItem value="status">Κατάσταση (Draft πρώτα)</MenuItem>
+            <MenuItem value="status">Κατάσταση (Found πρώτα)</MenuItem>
             <MenuItem value="petName">Όνομα ζώου (A-Ω)</MenuItem>
           </Select>
         </FormControl>
@@ -171,7 +199,6 @@ const OwnerDeclarations = () => {
           >
             <MenuItem value="newest">Πιο πρόσφατες</MenuItem>
             <MenuItem value="oldest">Πιο παλιές</MenuItem>
-            <MenuItem value="status">Κατάσταση (Draft πρώτα)</MenuItem>
             <MenuItem value="petName">Όνομα ζώου (A-Ω)</MenuItem>
           </Select>
         </FormControl>
@@ -191,6 +218,7 @@ const OwnerDeclarations = () => {
         open={isPreviewOpen}
         onClose={handleClosePreview}
         declaration={selectedDeclaration}
+        foundOnClick={foundOnClick}
       />  
 
     </ProfileLayout>
