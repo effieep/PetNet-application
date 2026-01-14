@@ -13,6 +13,8 @@ import {
   TextField,
   Grid,
   MenuItem,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import LoginDialog from "../components/login";
@@ -447,6 +449,15 @@ export default function ReportLostStepper() {
 
   const [contactPreset, setContactPreset] = useState("manual");
   const [showAltContact, setShowAltContact] = useState(false);
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "info" });
+
+  const openSnackbar = (message, severity = "info") => {
+    setSnackbar({ open: true, message, severity });
+  };
+
+  const closeSnackbar = () => {
+    setSnackbar({ open: false, message: "", severity: "info" });
+  };
 
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
@@ -801,6 +812,7 @@ export default function ReportLostStepper() {
         });
         const data = await response.json();
         if (!response.ok) throw new Error("Αποτυχία αποθήκευσης προσωρινών δεδομένων.");
+        openSnackbar("Τα προσωρινά δεδομένα αποθηκεύτηκαν επιτυχώς.", "success");
         setTempSavedData(prevData => prevData.map(item => item.id === tempSavedDataId ? data : item));
         return;
       }
@@ -816,10 +828,12 @@ export default function ReportLostStepper() {
         });
         const data = await response.json();
         if (!response.ok) throw new Error("Αποτυχία αποθήκευσης προσωρινών δεδομένων.");
+        openSnackbar("Τα προσωρινά δεδομένα αποθηκεύτηκαν επιτυχώς.", "success");
         setTempSavedData(prevData => [...prevData, data]);
       }
     }
     catch (error) {
+      openSnackbar("Σφάλμα κατά την αποθήκευση προσωρινών δεδομένων.", "error");
       console.error("Error saving temp data:", error);
     }
   };
@@ -864,12 +878,14 @@ export default function ReportLostStepper() {
       const response = await fetch(`${API_URL}/temp-saved-lost-form/${tempSavedDataId}`, {
         method: "DELETE",
       });
+      if(!response.ok) throw new Error("Αποτυχία διαγραφής προσωρινών δεδομένων.");
+      openSnackbar("Το προσωρινό αποθηκευμένο προσχέδιο διαγράφηκε επιτυχώς.", "success");
       setTempSavedDataId(null);
       setTempSavedData(prevData => prevData.filter(item => item.id !== tempSavedDataId));
-      if(!response.ok) throw new Error("Αποτυχία διαγραφής προσωρινών δεδομένων.");
     }
     catch (error) {
       console.error("Error deleting temp saved data:", error);
+      openSnackbar("Σφάλμα κατά τη διαγραφή προσωρινών δεδομένων.", "error");
     }
   };
 
@@ -1090,6 +1106,20 @@ export default function ReportLostStepper() {
           </Box>
         </Box>
       </Paper>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={closeSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert 
+          onClose={closeSnackbar} 
+          severity={snackbar.severity} 
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
