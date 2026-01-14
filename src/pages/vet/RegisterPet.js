@@ -55,6 +55,7 @@ const ColorlibConnector = styled(StepConnector)(() => ({
 
 const RegisterPet = () => {
   const [manualMode, setManualMode] = useState(false);
+  const [tempSavedData, setTempSavedData] = useState([]);
   const [formData, setFormData] = useState({
     microchip: '',
     weight: '',
@@ -130,9 +131,120 @@ const RegisterPet = () => {
         console.error('Error fetching microchips:', error);
       }
     };
+    const fetchAllTempSavedData = async () => {
+      try {
+        const response = await fetch(`${API_URL}/temp-saved-vet-form?vetId=${user.id}`);
+        const data = await response.json();
+        setTempSavedData(data.length > 0 ? data : []);
+
+      } catch (error) {
+        console.error('Error fetching temp saved data:', error);
+      }
+    };
+    fetchAllTempSavedData();
     fetchOwners();
     fetchAllMicrochips();
-  }, []);
+  }, [user]);
+
+
+  const handleTempChange = (e, newValue) => {
+    setFormData(newValue ? newValue.formData : {
+      microchip: '',
+      weight: '',
+      name: '',
+      breed: '',
+      color: '',
+      species: '',
+      gender: '',
+      birthDate: '',
+      ownerId: '',
+      health: 
+      { 
+        neutered: false, 
+        overview: {
+          lastVaccine: {
+            name: '',
+            date: '',
+            nextDate: '',
+          },
+          lastDeworming: {
+            internal: '',
+            external: '',
+            nextInternal: '',
+            nextExternal: '',
+          },
+          activeMedication: {
+            name: '',
+            instructions: '',
+            endDate: '',
+          },
+        },
+        history: {
+          vaccinations: [],
+          deworming: [],
+          medicalActs: {
+            tests: [],
+            surgeries: [],
+            medication: [],
+          },
+          lifeEvents: [],
+        }
+      },
+    });
+  }
+
+  const handleTempSave = async () => {
+    const currentMicrochip = formData.microchip.trim();
+
+    try {
+      // 1. Get fresh list from server to check existence
+      const response = await fetch(`${API_URL}/temp-saved-vet-form?vetId=${user.id}`);
+      const myDrafts = await response.json();
+
+      const existingDraft = myDrafts.find(item => item.formData.microchip === currentMicrochip);
+
+      if (existingDraft) {
+        // --- CASE A: UPDATE EXISTING ---
+        await fetch(`${API_URL}/temp-saved-vet-form/${existingDraft.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            formData: formData
+          }),
+        });
+
+        openSnackbar('Η ενημέρωση της προσωρινής αποθήκευσης ολοκληρώθηκε', 'success');
+
+        // FIX: Correctly update local state
+        setTempSavedData(prevData => prevData.map(draft =>
+          draft.formData.microchip === currentMicrochip
+            ? { ...draft, formData: formData } // Update the nested formData
+            : draft
+        ));
+
+      } else {
+        // --- CASE B: CREATE NEW ---
+        const createRes = await fetch(`${API_URL}/temp-saved-vet-form`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            vetId: user.id,
+            formData: formData
+          }),
+        });
+
+        // FIX: Add the new item to local state immediately
+        const newDraft = await createRes.json(); // Get the created object (with ID)
+        setTempSavedData(prevData => [...prevData, newDraft]);
+
+        openSnackbar('Η προσωρινή αποθήκευση δημιουργήθηκε', 'success');
+      }
+
+    } catch (error) {
+      console.error("Save failed", error);
+      openSnackbar('Σφάλμα αποθήκευσης', 'error');
+    }
+  };
 
   const handleNext = () => {
     if(!validateForm()) {
@@ -222,6 +334,19 @@ const RegisterPet = () => {
   const closeSnackbar = () => {
     setSnackbar(prev => ({ ...prev, open: false }));
   };
+
+  const checkTempSaveDisabled = () => {
+    const trimmedmicrochip = formData.microchip.trim();
+    const trimmedname = formData.name.trim();
+
+    if (trimmedmicrochip === '' || isNaN(Number(trimmedmicrochip)) || !/^\d{15}$/.test(trimmedmicrochip)) {
+      return true;
+    }
+    if (trimmedname === '') {
+      return true;
+    }
+    return false;
+  }
 
   const validateForm = () => {
     const newErrors = {};
@@ -539,6 +664,22 @@ const RegisterPet = () => {
         <Typography variant="h4" sx={{ color: '#000000', fontWeight: 'bold' }}>
           Καταγραφή Νέου Κατοικιδίου
         </Typography>
+        <Autocomplete
+          sx={{ mt: 2, mb: 1, width: '30vw', backgroundColor: '#ffffff' }}
+          options={tempSavedData ? tempSavedData : []}
+          getOptionLabel={(option) => `${option.formData.microchip} - ${option.formData.name}`}
+          onChange={(e, newValue) => handleTempChange(e, newValue)}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Φόρτωση Προσωρινά Αποθηκευμένων Δεδομένων"
+              variant="outlined"
+            />
+          )}
+        />
+        <Typography variant="body2" sx={{ color: '#000000', fontStyle: 'italic' }}>
+          *Για προσωρινή αποθήκευση της φόρμας, παρακαλώ συμπληρώστε έγκυρο Αριθμό Microchip και το όνομα του κατοικιδίου
+        </Typography>
 
         <Box sx={{ width: '100%', mt: 4 }}>
           <Stepper
@@ -578,6 +719,21 @@ const RegisterPet = () => {
             }}
           >
             Προηγούμενο
+          </Button>
+          <Button 
+            variant="contained"
+            disabled={checkTempSaveDisabled()}
+            onClick={handleTempSave}
+            sx = {{
+              borderColor: '#3b2004',
+              color: '#3b2004',
+              backgroundColor: '#d38d1e',
+              '&:hover': { 
+                backgroundColor: '#eeaf49',
+              },
+            }}
+          >
+            Προσωρινή Αποθήκευση
           </Button>
           <Button variant="contained" color="primary" onClick={() => nextOrCompleteFunction(activeStep)} 
             disabled={activeStep === 1 && !formData.ownerId}
