@@ -135,7 +135,11 @@ const RegisterPet = () => {
       try {
         const response = await fetch(`${API_URL}/temp-saved-vet-form?vetId=${user.id}`);
         const data = await response.json();
+<<<<<<< HEAD
         setTempSavedData(data.length > 0 ? data : []);
+=======
+        setTempSavedData(data.length > 0 ? data : {});
+>>>>>>> fc7e054369972bff75f4e8e994f3bde40fd7c660
 
       } catch (error) {
         console.error('Error fetching temp saved data:', error);
