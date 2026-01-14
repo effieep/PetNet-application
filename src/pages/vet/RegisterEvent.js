@@ -152,7 +152,15 @@ const RegisterEvent = () => {
                         <Box sx={{ textAlign: 'center' }}>
                           <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 2 }}>{selectedPet.name}</Typography>
                           <Box sx={{ width: 120, height: 120, border: '1px solid #000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <CameraAltIcon sx={{ fontSize: 40 }} />
+                            {selectedPet.photoUrl ? (
+                              <img 
+                                src={selectedPet.photoUrl}
+                                alt={selectedPet.name}
+                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                              />
+                            ) : (
+                              <CameraAltIcon sx={{ fontSize: 40 }} />
+                            )}
                           </Box>
                         </Box>
 

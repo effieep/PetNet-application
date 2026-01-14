@@ -32,7 +32,7 @@ const PetInfo = () => {
   return (
     <HealthRecordLayout petData={pet} activeTab="petInfo">
          <Box sx={{ maxWidth: '1000px', mx: 'auto' }}>
-            <PetDetailsCard petId={pet.id} />
+            <PetDetailsCard petId={pet.id} edit={true} />
          </Box>
     </HealthRecordLayout>
   );

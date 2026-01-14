@@ -740,7 +740,7 @@ export default function ReportLostStepper() {
 
   const layout = (() => {
     // Step 1 (pet selection) needs room for horizontal cards + details preview.
-    if (activeStep === 1) return { paperMaxWidth: 1200, contentMaxWidth: "100%" };
+    if (activeStep === 1) return { paperMaxWidth: 1300, contentMaxWidth: "100%" };
     // Login step stays compact.
     if (activeStep === 0) return { paperMaxWidth: 760, contentMaxWidth: 520 };
     // Step 2 (loss details) includes the map + notes; make it wider but still centered.
