@@ -56,6 +56,7 @@ const ColorlibConnector = styled(StepConnector)(() => ({
 const RegisterPet = () => {
   const [manualMode, setManualMode] = useState(false);
   const [tempSavedData, setTempSavedData] = useState([]);
+  const [tempSavedDataId, setTempSavedDataId] = useState(null);
   const [formData, setFormData] = useState({
     microchip: '',
     weight: '',
@@ -197,20 +198,19 @@ const RegisterPet = () => {
         }
       },
     });
+    setTempSavedDataId(newValue ? newValue.id : null);
   }
 
   const handleTempSave = async () => {
     const currentMicrochip = formData.microchip.trim();
 
     try {
-      // 1. Get fresh list from server to check existence
       const response = await fetch(`${API_URL}/temp-saved-vet-form?vetId=${user.id}`);
       const myDrafts = await response.json();
 
       const existingDraft = myDrafts.find(item => item.formData.microchip === currentMicrochip);
-
       if (existingDraft) {
-        // --- CASE A: UPDATE EXISTING ---
+
         await fetch(`${API_URL}/temp-saved-vet-form/${existingDraft.id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
@@ -220,16 +220,13 @@ const RegisterPet = () => {
         });
 
         openSnackbar('Η ενημέρωση της προσωρινής αποθήκευσης ολοκληρώθηκε', 'success');
-
-        // FIX: Correctly update local state
         setTempSavedData(prevData => prevData.map(draft =>
           draft.formData.microchip === currentMicrochip
-            ? { ...draft, formData: formData } // Update the nested formData
+            ? { ...draft, formData: formData }
             : draft
         ));
 
       } else {
-        // --- CASE B: CREATE NEW ---
         const createRes = await fetch(`${API_URL}/temp-saved-vet-form`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -239,11 +236,54 @@ const RegisterPet = () => {
           }),
         });
 
-        // FIX: Add the new item to local state immediately
-        const newDraft = await createRes.json(); // Get the created object (with ID)
+        const newDraft = await createRes.json();
         setTempSavedData(prevData => [...prevData, newDraft]);
 
         openSnackbar('Η προσωρινή αποθήκευση δημιουργήθηκε', 'success');
+
+        setFormData({
+          microchip: '',
+          weight: '',
+          name: '',
+          breed: '',
+          color: '',
+          species: '',
+          gender: '',
+          birthDate: '',
+          ownerId: '',
+          health: 
+          { 
+            neutered: false, 
+            overview: {
+              lastVaccine: {
+                name: '',
+                date: '',
+                nextDate: '',
+              },
+              lastDeworming: {
+                internal: '',
+                external: '',
+                nextInternal: '',
+                nextExternal: '',
+              },
+              activeMedication: {
+                name: '',
+                instructions: '',
+                endDate: '',
+              },
+            },
+            history: {
+              vaccinations: [],
+              deworming: [],
+              medicalActs: {
+                tests: [],
+                surgeries: [],
+                medication: [],
+              },
+              lifeEvents: [],
+            }
+          },
+        });
       }
 
     } catch (error) {
@@ -270,6 +310,10 @@ const RegisterPet = () => {
       } else {
         newValue = "";
       }
+    }
+
+    if(name === "microchip") {
+      newValue = newValue.slice(0, 15);
     }
     
     setFormData(prevData => ({
@@ -341,6 +385,20 @@ const RegisterPet = () => {
     setSnackbar(prev => ({ ...prev, open: false }));
   };
 
+  const handleTempDelete = async () => {
+    try {
+      await fetch(`${API_URL}/temp-saved-vet-form/${tempSavedDataId}`, {
+        method: 'DELETE',
+      });
+      setTempSavedData(prevData => prevData.filter(item => item.id !== tempSavedDataId));
+      setTempSavedDataId(null);
+      openSnackbar('Η προσωρινή αποθήκευση διαγράφηκε επιτυχώς', 'success');
+    } catch (error) {
+      console.error('Error deleting temp saved data:', error);
+      openSnackbar('Σφάλμα κατά τη διαγραφή της προσωρινής αποθήκευσης', 'error');
+    }
+  };
+
   const checkTempSaveDisabled = () => {
     const trimmedmicrochip = formData.microchip.trim();
     const trimmedname = formData.name.trim();
@@ -349,6 +407,9 @@ const RegisterPet = () => {
       return true;
     }
     if (trimmedname === '') {
+      return true;
+    }
+    if(existingMicrochips.includes(trimmedmicrochip)) {
       return true;
     }
     return false;
@@ -391,13 +452,13 @@ const RegisterPet = () => {
           body: JSON.stringify({ ...formData, birthDate: reverseDateString(formData.birthDate) }),
         });
         openSnackbar('Το κατοικίδιο καταχωρήθηκε επιτυχώς!', 'success');
-        const findExisting = tempSavedData.find(item => item.formData.microchip === formData.microchip);
-        if(findExisting) {
-          await fetch(`${API_URL}/temp-saved-vet-form/${findExisting.id}`, {
+        if(tempSavedDataId) {
+            await fetch(`${API_URL}/temp-saved-vet-form/${tempSavedDataId}`, {
             method: 'DELETE',
           });
         }
-        setTempSavedData(prevData => prevData.filter(item => item.formData.microchip !== formData.microchip));
+        setTempSavedData(prevData => prevData.filter(item => item.id !== tempSavedDataId));
+        setTempSavedDataId(null);
         setActiveStep(0);
         setFormData({
           microchip: '',
@@ -457,7 +518,7 @@ const RegisterPet = () => {
   const stepsContent = [
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       <Box sx={{ display: 'flex', flexDirection: 'row', gap: 8}}>
-        <TextField label="Αριθμός Microchip" variant="outlined" fullWidth name="microchip" type="number" value={formData["microchip"]} onChange={handleChange} 
+        <TextField label="Αριθμός Microchip" variant="outlined" fullWidth name="microchip" type="number" value={formData["microchip"]} disabled={tempSavedDataId} onChange={handleChange} 
           sx={{
             '& input[type=number]::-webkit-outer-spin-button': {
               '-webkit-appearance': 'none',
@@ -677,19 +738,37 @@ const RegisterPet = () => {
         <Typography variant="h4" sx={{ color: '#000000', fontWeight: 'bold' }}>
           Καταγραφή Νέου Κατοικιδίου
         </Typography>
-        <Autocomplete
-          sx={{ mt: 2, mb: 1, width: '30vw', backgroundColor: '#ffffff' }}
-          options={tempSavedData ? tempSavedData : []}
-          getOptionLabel={(option) => `${option.formData.microchip} - ${option.formData.name}`}
-          onChange={(e, newValue) => handleTempChange(e, newValue)}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Φόρτωση Προσωρινά Αποθηκευμένων Δεδομένων"
-              variant="outlined"
-            />
-          )}
-        />
+        <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap : 2 }}>
+          <Autocomplete
+            key="auto-1"
+            value={tempSavedData.find(item => item.id === tempSavedDataId) || null}
+            sx={{ mt: 2, mb: 1, width: '30vw', backgroundColor: '#ffffff' }}
+            options={tempSavedData ? tempSavedData : []}
+            getOptionLabel={(option) => `${option.formData.microchip} - ${option.formData.name}`}
+            onChange={(e, newValue) => handleTempChange(e, newValue)}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Φόρτωση Προσωρινά Αποθηκευμένων Δεδομένων"
+                variant="outlined"
+              />
+            )}
+          />
+          <Button
+            variant="contained"
+            disabled={!tempSavedDataId}
+            onClick={handleTempDelete}
+            sx={{
+              color: '#000000',
+              backgroundColor: '#bb3d3d',
+              '&:hover': { backgroundColor: '#ce5959' },
+              borderRadius: 2,
+              mt: 1,
+            }}
+          >
+            Διαγραφή Επιλεγμένης Αποθήκευσης
+          </Button>
+        </Box>
         <Typography variant="body2" sx={{ color: '#000000', fontStyle: 'italic' }}>
           *Για προσωρινή αποθήκευση της φόρμας, παρακαλώ συμπληρώστε έγκυρο Αριθμό Microchip και το όνομα του κατοικιδίου
         </Typography>
