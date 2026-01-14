@@ -61,7 +61,7 @@ const AppointmentsHistory = () => {
         });
         if (response.ok) {
           const data = await response.json();
-          const filtered = data.filter(appointment => (appointment.status === 'COMPLETED' || appointment.status === 'CANCELLED') && appointment.vetId === user.id);
+          const filtered = data.filter(appointment => (appointment.status === 'COMPLETED' || appointment.status === 'CANCELLED' || appointment.status === 'UNCOMPLETED') && appointment.vetId === user.id);
           setAppointments(filtered);
         } else {
           console.error('Σφάλμα κατά την ανάκτηση των κατοικιδίων');

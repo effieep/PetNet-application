@@ -54,12 +54,36 @@ const OwnerAppointments = () => {
     setOpenAppointmentId(prev => (prev === id ? null : id));
   };
 
-  const handleCancelSuccess = (id) => {
+  const handleCancelSuccess = async (id) => {
     setAppointments(prev =>
       prev.map(a =>
         a.id === id ? { ...a, status: "CANCELLED" } : a
       )
     );
+    const appointment = appointments.find(a => a.id === id);
+    try{
+      const vetResponse = await fetch(`${API_URL}/users/${appointment.vetId}`);
+      if(!vetResponse.ok) throw new Error('Failed to fetch vet data');
+      const vetData = await vetResponse.json();
+      await fetch(`${API_URL}/users/${appointment.vetId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          availability:
+            [...(vetData.availability || []),
+              {
+                id: Date.now(),
+                date: (appointment.date).replaceAll('-', '/'),
+                time: appointment.time,
+                duration: appointment.duration
+              }
+            ]
+        }),
+      });
+    }
+    catch (error) {
+      console.error("Error updating vet availability:", error);
+    }
   };
 
   const petById = useMemo(() => {
@@ -95,6 +119,10 @@ const OwnerAppointments = () => {
   //Cancelled appointments
   const cancelled = appointmentsFull.filter(a =>
     a.status === "CANCELLED"
+  );
+
+  const uncompleted = appointmentsFull.filter(a =>
+    a.status === "UNCOMPLETED"
   );
 
   if (!isLoggedIn) {
@@ -150,6 +178,18 @@ const OwnerAppointments = () => {
         Ακυρωμένα
       </Typography>
       {cancelled.map(a => (
+        <AppointmentCard  
+          key={a.id}
+          appointment={a}
+          open={openAppointmentId === a.id}
+          onToggle={() => toggleOpen(a.id)} 
+          />
+            ))}
+
+      <Typography variant="h6" sx={{ mt: 4, mb: 2 }}>
+        Μη Ολοκληρωμένα
+      </Typography>
+      {uncompleted.map(a => (
         <AppointmentCard  
           key={a.id}
           appointment={a}

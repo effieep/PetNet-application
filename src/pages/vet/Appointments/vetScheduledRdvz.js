@@ -40,7 +40,7 @@ const VetScheduledRdvz = () => {
       const response = await fetch(`${API_URL}/appointments/${appointmentId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'CANCELLED' }),
+        body: JSON.stringify({ status: 'UNCOMPLETED' }),
       });
       if(!response.ok) throw new Error('Failed to decline appointment');
       
@@ -133,7 +133,10 @@ const VetScheduledRdvz = () => {
               <Box sx={{ flex: 1, ...headerStyle }}>Ημερομηνία</Box>
               <Box sx={{ flex: 1, ...headerStyle }}>Ώρα</Box>
               <Box sx={{ flex: 2, ...headerStyle }}>Στοιχεια Πελατη</Box>
-              <Box sx={{ flex: 1, ...headerStyle, textAlign: 'right' }}>ΚΑΤΑΣΤΑΣΗ / ΕΝΕΡΓΕΙΕΣ</Box>
+              <Box sx={{ flex: 1, ...headerStyle, textAlign: 'right' }}>
+                <Typography>ΚΑΤΑΣΤΑΣΗ / ΕΝΕΡΓΕΙΕΣ</Typography>
+                <Typography variant="caption" color="text.secondary" sx = {{ textTransform: 'none' }}>(Ολοκλήρωση / Μη Ολοκλήρωση)</Typography>
+              </Box>
             </Box>
 
             <TransitionGroup>
