@@ -17,6 +17,7 @@ import MedicalHistory from './pages/healthRecord/medicalHistory.js';
 import PetInfo from './pages/healthRecord/petInfo.js';
 import SignUp from './pages/signup.js';
 import ReportLost from './pages/report_lost.js';
+import ReportFound from './pages/report_found.js';
 import Error404 from './pages/404.js';
 import Footer from './components/footer.jsx';
 import SearchVet from './pages/owner/search-vet/search-vet.js';
@@ -97,6 +98,7 @@ function App() {
           <Route path="/owner/search-vet/book-appointment" element={<BookAppointment />} />
           <Route path="/lost-found" element={<LostFound />} />
           <Route path="/lost-found/lost_pet" element={<ReportLost />} />
+          <Route path="/lost-found/found_pet" element={<ReportFound />} />
           <Route path="/help" element={<Help />} />
           <Route path="/owner/info" element={<OwnerProfile />} />
           <Route path="/owner/pets" element={<OwnerPets />} />
