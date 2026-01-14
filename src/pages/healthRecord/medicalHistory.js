@@ -118,7 +118,7 @@ const MedicalHistory = () => {
       <Box sx={{ maxWidth: '1000px', mx: 'auto' }}>
 
         {/* ------------------------------------------- */}
-        {/* ΕΝΟΤΗΤΑ 1: ΔΙΑΓΝΩΣΤΙΚΑ ΤΕΣΤ (Teal Color) */}
+        {/* ΕΝΟΤΗΤΑ 1: ΔΙΑΓΝΩΣΤΙΚΑ ΤΕΣΤ */}
         {/* ------------------------------------------- */}
         <Box sx={{ mb: 6 }}>
           <SectionHeader 
@@ -150,8 +150,7 @@ const MedicalHistory = () => {
                           label={test.result || "-"} 
                           size="small" 
                           variant="outlined"
-                          // Αν το αποτέλεσμα είναι "Αρνητικό" ή "Φυσιολογικά", πρασίνισε το, αλλιώς γκρι
-                          color={['Αρνητικό', 'Negative', 'Φυσιολογικά', 'Normal'].includes(test.result) ? "success" : "default"}
+                          color="default"
                           sx={{ fontWeight: '500' }}
                         />
                       </TableCell>
@@ -169,7 +168,7 @@ const MedicalHistory = () => {
         <Divider sx={{ mb: 6 }} />
 
         {/* ------------------------------------------- */}
-        {/* ΕΝΟΤΗΤΑ 2: ΘΕΡΑΠΕΙΕΣ (Blue Color) */}
+        {/* ΕΝΟΤΗΤΑ 2: ΘΕΡΑΠΕΙΕΣ  */}
         {/* ------------------------------------------- */}
         <Box sx={{ mb: 6 }}>
           <SectionHeader 

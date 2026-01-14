@@ -15,6 +15,16 @@ const ExpandedAppointmentDetails = ({ appointment, onCancelSuccess }) => {
       }
     });
   }
+
+  const handleViewVetDetails = () => {
+    navigate(`/owner/search-vet/vet-details`, { 
+      state: { 
+        vet: vet
+      } 
+    });
+  }
+
+
   // Μετατροπή dd-mm-yyyy σε δυναμικά στοιχεία
   const formatDate = (dateStr) => {
     if (!dateStr) return { dayNum: "-", dayName: "-", monthName: "-" };
@@ -130,10 +140,11 @@ const ExpandedAppointmentDetails = ({ appointment, onCancelSuccess }) => {
             <Button 
               variant="contained" 
               color="secondary" 
+              onClick={handleViewVetDetails}
               sx={{ 
                 borderRadius: "8px", 
                 fontWeight: "bold",
-                backgroundColor: "#A32CC4", // Το μωβ χρώμα της εικόνας σου
+                backgroundColor: "#A32CC4",
                 px: 3,
                 "&:hover": { backgroundColor: "#8a24a6" }
               }}
@@ -187,7 +198,6 @@ const ExpandedAppointmentDetails = ({ appointment, onCancelSuccess }) => {
         ΑΚΥΡΩΣΗ ΡΑΝΤΕΒΟΥ
       </Button>)}
 
-  {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: Αξιολόγηση ΚΑΙ Προβολή Κτηνιάτρου */}
       <Box sx={{ display: 'flex', gap: 2, alignItems: "center" }}>
         {status === "COMPLETED" && reviewed === false && (
           <Button 

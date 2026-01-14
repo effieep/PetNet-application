@@ -4,6 +4,7 @@ import { API_URL } from "../../api";
 import { useAuth } from "../../auth/AuthContext";
 import ProfileLayout from "../../components/profileLayout";
 import DeclarationCard from "../../components/DeclarationCard";
+import DeclarationPreview from "../../components/DeclarationPreview";
 
 const OwnerDeclarations = () => {
   const { user, isLoggedIn } = useAuth();
@@ -14,6 +15,11 @@ const OwnerDeclarations = () => {
   const [error, setError] = useState(null);
   const [lossSort, setLossSort] = useState("newest");
   const [foundSort, setFoundSort] = useState("newest");
+
+  // 2. STATE ΓΙΑ ΤΟ MODAL
+  const [selectedDeclaration, setSelectedDeclaration] = useState(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+
   useEffect(() => {
     if (!isLoggedIn || !user?.id) return;
 
@@ -52,13 +58,23 @@ const OwnerDeclarations = () => {
 
   const lossDeclarationsWithPet = useMemo(() => {
     return declarations
-      .filter((d) => d.type === "LOSS") // Κρατάμε μόνο τις δηλώσεις απώλειας
+      .filter((d) => d.type === "LOSS")
       .map((d) => ({
         ...d,
         pet: petById[String(d.petId)] || null,
       }));
   }, [declarations, petById]);
 
+  // 3. HANDLERS ΓΙΑ ΤΟ MODAL
+  const handleCardClick = (decl) => {
+    setSelectedDeclaration(decl);
+    setIsPreviewOpen(true);
+  };
+
+  const handleClosePreview = () => {
+    setIsPreviewOpen(false);
+    setSelectedDeclaration(null);
+  };
 
   const sortDeclarations = (arr, sortKey) => {
     const copy = [...arr];
@@ -134,8 +150,13 @@ const OwnerDeclarations = () => {
         </FormControl>
       </Box>
 
+      {/* 4. ΠΡΟΣΘΗΚΗ ONCLICK ΣΤΑ LOSS CARDS */}
       {sortedLoss.map((decl) => (
-        <DeclarationCard key={decl.id} declaration={decl} />
+        <DeclarationCard 
+            key={decl.id} 
+            declaration={decl} 
+            onClick={() => handleCardClick(decl)} 
+        />
       ))}
 
       <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mt: 4, mb: 2 }}>
@@ -156,9 +177,21 @@ const OwnerDeclarations = () => {
         </FormControl>
       </Box>
 
+      {/* 4. ΠΡΟΣΘΗΚΗ ONCLICK ΣΤΑ FOUND CARDS */}
       {sortedFound.map((decl) => (
-        <DeclarationCard key={decl.id} declaration={decl} />
+        <DeclarationCard 
+            key={decl.id} 
+            declaration={decl} 
+            onClick={() => handleCardClick(decl)}
+        />
       ))}
+
+      {/* 5. ΕΝΣΩΜΑΤΩΣΗ ΤΟΥ MODAL */}
+      <DeclarationPreview
+        open={isPreviewOpen}
+        onClose={handleClosePreview}
+        declaration={selectedDeclaration}
+      />  
 
     </ProfileLayout>
   );
