@@ -202,13 +202,12 @@ const RegisterPet = () => {
   }
 
   const handleTempSave = async () => {
-    const currentMicrochip = formData.microchip.trim();
 
     try {
       const response = await fetch(`${API_URL}/temp-saved-vet-form?vetId=${user.id}`);
       const myDrafts = await response.json();
 
-      const existingDraft = myDrafts.find(item => item.formData.microchip === currentMicrochip);
+      const existingDraft = myDrafts.find(item => item.id === tempSavedDataId);
       if (existingDraft) {
 
         await fetch(`${API_URL}/temp-saved-vet-form/${existingDraft.id}`, {
@@ -221,7 +220,7 @@ const RegisterPet = () => {
 
         openSnackbar('Η ενημέρωση της προσωρινής αποθήκευσης ολοκληρώθηκε', 'success');
         setTempSavedData(prevData => prevData.map(draft =>
-          draft.formData.microchip === currentMicrochip
+          draft.id === tempSavedDataId
             ? { ...draft, formData: formData }
             : draft
         ));
@@ -518,7 +517,7 @@ const RegisterPet = () => {
   const stepsContent = [
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       <Box sx={{ display: 'flex', flexDirection: 'row', gap: 8}}>
-        <TextField label="Αριθμός Microchip" variant="outlined" fullWidth name="microchip" type="number" value={formData["microchip"]} disabled={tempSavedDataId} onChange={handleChange} 
+        <TextField label="Αριθμός Microchip" variant="outlined" fullWidth name="microchip" type="number" value={formData["microchip"]}  onChange={handleChange} 
           sx={{
             '& input[type=number]::-webkit-outer-spin-button': {
               '-webkit-appearance': 'none',
