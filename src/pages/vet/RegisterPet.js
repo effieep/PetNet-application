@@ -20,7 +20,7 @@ const reverseDateString = (dateStr) => {
 const PetItems = [
   { label: "Φυλή", type: "text", name: "breed" },
   { label: "Χρώμα", type: "text", name: "color" },
-  { label: "Είδος", type: "select", name: "species", options: ["Σκύλος", "Γάτα", "Πουλί", "Άλλο"] },
+  { label: "Είδος", type: "select", name: "species", options: ["Σκύλος", "Γάτα"] },
   { label: "Φύλο", type: "select", name: "gender", options: ["Αρσενικό", "Θηλυκό"] },
   { label: "Βάρος (kg)", type: "text", name: "weight", inputProps: { type: "number", min: 0, max: 100 } },
   { label: "Ημερομηνία Γέννησης", type: "date", name: "birthDate" },

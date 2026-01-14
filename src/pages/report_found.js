@@ -98,9 +98,6 @@ const StepAnimalDetails = ({ formData, updateField, errors, onAddPhotos, onRemov
           <MenuItem value="">-</MenuItem>
           <MenuItem value="Σκύλος">Σκύλος</MenuItem>
           <MenuItem value="Γάτα">Γάτα</MenuItem>
-          <MenuItem value="Κουνέλι">Κουνέλι</MenuItem>
-          <MenuItem value="Χάμστερ">Χάμστερ</MenuItem>
-          <MenuItem value="Άλλο">Άλλο</MenuItem>
         </TextField>
 
         <TextField
@@ -807,6 +804,7 @@ export default function ReportFoundStepper() {
     if (!ok) return;
 
     const payload = {
+      ownerId:(isLoggedIn && user?.role === "owner") ? user.id : "guest-or-vet",
       type: "FOUND",
       status: "SUBMITTED",
       createdAt: todayDDMMYYYY(),
