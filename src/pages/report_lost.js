@@ -115,6 +115,7 @@ const StepSelectPet = ({ pets, loading, selectedPetId, previewPetId, errorText, 
               cardSx={{
                 transition: "transform 150ms ease",
                 "&:hover": { transform: "translateY(-1px)" },
+                my: 1, mx: 1
               }}
             />
           </Box>
