@@ -798,28 +798,28 @@ const RegisterPet = () => {
         </Box>
 
 
-        <Box sx={{ width: '70vw', ml: 3, boxShadow: 3, backgroundColor: '#ffffff9f', mt: 3, mb: 3, borderRadius: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <Box sx={{display: 'flex', gap: 2, alignItems: 'center', alignSelf: 'flex-start' }}>
-  
-            <Chip
-              icon={tempSavedDataId ? <EditIcon /> : <AddCircleOutlineIcon />}
-              
-              label={tempSavedDataId ? "Σε κατάσταση Επεξεργασίας Αποθηκευμένου Προσχεδίου" : "Σε κατάσταση Νέας Καταχώρησης"}
-              
-              color={tempSavedDataId ? "warning" : "success"}
-              
-              variant="filled"
-              
-              sx={{ 
-                fontWeight: 'bold',
-                fontSize: '0.9rem',
-                py: 2.5,
-                px: 1,
-                borderRadius: 2,
-              }}
-            />
+        <Box sx={{mt: 2, display: 'flex', gap: 2, alignItems: 'center' }}>
 
-          </Box>
+          <Chip
+            icon={tempSavedDataId ? <EditIcon /> : <AddCircleOutlineIcon />}
+            
+            label={tempSavedDataId ? "Σε κατάσταση Επεξεργασίας Αποθηκευμένου Προσχεδίου" : "Σε κατάσταση Νέας Καταχώρησης"}
+            
+            color={tempSavedDataId ? "warning" : "success"}
+            
+            variant="filled"
+            
+            sx={{ 
+              fontWeight: 'bold',
+              fontSize: '0.9rem',
+              py: 2.5,
+              px: 1,
+              borderRadius: 2,
+            }}
+          />
+
+        </Box>
+        <Box sx={{ width: '70vw', ml: 3, boxShadow: 3, backgroundColor: '#ffffff9f', mt: 3, mb: 3, borderRadius: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <Box sx={{ m: 4, display: 'flex', flexDirection: 'column', gap: 4, width: '60vw', alignItems: 'center' }}>
             {stepsContent[activeStep]}
           </Box>
