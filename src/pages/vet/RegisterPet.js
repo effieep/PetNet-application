@@ -1,5 +1,5 @@
 import Submenu from '../../components/SubMenu';
-import { Box, Typography, Stepper, Step, StepLabel, StepConnector, Button, TextField, Divider, Snackbar, Alert, Autocomplete, Paper, Grid, Stack } from '@mui/material';
+import { Box, Typography, Stepper, Step, StepLabel, StepConnector, Button, TextField, Divider, Snackbar, Alert, Autocomplete, Paper, Grid, Stack, Chip } from '@mui/material';
 import { useState, Fragment, useEffect } from 'react';
 import { useAuth } from '../../auth/AuthContext';
 import { styled } from '@mui/material/styles';
@@ -10,6 +10,8 @@ import { FaPhoneAlt  } from 'react-icons/fa';
 import { FaLocationDot } from 'react-icons/fa6';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import { OwnerField, DetailRow } from '../../components/PetDetailsCard';
+import EditIcon from '@mui/icons-material/Edit';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 const steps = ['Στοιχεία Κατοικιδίου', 'Ανάθεση σε Ιδιοκτήτη', 'Επιβεβαίωση & Υποβολή'];
 
@@ -797,6 +799,27 @@ const RegisterPet = () => {
 
 
         <Box sx={{ width: '70vw', ml: 3, boxShadow: 3, backgroundColor: '#ffffff9f', mt: 3, mb: 3, borderRadius: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <Box sx={{display: 'flex', gap: 2, alignItems: 'center', alignSelf: 'flex-start' }}>
+  
+            <Chip
+              icon={tempSavedDataId ? <EditIcon /> : <AddCircleOutlineIcon />}
+              
+              label={tempSavedDataId ? "Σε κατάσταση Επεξεργασίας Αποθηκευμένου Προσχεδίου" : "Σε κατάσταση Νέας Καταχώρησης"}
+              
+              color={tempSavedDataId ? "warning" : "success"}
+              
+              variant="filled"
+              
+              sx={{ 
+                fontWeight: 'bold',
+                fontSize: '0.9rem',
+                py: 2.5,
+                px: 1,
+                borderRadius: 2,
+              }}
+            />
+
+          </Box>
           <Box sx={{ m: 4, display: 'flex', flexDirection: 'column', gap: 4, width: '60vw', alignItems: 'center' }}>
             {stepsContent[activeStep]}
           </Box>
