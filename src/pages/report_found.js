@@ -563,7 +563,7 @@ export default function ReportFoundStepper() {
 
   // Reuse the known-working bucket from VetPublic.
   // We upload under a folder-like prefix to avoid mixing with profile pictures.
-  const FOUND_PHOTOS_BUCKET = "profile-pics";
+  const FOUND_PHOTOS_BUCKET = "report-pics";
   const FOUND_PHOTOS_PREFIX = "found-reports";
 
   useEffect(() => {
