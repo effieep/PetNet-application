@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
-import { Collapse, Divider } from "@mui/material";
+import { Autocomplete, Collapse, Divider, Chip } from "@mui/material";
 import { SwitchTransition } from "react-transition-group";
 import {
   Stepper,
@@ -20,6 +20,15 @@ import PetPreviewCard from "../components/PetPreviewCard";
 import PetDetailsCard from "../components/PetDetailsCard";
 import AddressPicker from "../components/AddressPicker";
 import { API_URL } from "../api";
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import EditIcon from '@mui/icons-material/Edit';
+
+const formatDateStr = (dateStr) => {
+  if (!dateStr) return "";
+  const date = dateStr.split("T")[0];
+  const [years, months, days] = date.split("-");
+  return `${days}/${months}/${years}`;
+};
 
 // ==============================================
 // SUB-COMPONENTS (ΤΟ ΠΕΡΙΕΧΟΜΕΝΟ ΤΩΝ ΒΗΜΑΤΩΝ)
@@ -402,6 +411,8 @@ export default function ReportLostStepper() {
   const [petsError, setPetsError] = useState("");
   const [selectedPetId, setSelectedPetId] = useState(null);
   const [previewPetId, setPreviewPetId] = useState(null);
+  const [tempSavedData, setTempSavedData] = useState([]);
+  const [tempSavedDataId, setTempSavedDataId] = useState(null);
 
   const [formData, setFormData] = useState({
     pet: {
@@ -452,6 +463,22 @@ export default function ReportLostStepper() {
     if (activeStep > 0 && (!isLoggedIn || user.role !== 'owner') ) {
       setActiveStep(0);
     }
+    const fetchTempSavedData = async () => {
+      try{
+        const response = await fetch(`${API_URL}/temp-saved-lost-form`);
+        const data = await response.json();
+        let userTempData = [];
+        if(data.length > 0 ){
+          userTempData = data.filter(item => item.userId === (user?.id || null));
+        }
+        if (!response.ok) throw new Error("Αποτυχία φόρτωσης προσωρινών δεδομένων.");
+        setTempSavedData(userTempData);
+      }
+      catch (error) {
+        console.error("Error fetching temp saved data:", error);
+      }
+    };
+    fetchTempSavedData();
   }, [activeStep, isLoggedIn, user]);
 
   useEffect(() => {
@@ -661,6 +688,14 @@ export default function ReportLostStepper() {
       if (!res.ok) throw new Error("Αποτυχία αποθήκευσης δήλωσης.");
 
       // Success: go to "Ολοκλήρωση"
+      if(tempSavedDataId){
+        const delres = await fetch(`${API_URL}/temp-saved-lost-form/${tempSavedDataId}`, {
+          method: "DELETE",
+        });
+        if(!delres.ok) throw new Error("Αποτυχία διαγραφής προσωρινών δεδομένων.");
+        setTempSavedDataId(null);
+        setTempSavedData(prevData => prevData.filter(item => item.id !== tempSavedDataId));
+      }
       setActiveStep((prev) => prev + 1);
     } catch (e) {
       setSubmitError(e?.message || "Παρουσιάστηκε σφάλμα κατά την αποθήκευση.");
@@ -749,6 +784,94 @@ export default function ReportLostStepper() {
     return { paperMaxWidth: 980, contentMaxWidth: 520 };
   })();
 
+  const handleTempSave = async () => {
+    setActiveStep(0);
+    try{
+      const existingDraft = tempSavedData.find(item => item.id === tempSavedDataId);
+      if(existingDraft){
+        // Update existing
+        const response = await fetch(`${API_URL}/temp-saved-lost-form/${tempSavedDataId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            savedAt: new Date().toISOString(),
+            data: formData,
+          }),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error("Αποτυχία αποθήκευσης προσωρινών δεδομένων.");
+        setTempSavedData(prevData => prevData.map(item => item.id === tempSavedDataId ? data : item));
+        return;
+      }
+      else{
+        const response = await fetch(`${API_URL}/temp-saved-lost-form`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: user?.id || null,
+            savedAt: new Date().toISOString(),
+            data: formData,
+          }),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error("Αποτυχία αποθήκευσης προσωρινών δεδομένων.");
+        setTempSavedData(prevData => [...prevData, data]);
+      }
+    }
+    catch (error) {
+      console.error("Error saving temp data:", error);
+    }
+  };
+
+  const handleTempChange = (event, newValue) => {
+    setTempSavedDataId(newValue?.id || null);
+    setFormData(newValue?.data || 
+    {
+      pet: {
+        id: "",
+        microchip: "",
+        species: "",
+        breed: "",
+        sex: "",
+        color: "",
+        size: "",
+        features: "",
+        photo: "",
+      },
+      loss: {
+        date: "",
+        time: "",
+        area: "",
+        lat: null,
+        lon: null,
+        notes: "",
+      },
+      contact: {
+        name: "",
+        phone: "",
+        email: "",
+        altName: "",
+        altPhone: "",
+        altEmail: "",
+      },
+  });
+  };
+
+  const handleTempDelete = async () => {
+    if (!tempSavedDataId) return;
+    try {
+      const response = await fetch(`${API_URL}/temp-saved-lost-form/${tempSavedDataId}`, {
+        method: "DELETE",
+      });
+      setTempSavedDataId(null);
+      setTempSavedData(prevData => prevData.filter(item => item.id !== tempSavedDataId));
+      if(!response.ok) throw new Error("Αποτυχία διαγραφής προσωρινών δεδομένων.");
+    }
+    catch (error) {
+      console.error("Error deleting temp saved data:", error);
+    }
+  };
+
   return (
     
     <Box
@@ -758,12 +881,40 @@ export default function ReportLostStepper() {
         justifyContent: "center",
         alignItems: "center",
         position: "relative",
+        flexDirection: 'column',
         px: 2,
       }}
     >
 
       <LoginDialog open={loginOpen} onClose={() => setLoginOpen(false)} />
-
+      <Box
+        sx={{
+          position: 'sticky',
+          top: 20,
+          zIndex: 1000,
+          mt: 2,
+          mb: 2,
+          backdropFilter: 'blur(8px)',
+          borderRadius: '20px',
+          p: 1,
+          display: 'flex',
+          justifyContent: 'center'
+        }}
+      >
+          <Chip
+            icon={tempSavedDataId ? <EditIcon /> : <AddCircleOutlineIcon />}
+            label={tempSavedDataId ? "Σε κατάσταση Επεξεργασίας Αποθηκευμένου Προσχεδίου" : "Σε κατάσταση Νέας Καταχώρησης"}
+            color={tempSavedDataId ? "warning" : "success"}
+            variant="filled"
+            sx={{
+              fontWeight: 'bold',
+              fontSize: '0.9rem',
+              py: 2.5,
+              px: 1,
+              borderRadius: 2,
+            }}
+          />
+      </Box>
       <Paper
         sx={{
           p: { xs: 2.5, sm: 3, md: 4 },
@@ -777,6 +928,27 @@ export default function ReportLostStepper() {
         <Typography variant="h4" align="center" sx={{ mb: 4, fontWeight: "bold", color: "#373721" }}>
           Δήλωση Απώλειας
         </Typography>
+        <Box sx={{ display: "flex", flexDirection: "row", gap: 2, justifyContent: "center", alignSelf: "center" }}>
+          <Autocomplete
+            value={tempSavedData.find(item => item.id === tempSavedDataId) || null}
+            options={tempSavedData}
+            getOptionLabel={(option) => `${formatDateStr(option.savedAt)} - ${pets.find(p => p.id === option.data.pet.id)?.name || 'Άγνωστο Κατοικίδιο'}`}
+            renderInput={(params) => <TextField {...params} label="Φόρτωση προσωρινής αποθήκευσης" variant="outlined" size="small" Inp />}
+            sx={{ mb: 3, width: "30vw", height: "5vh" }}
+            onChange={(event, newValue) => handleTempChange(event, newValue)}
+          />
+          <Button
+            variant="contained"
+            onClick={handleTempDelete}
+            sx={{ fontWeight: "bold", height: "5vh", textTransform: "none", 
+              color: '#dfdddd',
+              backgroundColor: '#bb3d3d',
+              '&:hover': { backgroundColor: '#ce5959' },
+            }}
+          >
+            Διαγραφή Επιλεγμένου Προσχεδίου
+          </Button>
+        </Box>
 
         <Box
           sx={{
@@ -860,6 +1032,7 @@ export default function ReportLostStepper() {
                 <Button
                   onClick={handleBack}
                   sx={{
+                    display: activeStep === 5 ? "none" : "block",
                     color: "#000000ff",
                     outline: "solid 1px #000000ff",
                     px: 4,
@@ -868,6 +1041,23 @@ export default function ReportLostStepper() {
                   ΠΙΣΩ
                 </Button>
               )}
+              <Button
+                disabled={formData.pet.id === ''}
+                variant="contained"
+                color="success"
+                onClick={handleTempSave}
+                sx={{ px: 4, py: 1, fontWeight: "bold", ml: "auto",
+                      borderColor: '#3b2004',
+                      color: '#3b2004',
+                      display: (activeStep === 4 || activeStep === 5) ? "none" : "block",
+                      backgroundColor: '#d38d1e',
+                      '&:hover': { 
+                        backgroundColor: '#eeaf49',
+                      }, 
+                 }}
+              >
+                Προσωρινη Αποθηκευση
+              </Button>
 
               {shouldShowFooterActions && (
                 isDone ? (
