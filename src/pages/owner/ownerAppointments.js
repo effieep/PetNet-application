@@ -80,6 +80,24 @@ const OwnerAppointments = () => {
             ]
         }),
       });
+      setVets(prevVets =>
+        prevVets.map(v =>
+          v.id === appointment.vetId
+            ? {
+                ...v,
+                availability: [ 
+                  ...(v.availability || []),
+                  {
+                    id: Date.now(),
+                    date: (appointment.date).replaceAll('-', '/'),
+                    time: appointment.time,
+                    duration: appointment.duration
+                  }
+                ],
+              }
+            : v
+        )
+      );
     }
     catch (error) {
       console.error("Error updating vet availability:", error);
