@@ -1,9 +1,10 @@
-import { Box, Typography, Grid } from "@mui/material";
+import { Box, Typography, Grid, Button } from "@mui/material";
 import ActionBox from "./ActionBox";
 import RecentPets from "./RecentPets";
 import UniversalButton from "./UniversalButton";    
 import { API_URL } from "../api";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 const returnDateObj = (dateStr) => {
   const [day, month, year] = dateStr.split('-');
@@ -47,6 +48,7 @@ export default function LostFoundSection() {
             backgroundColor: "#f6ecad",
             py: { xs: 4, md: 6 },
             px: 3,
+            position: "relative",
         }}
         >
         {/* HEADER */}
@@ -122,6 +124,30 @@ export default function LostFoundSection() {
             return acc;
         }, [])}
         />
+        <Button
+          component={Link}
+          to="/lost-found"
+          sx={{
+            mt: 4,
+            backgroundColor: "#4c4c2d",
+            color: "#ffffff",
+            textTransform: "none",
+            fontWeight: 700,
+            borderRadius: 15,
+            px: { xs: 3, sm: 4, md: 6 },
+            py: { xs: 0.5, sm: 1 },
+            fontSize: { xs: '0.85rem', sm: '0.9rem', md: '1rem' },
+            left: "50%",
+            transform: "translateX(-50%)",
+            '&:hover': {
+              backgroundColor: "#4c4c2d",
+              filter: 'brightness(0.85)',
+              boxShadow: 'grey 0px 2px 5px'
+            }
+          }}
+        >
+          Περισσότερα
+        </Button>
         </Box>
         </>
     );
