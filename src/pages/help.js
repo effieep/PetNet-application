@@ -5,7 +5,7 @@ import PetOwnerIcon from './../components/PetOwnerIcon.jsx';
 import { FaUserDoctor } from 'react-icons/fa6';
 import { FaSearch } from 'react-icons/fa';
 import { IoArrowBackCircleOutline } from 'react-icons/io5';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const cards = 
 [
@@ -45,9 +45,14 @@ const normalizeString = (str) => {
 
 
 const Help = () => {
-  
+
   const [selectedCard, setSelectedCard] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [selectedCard]);
+
   if (selectedCard !== null) {
     return (
       <>
