@@ -68,6 +68,7 @@ async function nominatimSearch(query, signal) {
   url.searchParams.set("addressdetails", "1");
   url.searchParams.set("limit", "6");
   url.searchParams.set("q", query);
+  url.searchParams.set("accept-language", "el"); // Greek results
   const res = await fetch(url.toString(), {
     signal,
     headers: {
@@ -88,6 +89,7 @@ async function nominatimReverse(lat, lon, signal) {
   url.searchParams.set("lon", String(lon));
   url.searchParams.set("zoom", "18");
   url.searchParams.set("addressdetails", "1");
+  url.searchParams.set("accept-language", "el"); // Greek results
   const res = await fetch(url.toString(), {
     signal,
     headers: { Referer: window.location.origin },
