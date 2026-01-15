@@ -76,6 +76,10 @@ function extractPhotoUrls(declaration) {
         .filter(Boolean);
 }
 
+function hasText(value) {
+    return String(value ?? "").trim().length > 0;
+}
+
 export default function LostAndFoundMainGrid({ mode }) {
     const [page, setPage] = useState(1);
     const [microchipQuery, setMicrochipQuery] = useState("");
@@ -134,6 +138,16 @@ export default function LostAndFoundMainGrid({ mode }) {
                     const owner = declaration.ownerId ? usersById.get(String(declaration.ownerId)) : null;
 
                     // Normalize a contact object so the UI has something consistent.
+                    const altRaw = declaration.contact?.alt;
+                    const alt =
+                        altRaw && typeof altRaw === "object"
+                            ? {
+                                  name: altRaw?.name || "",
+                                  phone: altRaw?.phone || "",
+                                  email: altRaw?.email || "",
+                              }
+                            : null;
+
                     const contact = {
                         name:
                             declaration.contact?.name ||
@@ -142,6 +156,7 @@ export default function LostAndFoundMainGrid({ mode }) {
                             "",
                         phone: declaration.contact?.phone || owner?.phone || "",
                         email: declaration.contact?.email || owner?.email || "",
+                        ...(alt && (hasText(alt.name) || hasText(alt.phone) || hasText(alt.email)) ? { alt } : {}),
                     };
 
                     return {
@@ -257,6 +272,27 @@ export default function LostAndFoundMainGrid({ mode }) {
         const idx = Math.min(Math.max(0, activePhotoIndex), selectedPhotos.length - 1);
         return selectedPhotos[idx] || "";
     }, [selectedPhotos, activePhotoIndex]);
+
+    const altContact = selectedDeclaration?.contact?.alt || null;
+    const hasAltContact = Boolean(
+        altContact && (hasText(altContact?.name) || hasText(altContact?.phone) || hasText(altContact?.email))
+    );
+
+    const hasDescription = hasText(selectedDeclaration?.description);
+    const hasLocationAddress = hasText(selectedDeclaration?.location?.address);
+    const hasFoundOrLostDate = hasText(selectedDeclaration?.lostDate) || hasText(selectedDeclaration?.foundDate);
+    const hasFoundOrLostTime = hasText(selectedDeclaration?.lostTime) || hasText(selectedDeclaration?.foundTime);
+
+    const pet = selectedDeclaration?.pet || null;
+    const hasPetType = hasText(selectedDeclaration?.petType) || hasText(pet?.species);
+    const hasBreed = hasText(pet?.breed);
+    const hasGender = hasText(pet?.gender);
+    const hasColor = hasText(pet?.color);
+    const hasSize = hasText(pet?.size) || hasText(pet?.weight);
+
+    const hasContactName = hasText(selectedDeclaration?.contact?.name);
+    const hasContactPhone = hasText(selectedDeclaration?.contact?.phone);
+    const hasContactEmail = hasText(selectedDeclaration?.contact?.email);
 
     useEffect(() => {
         // When switching declarations, default to the first photo.
@@ -498,6 +534,12 @@ export default function LostAndFoundMainGrid({ mode }) {
                                     const photos = extractPhotoUrls(card);
                                     const primaryPhoto = photos[0] || "";
 
+                                    const alt = card?.contact?.alt || null;
+                                    const hasAlt = Boolean(alt && (hasText(alt?.name) || hasText(alt?.phone) || hasText(alt?.email)));
+                                    const altParts = hasAlt
+                                        ? [alt?.name, alt?.phone, alt?.email].filter((v) => hasText(v))
+                                        : [];
+
                                     return (
                                 <Box
                                     key={card.id}
@@ -561,6 +603,11 @@ export default function LostAndFoundMainGrid({ mode }) {
                                         <Typography sx={{ fontSize: 11, fontWeight: 800, overflowWrap: "anywhere" }}>
                                             Τηλ. Επικοινωνίας : {card?.contact?.phone || "-"}
                                         </Typography>
+                                        {hasAlt && (
+                                            <Typography sx={{ fontSize: 11, fontWeight: 800, overflowWrap: "anywhere" }}>
+                                                Εναλ. Επικοινωνία : {altParts.join(" • ")}
+                                            </Typography>
+                                        )}
                                     </Box>
                                 </Box>
                                     );
@@ -667,6 +714,24 @@ export default function LostAndFoundMainGrid({ mode }) {
 
                         </Box>
 
+                        {mode === "found" && (
+                            <Box
+                                sx={{
+                                    px: { xs: 1, md: 2 },
+                                    mb: 2,
+                                    display: "flex",
+                                    flexWrap: "wrap",
+                                    gap: 1,
+                                    alignItems: "center",
+                                    color: "rgba(0,0,0,0.75)",
+                                }}
+                            >
+                                <Typography sx={{ fontSize: 12, fontWeight: 800, overflowWrap: "anywhere" }}>
+                                    Δημιουργήθηκε: {selectedDeclaration?.createdAt ?? "-"}{selectedDeclaration?.createdTime ? `, ${selectedDeclaration.createdTime}` : ""}
+                                </Typography>
+                            </Box>
+                        )}
+
                         <Box
                             sx={{
                                 display: "grid",
@@ -753,6 +818,59 @@ export default function LostAndFoundMainGrid({ mode }) {
                                     </Box>
                                 )}
 
+                                {mode === "found" && selectedPhotos.length > 0 && (
+                                    <Box
+                                        sx={{
+                                            border: "2px solid rgba(0,0,0,0.20)",
+                                            borderRadius: 1.5,
+                                            p: 2,
+                                        }}
+                                    >
+                                        <Typography sx={{ fontWeight: 900, fontSize: 14, mb: 1 }}>
+                                            Φωτογραφίες
+                                        </Typography>
+                                        <Box
+                                            sx={{
+                                                display: "grid",
+                                                gridTemplateColumns: { xs: "repeat(2, minmax(0, 1fr))", sm: "repeat(3, minmax(0, 1fr))" },
+                                                gap: 1,
+                                            }}
+                                        >
+                                            {selectedPhotos.map((url, idx) => (
+                                                <Box
+                                                    key={`gallery-${url}-${idx}`}
+                                                    role="button"
+                                                    tabIndex={0}
+                                                    onClick={() => setActivePhotoIndex(idx)}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === "Enter" || e.key === " ") setActivePhotoIndex(idx);
+                                                    }}
+                                                    sx={{
+                                                        width: "100%",
+                                                        height: 90,
+                                                        borderRadius: 1,
+                                                        overflow: "hidden",
+                                                        cursor: "pointer",
+                                                        outline: "none",
+                                                        border:
+                                                            idx === activePhotoIndex
+                                                                ? "2px solid rgba(0,0,0,0.75)"
+                                                                : "2px solid rgba(0,0,0,0.12)",
+                                                        "&:focus-visible": { outline: "2px solid rgba(0,0,0,0.35)", outlineOffset: 2 },
+                                                    }}
+                                                >
+                                                    <Box
+                                                        component="img"
+                                                        src={url}
+                                                        alt={`Φωτογραφία ${idx + 1}`}
+                                                        sx={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                                                    />
+                                                </Box>
+                                            ))}
+                                        </Box>
+                                    </Box>
+                                )}
+
                                 <Box
                                     sx={{
                                         border: "2px solid rgba(0,0,0,0.20)",
@@ -761,6 +879,7 @@ export default function LostAndFoundMainGrid({ mode }) {
                                     }}
                                 >
                                     <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2, mb: 2 }}>
+                                        {hasFoundOrLostDate && (
                                         <Box>
                                             <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
                                                 Ημερομηνία {mode === "lost" ? "απώλειας" : "εύρεσης"}
@@ -782,6 +901,8 @@ export default function LostAndFoundMainGrid({ mode }) {
                                                 </Typography>
                                             </Box>
                                         </Box>
+                                        )}
+                                        {hasFoundOrLostTime && (
                                         <Box>
                                             <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
                                                 Ώρα
@@ -803,47 +924,63 @@ export default function LostAndFoundMainGrid({ mode }) {
                                                 </Typography>
                                             </Box>
                                         </Box>
+                                        )}
                                     </Box>
 
-                                    <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
-                                        Περιοχή που {mode === "lost" ? "χάθηκε" : "βρέθηκε"}
-                                    </Typography>
-                                    <Box
-                                        sx={{
-                                            minHeight: 34,
-                                            height: "auto",
-                                            borderRadius: 1.2,
-                                            backgroundColor: "#f1e9c9",
-                                            display: "flex",
-                                            alignItems: "flex-start",
-                                            gap: 1,
-                                            px: 1.5,
-                                            py: 0.75,
-                                            mb: 2,
-                                        }}
-                                    >
-                                        <LocationOnIcon fontSize="small" sx={{ opacity: 0.75, mt: "2px" }} />
-                                        <Typography sx={{ fontSize: 12, fontWeight: 700, opacity: 0.75, overflowWrap: "anywhere" }}>
-                                            {selectedDeclaration?.location?.address || "-"}
-                                        </Typography>
-                                    </Box>
+                                    {hasLocationAddress && (
+                                        <>
+                                            <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
+                                                Περιοχή που {mode === "lost" ? "χάθηκε" : "βρέθηκε"}
+                                            </Typography>
+                                            <Box
+                                                sx={{
+                                                    minHeight: 34,
+                                                    height: "auto",
+                                                    borderRadius: 1.2,
+                                                    backgroundColor: "#f1e9c9",
+                                                    display: "flex",
+                                                    alignItems: "flex-start",
+                                                    gap: 1,
+                                                    px: 1.5,
+                                                    py: 0.75,
+                                                    mb: 2,
+                                                }}
+                                            >
+                                                <LocationOnIcon fontSize="small" sx={{ opacity: 0.75, mt: "2px" }} />
+                                                <Typography sx={{ fontSize: 12, fontWeight: 700, opacity: 0.75, overflowWrap: "anywhere" }}>
+                                                    {selectedDeclaration?.location?.address}
+                                                </Typography>
+                                            </Box>
+                                        </>
+                                    )}
 
-                                    <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
-                                        Επιπλέον πληροφορίες
-                                    </Typography>
-                                    <Box
-                                        sx={{
-                                            minHeight: 64,
-                                            borderRadius: 1.2,
-                                            backgroundColor: "#f1e9c9",
-                                            px: 1.5,
-                                            py: 1,
-                                        }}
-                                    >
-                                        <Typography sx={{ fontSize: 12, fontWeight: 700, opacity: 0.75, whiteSpace: "pre-wrap" }}>
-                                            {selectedDeclaration?.description || "-"}
+                                    {mode === "found" && (Number.isFinite(selectedDeclaration?.location?.lat) || Number.isFinite(selectedDeclaration?.location?.lon)) && (
+                                        <Typography sx={{ fontSize: 11, fontWeight: 700, opacity: 0.7, mb: 2, overflowWrap: "anywhere" }}>
+                                            Συντεταγμένες: {Number.isFinite(selectedDeclaration?.location?.lat) ? selectedDeclaration.location.lat : "-"},{" "}
+                                            {Number.isFinite(selectedDeclaration?.location?.lon) ? selectedDeclaration.location.lon : "-"}
                                         </Typography>
-                                    </Box>
+                                    )}
+
+                                    {hasDescription && (
+                                        <>
+                                            <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
+                                                Επιπλέον πληροφορίες
+                                            </Typography>
+                                            <Box
+                                                sx={{
+                                                    minHeight: 64,
+                                                    borderRadius: 1.2,
+                                                    backgroundColor: "#f1e9c9",
+                                                    px: 1.5,
+                                                    py: 1,
+                                                }}
+                                            >
+                                                <Typography sx={{ fontSize: 12, fontWeight: 700, opacity: 0.75, whiteSpace: "pre-wrap" }}>
+                                                    {selectedDeclaration?.description}
+                                                </Typography>
+                                            </Box>
+                                        </>
+                                    )}
                                 </Box>
                             </Box>
 
@@ -854,28 +991,33 @@ export default function LostAndFoundMainGrid({ mode }) {
                                         Στοιχεία κατοικιδίου
                                     </Typography>
 
-                                    <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
-                                        Αρ. Microchip
-                                    </Typography>
-                                    <Box
-                                        sx={{
-                                            minHeight: 34,
-                                            height: "auto",
-                                            borderRadius: 1.2,
-                                            backgroundColor: "#f1e9c9",
-                                            mb: 1.5,
-                                            display: "flex",
-                                            alignItems: "center",
-                                            px: 1.5,
-                                            py: 0.75,
-                                        }}
-                                    >
-                                        <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
-                                            {selectedDeclaration?.pet?.microchip || selectedDeclaration?.microchip || "-"}
-                                        </Typography>
-                                    </Box>
+                                    {mode === "found" && hasPetType && (
+                                        <>
+                                            <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
+                                                Τύπος ζώου
+                                            </Typography>
+                                            <Box
+                                                sx={{
+                                                    minHeight: 34,
+                                                    height: "auto",
+                                                    borderRadius: 1.2,
+                                                    backgroundColor: "#f1e9c9",
+                                                    mb: 1.5,
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    px: 1.5,
+                                                    py: 0.75,
+                                                }}
+                                            >
+                                                <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
+                                                    {selectedDeclaration?.petType || pet?.species}
+                                                </Typography>
+                                            </Box>
+                                        </>
+                                    )}
 
                                     <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 2, mb: 1.5 }}>
+                                        {hasBreed && (
                                         <Box>
                                             <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
                                                 Φυλή
@@ -893,10 +1035,12 @@ export default function LostAndFoundMainGrid({ mode }) {
                                                 }}
                                             >
                                                 <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
-                                                    {selectedDeclaration?.pet?.breed || "-"}
+                                                    {pet?.breed}
                                                 </Typography>
                                             </Box>
                                         </Box>
+                                        )}
+                                        {hasGender && (
                                         <Box>
                                             <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
                                                 Φύλο
@@ -914,13 +1058,15 @@ export default function LostAndFoundMainGrid({ mode }) {
                                                 }}
                                             >
                                                 <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
-                                                    {selectedDeclaration?.pet?.gender || "-"}
+                                                    {pet?.gender}
                                                 </Typography>
                                             </Box>
                                         </Box>
+                                        )}
                                     </Box>
 
                                     <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 2, mb: 1.5 }}>
+                                        {hasColor && (
                                         <Box>
                                             <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
                                                 Χρώμα
@@ -938,10 +1084,12 @@ export default function LostAndFoundMainGrid({ mode }) {
                                                 }}
                                             >
                                                 <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
-                                                    {selectedDeclaration?.pet?.color || "-"}
+                                                    {pet?.color}
                                                 </Typography>
                                             </Box>
                                         </Box>
+                                        )}
+                                        {hasSize && (
                                         <Box>
                                             <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
                                                 Μέγεθος
@@ -959,10 +1107,11 @@ export default function LostAndFoundMainGrid({ mode }) {
                                                 }}
                                             >
                                                 <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
-                                                    {selectedDeclaration?.pet?.weight || "-"}
+                                                    {pet?.size || pet?.weight}
                                                 </Typography>
                                             </Box>
                                         </Box>
+                                        )}
                                     </Box>
 
                                     <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
@@ -988,73 +1137,162 @@ export default function LostAndFoundMainGrid({ mode }) {
                                         Στοιχεία επικοινωνίας
                                     </Typography>
 
-                                    <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
-                                        Όνομα ιδιοκτήτη
-                                    </Typography>
-                                    <Box
-                                        sx={{
-                                            minHeight: 34,
-                                            height: "auto",
-                                            borderRadius: 1.2,
-                                            backgroundColor: "#eef0d2",
-                                            mb: 1.5,
-                                            display: "flex",
-                                            alignItems: "center",
-                                            px: 1.5,
-                                            py: 0.75,
-                                        }}
-                                    >
-                                        <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
-                                            {selectedDeclaration?.contact?.name || "-"}
-                                        </Typography>
-                                    </Box>
+                                    {hasContactName && (
+                                        <>
+                                            <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
+                                                Όνομα
+                                            </Typography>
+                                            <Box
+                                                sx={{
+                                                    minHeight: 34,
+                                                    height: "auto",
+                                                    borderRadius: 1.2,
+                                                    backgroundColor: "#eef0d2",
+                                                    mb: 1.5,
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    px: 1.5,
+                                                    py: 0.75,
+                                                }}
+                                            >
+                                                <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
+                                                    {selectedDeclaration?.contact?.name}
+                                                </Typography>
+                                            </Box>
+                                        </>
+                                    )}
 
-                                    <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
-                                        Τηλέφωνο επικοινωνίας
-                                    </Typography>
-                                    <Box
-                                        sx={{
-                                            minHeight: 34,
-                                            height: "auto",
-                                            borderRadius: 1.2,
-                                            backgroundColor: "#eef0d2",
-                                            mb: 1.5,
-                                            display: "flex",
-                                            alignItems: "center",
-                                            px: 1.5,
-                                            py: 0.75,
-                                        }}
-                                    >
-                                        <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
-                                            {selectedDeclaration?.contact?.phone || "-"}
-                                        </Typography>
-                                    </Box>
+                                    {hasContactPhone && (
+                                        <>
+                                            <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
+                                                Τηλέφωνο
+                                            </Typography>
+                                            <Box
+                                                sx={{
+                                                    minHeight: 34,
+                                                    height: "auto",
+                                                    borderRadius: 1.2,
+                                                    backgroundColor: "#eef0d2",
+                                                    mb: 1.5,
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    px: 1.5,
+                                                    py: 0.75,
+                                                }}
+                                            >
+                                                <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
+                                                    {selectedDeclaration?.contact?.phone}
+                                                </Typography>
+                                            </Box>
+                                        </>
+                                    )}
 
-                                    <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
-                                        Email
-                                    </Typography>
-                                    <Box
-                                        sx={{
-                                            minHeight: 34,
-                                            height: "auto",
-                                            borderRadius: 1.2,
-                                            backgroundColor: "#eef0d2",
-                                            display: "flex",
-                                            alignItems: "center",
-                                            px: 1.5,
-                                            py: 0.75,
-                                        }}
-                                    >
-                                        <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
-                                            {selectedDeclaration?.contact?.email || "-"}
-                                        </Typography>
-                                    </Box>
+                                    {hasContactEmail && (
+                                        <>
+                                            <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
+                                                Email
+                                            </Typography>
+                                            <Box
+                                                sx={{
+                                                    minHeight: 34,
+                                                    height: "auto",
+                                                    borderRadius: 1.2,
+                                                    backgroundColor: "#eef0d2",
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    px: 1.5,
+                                                    py: 0.75,
+                                                }}
+                                            >
+                                                <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
+                                                    {selectedDeclaration?.contact?.email}
+                                                </Typography>
+                                            </Box>
+                                        </>
+                                    )}
+
+                                    {mode === "found" && hasAltContact && (
+                                        <>
+                                            <Typography sx={{ fontWeight: 900, fontSize: 14, mt: 2, mb: 1 }}>
+                                                Εναλλακτική επικοινωνία
+                                            </Typography>
+
+                                            {hasText(altContact?.name) && (
+                                                <>
+                                                    <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
+                                                        Όνομα
+                                                    </Typography>
+                                                    <Box
+                                                        sx={{
+                                                            minHeight: 34,
+                                                            height: "auto",
+                                                            borderRadius: 1.2,
+                                                            backgroundColor: "#eef0d2",
+                                                            mb: 1.5,
+                                                            display: "flex",
+                                                            alignItems: "center",
+                                                            px: 1.5,
+                                                            py: 0.75,
+                                                        }}
+                                                    >
+                                                        <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
+                                                            {altContact?.name}
+                                                        </Typography>
+                                                    </Box>
+                                                </>
+                                            )}
+
+                                            {hasText(altContact?.phone) && (
+                                                <>
+                                                    <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
+                                                        Τηλέφωνο
+                                                    </Typography>
+                                                    <Box
+                                                        sx={{
+                                                            minHeight: 34,
+                                                            height: "auto",
+                                                            borderRadius: 1.2,
+                                                            backgroundColor: "#eef0d2",
+                                                            mb: 1.5,
+                                                            display: "flex",
+                                                            alignItems: "center",
+                                                            px: 1.5,
+                                                            py: 0.75,
+                                                        }}
+                                                    >
+                                                        <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
+                                                            {altContact?.phone}
+                                                        </Typography>
+                                                    </Box>
+                                                </>
+                                            )}
+
+                                            {hasText(altContact?.email) && (
+                                                <>
+                                                    <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
+                                                        Email
+                                                    </Typography>
+                                                    <Box
+                                                        sx={{
+                                                            minHeight: 34,
+                                                            height: "auto",
+                                                            borderRadius: 1.2,
+                                                            backgroundColor: "#eef0d2",
+                                                            display: "flex",
+                                                            alignItems: "center",
+                                                            px: 1.5,
+                                                            py: 0.75,
+                                                        }}
+                                                    >
+                                                        <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
+                                                            {altContact?.email}
+                                                        </Typography>
+                                                    </Box>
+                                                </>
+                                            )}
+                                        </>
+                                    )}
                                 </Box>
-
-                                {/* Placeholder so we can verify state is wired */}
-                                <Typography sx={{ fontSize: 11, opacity: 0.5 }}>
-                                    selected: {selectedId ?? ""}
-                                </Typography>
                             </Box>
                         </Box>
                     </Box>
