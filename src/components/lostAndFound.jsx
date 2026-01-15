@@ -2,9 +2,46 @@ import { Box, Typography, Grid } from "@mui/material";
 import ActionBox from "./ActionBox";
 import RecentPets from "./RecentPets";
 import UniversalButton from "./UniversalButton";    
+import { API_URL } from "../api";
+import { useEffect, useState } from "react";
+
+const returnDateObj = (dateStr) => {
+  const [day, month, year] = dateStr.split('-');
+  return new Date(`${year}-${month}-${day}`);
+}
 
 export default function LostFoundSection() {
+  const [pets, setPets] = useState([]);
+  const [lostDeclarations, setLostDeclarations] = useState([]);
+
+  useEffect(() => {
+    const fetchPets = async () => {
+      try {
+        const response = await fetch(`${API_URL}/pets`);
+        const data = await response.json();
+        setPets(data);
+      } catch (error) {
+        console.error("Error fetching recent lost/found pets:", error);
+      }
+    };
+    fetchPets();
+
+    const fetchLostDeclarations = async () => {
+      try {
+        const response = await fetch(`${API_URL}/declarations?type=LOSS&status=SUBMITTED`);
+        const data = await response.json();
+        setLostDeclarations(data.filter(decl => new Date() - returnDateObj(decl.createdAt) <= 30 * 24 * 60 * 60 * 1000)); // lost within last 30 days
+      } catch (error) {
+        console.error("Error fetching lost declarations:", error);
+      }
+    };
+    fetchLostDeclarations();
+
+    
+
+  }, []);
     return (
+        <>
         <Box
         sx={{
             backgroundColor: "#f6ecad",
@@ -71,81 +108,21 @@ export default function LostFoundSection() {
 
         {/* RECENT */}
         <RecentPets
-        pets={[
-            {
-            id: 12,
-            image: "/pets/pet1.jpg",
-            area: "Καλλιθέα",
-            phone: "6912345689",
-            },
-            {
-            id: 11,
-            image: "/pets/pet2.jpg",
-            area: "Θεσσαλονίκη",
-            phone: "6912345678",
-            },
-            {
-            id: 10,
-            image: "/pets/pet3.jpg",
-            area: "Χαλάνδρι",
-            phone: "6912345669",
-            },
-            {
-            id: 9,
-            image: "/pets/pet4.jpg",
-            area: "Χαλάνδρι",
-            phone: "6912345659",
-            },
-            {
-            id: 1,
-            image: "/pets/dog1.jpg",
-            area: "Καλλιθέα",
-            phone: "6912345678",
-            },
-            {
-            id: 2,
-            image: "/pets/cat1.jpg",
-            area: "Θεσσαλονίκη",
-            phone: "6987654321",
-            },
-            {
-            id: 3,
-            image: "/pets/dog2.jpg",
-            area: "Χαλάνδρι",
-            phone: "6901122334",
-            },
-            {
-            id: 4,
-            image: "/pets/cat2.jpg",
-            area: "Περιστέρι",
-            phone: "6977788899",
-            },
-            {
-            id: 5,
-            image: "/pets/dog3.jpg",
-            area: "Νέα Σμύρνη",
-            phone: "6933344455",
-            },
-            {
-            id: 6,
-            image: "/pets/cat3.jpg",
-            area: "Γλυφάδα",
-            phone: "6945566778",
-            },
-            {
-            id: 7,
-            image: "/pets/dog4.jpg",
-            area: "Πατήσια",
-            phone: "6999988877",
-            },
-            {
-            id: 8,
-            image: "/pets/cat4.jpg",
-            area: "Μαρούσι",
-            phone: "6922233344",
-            },
-        ]}
+        pets={pets.reduce((acc, pet) => {
+            const petDeclarations = lostDeclarations.filter(decl => decl.petId === pet.id);
+
+            petDeclarations.forEach(declaration => {
+              acc.push({
+                image: pet?.photoUrl || './pet_lost_default.png',
+                phone: declaration.contact.phone,
+                area: declaration.location.address.split(',').slice(0, 2).join(',') || "Άγνωστη τοποθεσία",
+              });
+            });
+            
+            return acc;
+        }, [])}
         />
         </Box>
+        </>
     );
 }
