@@ -20,8 +20,9 @@ import SearchIcon from "@mui/icons-material/Search";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PhoneIcon from "@mui/icons-material/Phone";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import CloseIcon from "@mui/icons-material/Close";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
+import KeyboardArrowUpRoundedIcon from "@mui/icons-material/KeyboardArrowUpRounded";
 import { API_URL } from "../api";
 
 const PAGE_SIZE = 12;
@@ -716,7 +717,7 @@ export default function LostAndFoundMainGrid({ mode }) {
                         justifyContent: "center",
                         px: { xs: 2, md: 3 },
                         py: { xs: 3, md: 4 },
-                        overflowY: "auto",
+                        overflow: "hidden",
                     }}
                 >
                     <Box
@@ -729,20 +730,34 @@ export default function LostAndFoundMainGrid({ mode }) {
                             border: "2px solid rgba(0,0,0,0.65)",
                             boxShadow: "0 10px 30px rgba(0,0,0,0.25)",
                             position: "relative",
-                            p: { xs: 2, md: 3 },
-                            maxHeight: { xs: "calc(100dvh - 64px)", md: "calc(100dvh - 96px)" },
-                            overflowY: "auto",
-                            overflowX: "hidden",
+                            display: "flex",
+                            flexDirection: "column",
+                            p: 0,
+                            maxHeight: {
+                                xs: "clamp(520px, 78dvh, 720px)",
+                                md: "clamp(560px, 76dvh, 760px)",
+                            },
+                            overflow: "hidden",
                         }}
                     >
+                        <Box
+                            sx={{
+                                flex: "1 1 auto",
+                                minHeight: 0,
+                                overflowY: "auto",
+                                overflowX: "hidden",
+                                scrollbarGutter: "stable",
+                                p: { xs: 2, md: 3 },
+                            }}
+                        >
                         <Box
                             sx={{
                                 position: "sticky",
                                 top: 0,
                                 zIndex: 5,
-                                pt: { xs: 0.25, md: 0.25 },
-                                pb: { xs: 0.75, md: 0.75 },
-                                mb: 1.75,
+                                pt: { xs: 0.2, md: 0.2 },
+                                pb: { xs: 0.6, md: 0.6 },
+                                mb: 1.25,
                                 px: { xs: 0.5, md: 0.75 },
                                 borderRadius: 2,
                                 backgroundColor: "rgba(255,255,255,0.72)",
@@ -763,20 +778,28 @@ export default function LostAndFoundMainGrid({ mode }) {
                                 <IconButton
                                     onClick={closeDetails}
                                     sx={{
-                                        border: "2px solid rgba(0,0,0,0.65)",
-                                        backgroundColor: "#ffffff",
-                                        "&:hover": { backgroundColor: "#ffffff", filter: "brightness(0.95)" },
+                                        width: 36,
+                                        height: 36,
+                                        borderRadius: 999,
+                                        border: "1px solid rgba(0,0,0,0.18)",
+                                        backgroundColor: "rgba(255,255,255,0.70)",
+                                        boxShadow: "0 6px 14px rgba(0,0,0,0.10)",
+                                        backdropFilter: "saturate(180%) blur(10px)",
+                                        WebkitBackdropFilter: "saturate(180%) blur(10px)",
+                                        "&:hover": { backgroundColor: "rgba(255,255,255,0.82)" },
                                         flex: "0 0 auto",
                                     }}
                                     aria-label="Close"
                                 >
-                                    <CloseIcon />
+                                    <CloseRoundedIcon fontSize="small" />
                                 </IconButton>
 
                                 <Typography
                                     sx={{
                                         fontWeight: 900,
-                                        fontSize: { xs: 18, md: 22 },
+                                        fontSize: { xs: 16, md: 20 },
+                                        lineHeight: 1.15,
+                                        letterSpacing: "-0.2px",
                                         textAlign: "center",
                                         flex: "1 1 auto",
                                         px: 1,
@@ -786,13 +809,13 @@ export default function LostAndFoundMainGrid({ mode }) {
                                     Δήλωση {mode === "lost" ? "απώλειας" : "εύρεσης"}
                                 </Typography>
 
-                                <Box sx={{ width: 44, flex: "0 0 auto" }} />
+                                <Box sx={{ width: 36, flex: "0 0 auto" }} />
                             </Box>
 
                             {mode === "found" && (
                                 <Box
                                     sx={{
-                                        mt: 1,
+                                        mt: 0.75,
                                         display: "flex",
                                         flexWrap: "wrap",
                                         gap: 1,
@@ -800,7 +823,7 @@ export default function LostAndFoundMainGrid({ mode }) {
                                         color: "rgba(0,0,0,0.75)",
                                     }}
                                 >
-                                    <Typography sx={{ fontSize: 12, fontWeight: 800, overflowWrap: "anywhere" }}>
+                                    <Typography sx={{ fontSize: 11, fontWeight: 800, overflowWrap: "anywhere" }}>
                                         Δημιουργήθηκε: {selectedDeclaration?.createdAt ?? "-"}{selectedDeclaration?.createdTime ? `, ${selectedDeclaration.createdTime}` : ""}
                                     </Typography>
                                 </Box>
@@ -1004,7 +1027,11 @@ export default function LostAndFoundMainGrid({ mode }) {
                                                                         "&:hover": { backgroundColor: "rgba(255,255,255,0.55)" },
                                                                     }}
                                                                 >
-                                                                    <MoreHorizIcon fontSize="small" />
+                                                                    {showFullAddress ? (
+                                                                        <KeyboardArrowUpRoundedIcon fontSize="small" />
+                                                                    ) : (
+                                                                        <KeyboardArrowDownRoundedIcon fontSize="small" />
+                                                                    )}
                                                                 </IconButton>
                                                             )}
                                                         </Box>
@@ -1346,6 +1373,7 @@ export default function LostAndFoundMainGrid({ mode }) {
                                     )}
                                 </Box>
                             </Box>
+                        </Box>
                         </Box>
                     </Box>
                 </Box>
