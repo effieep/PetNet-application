@@ -1,4 +1,5 @@
 import './App.css';
+import { useEffect } from 'react';
 import NavBar from './components/NavBar';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import Home from './pages/home.js';
@@ -50,6 +51,9 @@ import { Box } from "@mui/material";
 
 function App() {
   const location = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location]);
   const hideNav =
     location.pathname === "/signup";
     // ||
