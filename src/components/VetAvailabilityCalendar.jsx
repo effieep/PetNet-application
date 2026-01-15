@@ -7,6 +7,12 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
+const returnDateObj = (dateStr, timeStr) => {
+    const [day, month, year] = dateStr.split('/');
+    const [hours, minutes] = timeStr.split(':');
+    return new Date(`${year}-${month}-${day}T${hours}:${minutes}:00`);
+}
+
 const VetAvailabilityCalendar = ({ availability = [], onBookAppointment }) => {
     
     const DAYS_TO_SHOW = 7; // Δείχνουμε 6 μέρες στη σειρά
@@ -21,8 +27,14 @@ const VetAvailabilityCalendar = ({ availability = [], onBookAppointment }) => {
     const groupedDays = useMemo(() => {
         if (!availability || availability.length === 0) return [];
 
+        const fixedAvailability = availability.filter(slot => {
+            // Φιλτράρουμε μόνο μελλοντικά slots
+            const slotDate = returnDateObj(slot.date, slot.time);
+            return slotDate >= new Date();
+        });  
+
         // Ταξινόμηση
-        const sortedSlots = [...availability].sort((a, b) => {
+        const sortedSlots = [...fixedAvailability].sort((a, b) => {
             // Μετατροπή DD/MM/YYYY σε Date object για σωστή σύγκριση
             const [d1, m1, y1] = a.date.split('/');
             const [d2, m2, y2] = b.date.split('/');
