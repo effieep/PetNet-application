@@ -176,6 +176,7 @@ const StepLossDetails = ({ formData, updateField, errors }) => (
             label="Διεύθυνση / Περιοχή που χάθηκε"
             value={formData.loss.area}
             onChange={(val) => updateField("loss", "area", val)}
+            onRegionChange={(val) => updateField("loss", "region", val)}
             coords={{
               lat: formData.loss.lat,
               lon: formData.loss.lon,
@@ -337,7 +338,16 @@ const StepConfirmation = ({ formData, submitError }) => (
     )}
 
     <Box sx={{ bgcolor: "#f5f5f5", p: 3, borderRadius: 2 }}>
-      <ul style={{ listStyle: "none", padding: 0, margin: 0, lineHeight: "2" }}>
+      <ul
+        style={{
+          listStyle: "none",
+          padding: 0,
+          margin: 0,
+          lineHeight: "2",
+          overflowWrap: "anywhere",
+          wordBreak: "break-word",
+        }}
+      >
         <li>
           <strong>Microchip:</strong> {formData.pet.microchip}
         </li>
@@ -434,6 +444,7 @@ export default function ReportLostStepper() {
       date: "",
       time: "",
       area: "",
+      region: "",
       lat: null,
       lon: null,
       notes: "",
@@ -670,6 +681,7 @@ export default function ReportLostStepper() {
       lostTime: formData.loss.time || "",
       location: {
         address: formData.loss.area,
+        region: formData.loss.region || "",
         ...(formData.loss.lat != null && formData.loss.lon != null
           ? { lat: formData.loss.lat, lon: formData.loss.lon }
           : {}),

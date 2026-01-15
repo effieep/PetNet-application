@@ -61,6 +61,7 @@ const StepFoundDetails = ({ formData, updateField, errors }) => (
             label="Διεύθυνση / Περιοχή που βρέθηκε"
             value={formData.found.area}
             onChange={(val) => updateField("found", "area", val)}
+            onRegionChange={(val) => updateField("found", "region", val)}
             coords={{ lat: formData.found.lat, lon: formData.found.lon }}
             onCoordsChange={(c) => {
               updateField("found", "lat", c.lat);
@@ -392,7 +393,16 @@ const StepOverview = ({ formData, submitError }) => {
       )}
 
       <Box sx={{ bgcolor: "#f5f5f5", p: 3, borderRadius: 2 }}>
-        <ul style={{ listStyle: "none", padding: 0, margin: 0, lineHeight: "2" }}>
+        <ul
+          style={{
+            listStyle: "none",
+            padding: 0,
+            margin: 0,
+            lineHeight: "2",
+            overflowWrap: "anywhere",
+            wordBreak: "break-word",
+          }}
+        >
           <li>
             <strong>Ημερομηνία εύρεσης:</strong> {formData.found.date || "-"}
           </li>
@@ -530,6 +540,7 @@ export default function ReportFoundStepper() {
       date: "",
       time: "",
       area: "",
+      region: "",
       lat: null,
       lon: null,
     },
@@ -813,6 +824,7 @@ export default function ReportFoundStepper() {
       foundTime: formData.found.time || "",
       location: {
         address: formData.found.area,
+        region: formData.found.region || "",
         ...(formData.found.lat != null && formData.found.lon != null
           ? { lat: formData.found.lat, lon: formData.found.lon }
           : {}),
