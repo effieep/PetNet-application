@@ -1656,7 +1656,10 @@
       "ownerId": "u1",
       "lostDate": "18-11-2024",
       "location": {
-        "address": "Γλυφάδα, Αθήνα"
+        "address": "Γλυφάδα, Αθήνα",
+        "region": "Attica",
+        "lat": 37.8753,
+        "lon": 23.7504
       },
       "description": "Χάθηκε κοντά στην πλατεία",
       "contact": {
@@ -1672,7 +1675,10 @@
       "ownerId": "u1",
       "lostDate": "18-11-2024",
       "location": {
-        "address": "Γλυφάδα, Αθήνα"
+        "address": "Γλυφάδα, Αθήνα",
+        "region": "Attica",
+        "lat": 37.8753,
+        "lon": 23.7504
       },
       "description": "Χάθηκε κοντά στην πλατεία",
       "contact": {
@@ -1688,7 +1694,10 @@
       "ownerId": "u1",
       "lostDate": "18-11-2023",
       "location": {
-        "address": "Γλυφάδα, Αθήνα"
+        "address": "Γλυφάδα, Αθήνα",
+        "region": "Attica",
+        "lat": 37.8753,
+        "lon": 23.7504
       },
       "description": "Χάθηκε κοντά στην πλατεία",
       "contact": {
@@ -1704,7 +1713,10 @@
       "ownerId": "u1",
       "lostDate": "18-11-2025",
       "location": {
-        "address": "Γλυφάδα, Αθήνα"
+        "address": "Γλυφάδα, Αθήνα",
+        "region": "Attica",
+        "lat": 37.8753,
+        "lon": 23.7504
       },
       "description": "Χάθηκε κοντά στην πλατεία",
       "contact": {
@@ -1716,11 +1728,24 @@
       "type": "FOUND",
       "status": "SUBMITTED",
       "createdAt": "22-11-2022",
-      "petType": "Σκύλος",
       "microchip": "123456789012346",
       "ownerId": "u1",
       "location": {
-        "address": "Κυψέλη, Αθήνα"
+        "address": "Κυψέλη, Αθήνα",
+        "region": "Attica",
+        "lat": 37.9897,
+        "lon": 23.7338
+      },
+      "petType": "Σκύλος",
+      "pet": {
+        "species": "Σκύλος",
+        "breed": "chiwawa",
+        "gender": "Άγνωστο",
+        "color": "aspro",
+        "size": "Μεγάλο",
+        "photos": [
+          "https://bulzcydlenmnkhxahvwa.supabase.co/storage/v1/object/public/report-pics/found-reports/u1_1768476811150_49c72b768c5db.jpg"
+        ]
       },
       "description": "Χάθηκε κοντά στον σταθμό Βικτώρια",
       "contact": {
@@ -1736,7 +1761,10 @@
       "foundDate": "09-01-2026",
       "foundTime": "18:49",
       "location": {
-        "address": "Λασκαρίδου 24"
+        "address": "Λασκαρίδου 24",
+        "region": "Attica",
+        "lat": 37.943678,
+        "lon": 23.752123
       },
       "petType": "Γάτα",
       "pet": {
@@ -1766,6 +1794,7 @@
       "foundTime": "15:08",
       "location": {
         "address": "Σκοπευτηρίου, Κίτσι, Δήμος Κρωπίας, Περιφερειακή Ενότητα Ανατολικής Αττικής, Περιφέρεια Αττικής, Αποκεντρωμένη Διοίκηση Αττικής, 194 00, Ελλάδα",
+        "region": "Attica",
         "lat": 37.86206220932553,
         "lon": 23.8254359028127
       },
@@ -1799,6 +1828,7 @@
       "lostTime": "19:52",
       "location": {
         "address": "Εφέσου, Νέα Σμύρνη, Δήμος Νέας Σμύρνης, Περιφερειακή Ενότητα Νοτίου Τομέα Αθηνών, Περιφέρεια Αττικής, Αποκεντρωμένη Διοίκηση Αττικής, 171 21, Ελλάδα",
+        "region": "Attica",
         "lat": 37.950965882891325,
         "lon": 23.71621658238864
       },
@@ -1821,6 +1851,7 @@
       "lostTime": "22:15",
       "location": {
         "address": "Τσιμισκή, Θεσσαλονίκη, Δήμος Θεσσαλονίκης, Περιφερειακή Ενότητα Θεσσαλονίκης, Περιφέρεια Κεντρικής Μακεδονίας, 546 23, Ελλάδα",
+        "region": "Attica",
         "lat": 40.632298,
         "lon": 22.940842
       },
@@ -1843,6 +1874,7 @@
       "lostTime": "09:00",
       "location": {
         "address": "Λεωφόρος Κνωσού, Ηράκλειο, Δήμος Ηρακλείου, Περιφερειακή Ενότητα Ηρακλείου, Περιφέρεια Κρήτης, 713 06, Ελλάδα",
+        "region": "Attica",
         "lat": 35.329689,
         "lon": 25.136698
       },
@@ -1865,6 +1897,7 @@
       "lostTime": "23:30",
       "location": {
         "address": "Παναγή Τσαλδάρη, Περιστέρι, Δήμος Περιστερίου, Περιφερειακή Ενότητα Δυτικού Τομέα Αθηνών, Περιφέρεια Αττικής, 121 34, Ελλάδα",
+        "region": "Attica",
         "lat": 38.009387,
         "lon": 23.693456
       },
@@ -1873,6 +1906,124 @@
         "name": "Efthymia Papafili",
         "phone": "6985595001",
         "email": "epapafili2003@gmail.com"
+      }
+    },
+    {
+      "id": "6827",
+      "ownerId": "u1",
+      "type": "FOUND",
+      "status": "SUBMITTED",
+      "createdAt": "15-01-2026",
+      "createdTime": "13:34",
+      "foundDate": "01-01-2026",
+      "foundTime": "13:30",
+      "location": {
+        "address": "Στρατονίκης, Penteli Community, Penteli Municipal Unit, Municipality of Chalandri, Regional Unit of North Athens, Attica, 152 36, Greece",
+        "region": "Attica",
+        "lat": 38.04192311719163,
+        "lon": 23.850374255807598
+      },
+      "petType": "Σκύλος",
+      "pet": {
+        "species": "Σκύλος",
+        "breed": "chiwawa",
+        "gender": "Άγνωστο",
+        "color": "aspro",
+        "size": "Μεγάλο",
+        "photos": [
+          "https://bulzcydlenmnkhxahvwa.supabase.co/storage/v1/object/public/report-pics/found-reports/u1_1768476811150_49c72b768c5db.jpg"
+        ]
+      },
+      "description": "bla bla bla bla bla ",
+      "contact": {
+        "name": "Efthymia Papafili",
+        "phone": "6985595001",
+        "email": "epapafili2003@gmail.com",
+        "alt": {
+          "name": "sam",
+          "phone": "6944620644",
+          "email": "yassinsammy2@gmail.com"
+        }
+      }
+    },
+    {
+      "id": "2c5a",
+      "ownerId": "u1",
+      "type": "FOUND",
+      "status": "SUBMITTED",
+      "createdAt": "15-01-2026",
+      "createdTime": "13:42",
+      "foundDate": "02-01-2026",
+      "foundTime": "13:40",
+      "location": {
+        "address": "Ομήρου Ντέιβις, Psychiko, Community of Psychiko, Municipal Unit of Psychiko, Municipality of Filothei - Psychiko, Regional Unit of North Athens, Attica, 152 37, Greece",
+        "region": "Attica",
+        "lat": 38.016586826477884,
+        "lon": 23.78042411501926
+      },
+      "petType": "Γάτα",
+      "pet": {
+        "species": "Γάτα",
+        "breed": "siam",
+        "gender": "Άγνωστο",
+        "color": "aspro",
+        "size": "Άγνωστο",
+        "photos": [
+          "https://bulzcydlenmnkhxahvwa.supabase.co/storage/v1/object/public/report-pics/found-reports/u1_1768477292459_c7a58c15093cf.jpg",
+          "https://bulzcydlenmnkhxahvwa.supabase.co/storage/v1/object/public/report-pics/found-reports/u1_1768477296534_2bdde5bb21f628.png",
+          "https://bulzcydlenmnkhxahvwa.supabase.co/storage/v1/object/public/report-pics/found-reports/u1_1768477309464_d64d20746a7fd8.jpg"
+        ]
+      },
+      "description": "",
+      "contact": {
+        "name": "Efthymia Papafili",
+        "phone": "6985595001",
+        "email": "epapafili2003@gmail.com",
+        "alt": {
+          "name": "woh",
+          "phone": "woooohhhh",
+          "email": "wwwwoooooooohhhhhhhhhh"
+        }
+      }
+    },
+    {
+      "id": "6998",
+      "ownerId": "u1",
+      "type": "FOUND",
+      "status": "SUBMITTED",
+      "createdAt": "15-01-2026",
+      "createdTime": "15:44",
+      "foundDate": "14-01-2026",
+      "foundTime": "15:36",
+      "location": {
+        "address": "Πατριάρχου Ιερεμίου, Gyzi District, Αμπελόκηποι, 7th District of Athens, Athens, Municipality of Athens, Regional Unit of Central Athens, Attica, 114 75, Greece",
+        "region": "Attica",
+        "lat": 37.98777495867814,
+        "lon": 23.750204678328842
+      },
+      "petType": "Σκύλος",
+      "pet": {
+        "species": "Σκύλος",
+        "breed": "grifon",
+        "gender": "Θηλυκό",
+        "color": "white",
+        "size": "Μικρό",
+        "photos": [
+          "https://bulzcydlenmnkhxahvwa.supabase.co/storage/v1/object/public/report-pics/found-reports/u1_1768484242582_dd5d7a20eb5d9.png",
+          "https://bulzcydlenmnkhxahvwa.supabase.co/storage/v1/object/public/report-pics/found-reports/u1_1768484250539_c27399233334e8.png",
+          "https://bulzcydlenmnkhxahvwa.supabase.co/storage/v1/object/public/report-pics/found-reports/u1_1768484264694_06fd4233a75d28.jpg"
+        ]
+      },
+      "description": "bla bla bla booooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo",
+      "contact": {
+        "name": "Efthymia Papafili",
+        "phone": "6985595001",
+        "email": "epapafili2003@gmail.com",
+        "alt": {
+          "name": "sam",
+          "phone": "6944620644",
+          "email": "yassinsammy2@gmail.com"
+        }
       }
     }
   ],
