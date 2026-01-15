@@ -43,6 +43,7 @@ const breadcrumbMap = {
   'death': 'Καταγραφή Θανάτου',
   'book-appointment': 'Κράτηση Ραντεβού',
   'appointment-history': 'Ιστορικό Ραντεβού',
+  'help': 'Βοήθεια',
 };
 
 function AppBreadcrumbs() {
