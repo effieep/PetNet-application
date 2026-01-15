@@ -94,7 +94,28 @@ async function nominatimReverse(lat, lon, signal) {
   });
   if (!res.ok) throw new Error("Reverse failed");
   const data = await res.json();
-  return data?.display_name || "";
+  return {
+    displayName: data?.display_name || "",
+    address: data?.address || null,
+  };
+}
+
+function extractRegionFromNominatimAddress(address) {
+  if (!address) return "";
+
+  // Nominatim/OSM uses different keys depending on country.
+  // In Greece, the administrative region is typically under `state`.
+  return (
+    address.state ||
+    address.region ||
+    address.province ||
+    address.state_district ||
+    address.county ||
+    address.city ||
+    address.town ||
+    address.village ||
+    ""
+  );
 }
 
 /**
@@ -107,6 +128,7 @@ export default function AddressPicker({
   label = "Διεύθυνση / Περιοχή",
   value,
   onChange,
+  onRegionChange,
   coords,
   onCoordsChange,
   helperText,
@@ -149,6 +171,7 @@ export default function AddressPicker({
             label: r.display_name,
             lat: Number(r.lat),
             lon: Number(r.lon),
+            region: extractRegionFromNominatimAddress(r.address),
           }))
         );
       } catch (e) {
@@ -167,6 +190,36 @@ export default function AddressPicker({
     if (!picked) return;
     onChange?.(picked.label);
     onCoordsChange?.({ lat: picked.lat, lon: picked.lon });
+    onRegionChange?.(picked.region || "");
+  };
+
+  const resolveTypedAddressIfNeeded = async () => {
+    const q = String(inputValue || "").trim();
+    if (q.length < 3) return;
+
+    // If we already have coords, we assume the user has selected a suggestion or used the map.
+    if (coords?.lat != null && coords?.lon != null) return;
+
+    // Resolve the typed text to a best match so we can persist address/region/lat/lon.
+    try {
+      const results = await nominatimSearch(q, undefined);
+      const best = Array.isArray(results) && results.length > 0 ? results[0] : null;
+      if (!best) return;
+
+      const bestLat = Number(best.lat);
+      const bestLon = Number(best.lon);
+      const bestLabel = best.display_name || q;
+      const bestRegion = extractRegionFromNominatimAddress(best.address);
+
+      if (Number.isFinite(bestLat) && Number.isFinite(bestLon)) {
+        onCoordsChange?.({ lat: bestLat, lon: bestLon });
+      }
+      onChange?.(bestLabel);
+      setInputValue(bestLabel);
+      onRegionChange?.(bestRegion || "");
+    } catch {
+      // best-effort; ignore
+    }
   };
 
   const handleCenterSettled = async ({ lat, lon, signal }) => {
@@ -176,12 +229,15 @@ export default function AddressPicker({
     onCoordsChange?.({ lat, lon });
     setReverseLoading(true);
     try {
-      const addr = await nominatimReverse(lat, lon, signal);
+      const res = await nominatimReverse(lat, lon, signal);
+      const addr = res?.displayName || "";
+      const region = extractRegionFromNominatimAddress(res?.address);
       if (addr) {
         // Update both the parent form value and the visible input.
         onChange?.(addr);
         setInputValue(addr);
       }
+      onRegionChange?.(region || "");
     } catch {
       // ignore
     } finally {
@@ -212,6 +268,9 @@ export default function AddressPicker({
             size="small"
             error={error}
             helperText={helperText}
+            onBlur={() => {
+              resolveTypedAddressIfNeeded();
+            }}
             InputProps={{
               ...params.InputProps,
               endAdornment: (
