@@ -572,7 +572,7 @@ export default function ReportLostStepper() {
         if (!res.ok) throw new Error("Αποτυχία φόρτωσης κατοικιδίων");
         return res.json();
       })
-      .then((data) => setPets(Array.isArray(data) ? data : []))
+      .then((data) => setPets(data.filter(pet => pet.dateOfDeath === null || pet.dateOfDeath === undefined || pet.dateOfDeath === '')))
       .catch(() => setPetsError("Δεν ήταν δυνατή η φόρτωση των κατοικιδίων."))
       .finally(() => setPetsLoading(false));
   }, [isLoggedIn, user?.id]);
