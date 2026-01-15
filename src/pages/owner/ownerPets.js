@@ -20,7 +20,7 @@ const OwnerPets = () => {
 
     fetch(`${API_URL}/pets?ownerId=${user.id}`)
       .then(res => res.json())
-      .then(data => setPets(data))
+      .then(data => setPets(data.filter(pet => pet.dateOfDeath === null || pet.dateOfDeath === undefined || pet.dateOfDeath === '')))
       .catch(err => console.error(err));
   } , [isLoggedIn, user?.id]);
 
