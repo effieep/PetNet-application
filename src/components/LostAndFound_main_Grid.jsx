@@ -19,6 +19,8 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import PhoneIcon from "@mui/icons-material/Phone";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import CloseIcon from "@mui/icons-material/Close";
 import { API_URL } from "../api";
 
@@ -80,6 +82,19 @@ function hasText(value) {
     return String(value ?? "").trim().length > 0;
 }
 
+function shortenAddress(fullAddress, partsToShow = 2) {
+    const full = String(fullAddress ?? "").trim();
+    if (!full) return { short: "", shortened: false };
+
+    const parts = full
+        .split(",")
+        .map((p) => p.trim())
+        .filter(Boolean);
+
+    if (parts.length <= partsToShow) return { short: full, shortened: false };
+    return { short: parts.slice(0, partsToShow).join(", "), shortened: true };
+}
+
 export default function LostAndFoundMainGrid({ mode }) {
     const [page, setPage] = useState(1);
     const [microchipQuery, setMicrochipQuery] = useState("");
@@ -97,6 +112,7 @@ export default function LostAndFoundMainGrid({ mode }) {
     const [detailsOpen, setDetailsOpen] = useState(false);
     const [selectedId, setSelectedId] = useState(null);
     const [activePhotoIndex, setActivePhotoIndex] = useState(0);
+    const [showFullAddress, setShowFullAddress] = useState(false);
 
     const [loading, setLoading] = useState(false);
     const [loadError, setLoadError] = useState(null);
@@ -297,6 +313,7 @@ export default function LostAndFoundMainGrid({ mode }) {
     useEffect(() => {
         // When switching declarations, default to the first photo.
         setActivePhotoIndex(0);
+        setShowFullAddress(false);
     }, [selectedId]);
 
     const openDetails = (id) => {
@@ -534,11 +551,14 @@ export default function LostAndFoundMainGrid({ mode }) {
                                     const photos = extractPhotoUrls(card);
                                     const primaryPhoto = photos[0] || "";
 
-                                    const alt = card?.contact?.alt || null;
-                                    const hasAlt = Boolean(alt && (hasText(alt?.name) || hasText(alt?.phone) || hasText(alt?.email)));
-                                    const altParts = hasAlt
-                                        ? [alt?.name, alt?.phone, alt?.email].filter((v) => hasText(v))
-                                        : [];
+                                    const regionText = card?.location?.region || card?.location?.address || "-";
+                                    const phoneText = card?.contact?.phone || "-";
+
+                                    const regionPreview = (() => {
+                                        if (!hasText(regionText) || regionText === "-") return regionText;
+                                        const { short, shortened } = shortenAddress(regionText, 2);
+                                        return shortened ? `${short}…` : short;
+                                    })();
 
                                     return (
                                 <Box
@@ -550,17 +570,24 @@ export default function LostAndFoundMainGrid({ mode }) {
                                         if (e.key === "Enter" || e.key === " ") openDetails(card.id);
                                     }}
                                     sx={{
-                                        borderRadius: 2,
+                                        borderRadius: 2.5,
                                         overflow: "hidden",
                                         cursor: "pointer",
                                         outline: "none",
-                                        "&:hover": { filter: "brightness(0.98)" },
+                                        border: "1px solid rgba(0,0,0,0.12)",
+                                        boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
+                                        transition: "transform 160ms ease, box-shadow 160ms ease, filter 160ms ease",
+                                        "&:hover": {
+                                            filter: "brightness(0.99)",
+                                            transform: "translateY(-2px)",
+                                            boxShadow: "0 10px 26px rgba(0,0,0,0.12)",
+                                        },
                                         "&:focus-visible": { outline: "2px solid rgba(0,0,0,0.35)", outlineOffset: 2 },
                                     }}
                                 >
                                     <Box
                                         sx={{
-                                            height: 170,
+                                            height: 185,
                                             backgroundColor: "#b7b487",
                                             display: "flex",
                                             alignItems: "center",
@@ -589,25 +616,49 @@ export default function LostAndFoundMainGrid({ mode }) {
 
                                     <Box
                                         sx={{
-                                            backgroundColor: "#c9c58c",
-                                            px: 1.5,
-                                            py: 1,
+                                            background: "linear-gradient(180deg, #d8d5a1 0%, #c9c58c 100%)",
+                                            px: 2,
+                                            py: 1.5,
                                             display: "flex",
                                             flexDirection: "column",
-                                            gap: 0.25,
+                                            gap: 1,
                                         }}
                                     >
-                                        <Typography sx={{ fontSize: 11, fontWeight: 800, overflowWrap: "anywhere" }}>
-                                            Περιοχή : {card?.location?.address || "-"}
-                                        </Typography>
-                                        <Typography sx={{ fontSize: 11, fontWeight: 800, overflowWrap: "anywhere" }}>
-                                            Τηλ. Επικοινωνίας : {card?.contact?.phone || "-"}
-                                        </Typography>
-                                        {hasAlt && (
-                                            <Typography sx={{ fontSize: 11, fontWeight: 800, overflowWrap: "anywhere" }}>
-                                                Εναλ. Επικοινωνία : {altParts.join(" • ")}
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                alignItems: "flex-start",
+                                                gap: 1,
+                                                backgroundColor: "rgba(255,255,255,0.35)",
+                                                border: "1px solid rgba(0,0,0,0.08)",
+                                                borderRadius: 1.5,
+                                                px: 1.25,
+                                                py: 0.75,
+                                            }}
+                                        >
+                                            <LocationOnIcon fontSize="small" sx={{ opacity: 0.8, mt: "2px" }} />
+                                            <Typography sx={{ fontSize: 12, fontWeight: 800, lineHeight: 1.25, overflowWrap: "anywhere" }}>
+                                                {regionPreview}
                                             </Typography>
-                                        )}
+                                        </Box>
+
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                alignItems: "flex-start",
+                                                gap: 1,
+                                                backgroundColor: "rgba(255,255,255,0.35)",
+                                                border: "1px solid rgba(0,0,0,0.08)",
+                                                borderRadius: 1.5,
+                                                px: 1.25,
+                                                py: 0.75,
+                                            }}
+                                        >
+                                            <PhoneIcon fontSize="small" sx={{ opacity: 0.8, mt: "2px" }} />
+                                            <Typography sx={{ fontSize: 12, fontWeight: 800, lineHeight: 1.25, overflowWrap: "anywhere" }}>
+                                                {phoneText}
+                                            </Typography>
+                                        </Box>
                                     </Box>
                                 </Box>
                                     );
@@ -659,11 +710,13 @@ export default function LostAndFoundMainGrid({ mode }) {
             >
                 <Box
                     sx={{
-                        minHeight: "100vh",
+                        height: "100dvh",
                         display: "flex",
-                        alignItems: { xs: "flex-start", md: "center" },
+                        alignItems: "center",
                         justifyContent: "center",
-                        p: { xs: 2, md: 3 },
+                        px: { xs: 2, md: 3 },
+                        py: { xs: 3, md: 4 },
+                        overflowY: "auto",
                     }}
                 >
                     <Box
@@ -677,60 +730,82 @@ export default function LostAndFoundMainGrid({ mode }) {
                             boxShadow: "0 10px 30px rgba(0,0,0,0.25)",
                             position: "relative",
                             p: { xs: 2, md: 3 },
-                            maxHeight: { xs: "calc(100vh - 32px)", md: "calc(100vh - 48px)" },
+                            maxHeight: { xs: "calc(100dvh - 64px)", md: "calc(100dvh - 96px)" },
                             overflowY: "auto",
                             overflowX: "hidden",
                         }}
                     >
-                        <IconButton
-                            onClick={closeDetails}
-                            sx={{
-                                position: "absolute",
-                                top: 10,
-                                left: 10,
-                                border: "2px solid rgba(0,0,0,0.65)",
-                                backgroundColor: "#ffffff",
-                                "&:hover": { backgroundColor: "#ffffff", filter: "brightness(0.95)" },
-                            }}
-                            aria-label="Close"
-                        >
-                            <CloseIcon />
-                        </IconButton>
-
                         <Box
                             sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "space-between",
-                                px: { xs: 6, md: 7 },
-                                mb: 2,
+                                position: "sticky",
+                                top: 0,
+                                zIndex: 5,
+                                pt: { xs: 0.25, md: 0.25 },
+                                pb: { xs: 0.75, md: 0.75 },
+                                mb: 1.75,
+                                px: { xs: 0.5, md: 0.75 },
+                                borderRadius: 2,
+                                backgroundColor: "rgba(255,255,255,0.72)",
+                                backdropFilter: "saturate(180%) blur(12px)",
+                                WebkitBackdropFilter: "saturate(180%) blur(12px)",
+                                border: "1px solid rgba(0,0,0,0.10)",
+                                boxShadow: "0 8px 18px rgba(0,0,0,0.10)",
                             }}
                         >
-                            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                                <Typography sx={{ fontWeight: 900, fontSize: { xs: 20, md: 24 } }}>
-                                    Δήλωση {mode === "lost" ? "απώλειας" : "εύρεσης"}
-                                </Typography>
-                            </Box>
-
-                        </Box>
-
-                        {mode === "found" && (
                             <Box
                                 sx={{
-                                    px: { xs: 1, md: 2 },
-                                    mb: 2,
                                     display: "flex",
-                                    flexWrap: "wrap",
-                                    gap: 1,
                                     alignItems: "center",
-                                    color: "rgba(0,0,0,0.75)",
+                                    justifyContent: "space-between",
+                                    gap: 1,
                                 }}
                             >
-                                <Typography sx={{ fontSize: 12, fontWeight: 800, overflowWrap: "anywhere" }}>
-                                    Δημιουργήθηκε: {selectedDeclaration?.createdAt ?? "-"}{selectedDeclaration?.createdTime ? `, ${selectedDeclaration.createdTime}` : ""}
+                                <IconButton
+                                    onClick={closeDetails}
+                                    sx={{
+                                        border: "2px solid rgba(0,0,0,0.65)",
+                                        backgroundColor: "#ffffff",
+                                        "&:hover": { backgroundColor: "#ffffff", filter: "brightness(0.95)" },
+                                        flex: "0 0 auto",
+                                    }}
+                                    aria-label="Close"
+                                >
+                                    <CloseIcon />
+                                </IconButton>
+
+                                <Typography
+                                    sx={{
+                                        fontWeight: 900,
+                                        fontSize: { xs: 18, md: 22 },
+                                        textAlign: "center",
+                                        flex: "1 1 auto",
+                                        px: 1,
+                                        overflowWrap: "anywhere",
+                                    }}
+                                >
+                                    Δήλωση {mode === "lost" ? "απώλειας" : "εύρεσης"}
                                 </Typography>
+
+                                <Box sx={{ width: 44, flex: "0 0 auto" }} />
                             </Box>
-                        )}
+
+                            {mode === "found" && (
+                                <Box
+                                    sx={{
+                                        mt: 1,
+                                        display: "flex",
+                                        flexWrap: "wrap",
+                                        gap: 1,
+                                        alignItems: "center",
+                                        color: "rgba(0,0,0,0.75)",
+                                    }}
+                                >
+                                    <Typography sx={{ fontSize: 12, fontWeight: 800, overflowWrap: "anywhere" }}>
+                                        Δημιουργήθηκε: {selectedDeclaration?.createdAt ?? "-"}{selectedDeclaration?.createdTime ? `, ${selectedDeclaration.createdTime}` : ""}
+                                    </Typography>
+                                </Box>
+                            )}
+                        </Box>
 
                         <Box
                             sx={{
@@ -818,59 +893,6 @@ export default function LostAndFoundMainGrid({ mode }) {
                                     </Box>
                                 )}
 
-                                {mode === "found" && selectedPhotos.length > 0 && (
-                                    <Box
-                                        sx={{
-                                            border: "2px solid rgba(0,0,0,0.20)",
-                                            borderRadius: 1.5,
-                                            p: 2,
-                                        }}
-                                    >
-                                        <Typography sx={{ fontWeight: 900, fontSize: 14, mb: 1 }}>
-                                            Φωτογραφίες
-                                        </Typography>
-                                        <Box
-                                            sx={{
-                                                display: "grid",
-                                                gridTemplateColumns: { xs: "repeat(2, minmax(0, 1fr))", sm: "repeat(3, minmax(0, 1fr))" },
-                                                gap: 1,
-                                            }}
-                                        >
-                                            {selectedPhotos.map((url, idx) => (
-                                                <Box
-                                                    key={`gallery-${url}-${idx}`}
-                                                    role="button"
-                                                    tabIndex={0}
-                                                    onClick={() => setActivePhotoIndex(idx)}
-                                                    onKeyDown={(e) => {
-                                                        if (e.key === "Enter" || e.key === " ") setActivePhotoIndex(idx);
-                                                    }}
-                                                    sx={{
-                                                        width: "100%",
-                                                        height: 90,
-                                                        borderRadius: 1,
-                                                        overflow: "hidden",
-                                                        cursor: "pointer",
-                                                        outline: "none",
-                                                        border:
-                                                            idx === activePhotoIndex
-                                                                ? "2px solid rgba(0,0,0,0.75)"
-                                                                : "2px solid rgba(0,0,0,0.12)",
-                                                        "&:focus-visible": { outline: "2px solid rgba(0,0,0,0.35)", outlineOffset: 2 },
-                                                    }}
-                                                >
-                                                    <Box
-                                                        component="img"
-                                                        src={url}
-                                                        alt={`Φωτογραφία ${idx + 1}`}
-                                                        sx={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                                                    />
-                                                </Box>
-                                            ))}
-                                        </Box>
-                                    </Box>
-                                )}
-
                                 <Box
                                     sx={{
                                         border: "2px solid rgba(0,0,0,0.20)",
@@ -947,9 +969,47 @@ export default function LostAndFoundMainGrid({ mode }) {
                                                 }}
                                             >
                                                 <LocationOnIcon fontSize="small" sx={{ opacity: 0.75, mt: "2px" }} />
-                                                <Typography sx={{ fontSize: 12, fontWeight: 700, opacity: 0.75, overflowWrap: "anywhere" }}>
-                                                    {selectedDeclaration?.location?.address}
-                                                </Typography>
+                                                {(() => {
+                                                    const fullAddress = String(selectedDeclaration?.location?.address ?? "").trim();
+                                                    const fallback = "Άγνωστη τοποθεσία";
+                                                    const { short, shortened } = shortenAddress(fullAddress, 2);
+                                                    const display = fullAddress
+                                                        ? showFullAddress
+                                                            ? fullAddress
+                                                            : shortened
+                                                                ? `${short}…`
+                                                                : short
+                                                        : fallback;
+
+                                                    return (
+                                                        <Box sx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 1, width: "100%" }}>
+                                                            <Typography sx={{ fontSize: 12, fontWeight: 700, opacity: 0.75, overflowWrap: "anywhere" }}>
+                                                                {display}
+                                                            </Typography>
+
+                                                            {fullAddress && shortened && (
+                                                                <IconButton
+                                                                    size="small"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        setShowFullAddress((v) => !v);
+                                                                    }}
+                                                                    aria-label={showFullAddress ? "Show less address" : "Show full address"}
+                                                                    sx={{
+                                                                        mt: "-4px",
+                                                                        opacity: 0.8,
+                                                                        flex: "0 0 auto",
+                                                                        border: "1px solid rgba(0,0,0,0.15)",
+                                                                        backgroundColor: "rgba(255,255,255,0.35)",
+                                                                        "&:hover": { backgroundColor: "rgba(255,255,255,0.55)" },
+                                                                    }}
+                                                                >
+                                                                    <MoreHorizIcon fontSize="small" />
+                                                                </IconButton>
+                                                            )}
+                                                        </Box>
+                                                    );
+                                                })()}
                                             </Box>
                                         </>
                                     )}
@@ -975,7 +1035,16 @@ export default function LostAndFoundMainGrid({ mode }) {
                                                     py: 1,
                                                 }}
                                             >
-                                                <Typography sx={{ fontSize: 12, fontWeight: 700, opacity: 0.75, whiteSpace: "pre-wrap" }}>
+                                                <Typography
+                                                    sx={{
+                                                        fontSize: 12,
+                                                        fontWeight: 700,
+                                                        opacity: 0.75,
+                                                        whiteSpace: "pre-wrap",
+                                                        overflowWrap: "anywhere",
+                                                        wordBreak: "break-word",
+                                                    }}
+                                                >
                                                     {selectedDeclaration?.description}
                                                 </Typography>
                                             </Box>
@@ -1112,23 +1181,6 @@ export default function LostAndFoundMainGrid({ mode }) {
                                             </Box>
                                         </Box>
                                         )}
-                                    </Box>
-
-                                    <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
-                                        Ιδιαίτερα χαρακτηριστικά
-                                    </Typography>
-                                    <Box
-                                        sx={{
-                                            minHeight: 44,
-                                            borderRadius: 1.2,
-                                            backgroundColor: "#fbf3d6",
-                                            px: 1.5,
-                                            py: 1,
-                                        }}
-                                    >
-                                        <Typography sx={{ fontSize: 12, fontWeight: 700, opacity: 0.75 }}>
-                                            -
-                                        </Typography>
                                     </Box>
                                 </Box>
 
