@@ -71,7 +71,9 @@ const RecentPets = ({ pets }) => {
                 src={pet.image}
                 alt={"Photo of the lost pet"}
                 sx={{
-                  objectFit: "contain",
+                  width: "100%",
+                  height: IMAGE_HEIGHT,
+                  objectFit: "cover",
                   height: IMAGE_HEIGHT,
                   borderRadius: 3,
                   backgroundColor: "#bcbc8a",
