@@ -312,7 +312,15 @@ export default function LostAndFoundMainGrid({ mode }) {
         return (declarations || []).find((d) => String(d.id) === String(selectedId)) || null;
     }, [declarations, selectedId]);
 
-    const selectedPhotos = useMemo(() => extractPhotoUrls(selectedDeclaration), [selectedDeclaration]);
+    const selectedPhotos = useMemo(() => {
+      if(mode === "found") {
+        return extractPhotoUrls(selectedDeclaration);
+      } 
+      else {
+        return selectedDeclaration?.pet?.photoUrl ? [selectedDeclaration.pet.photoUrl] : [];
+      }
+    }, [selectedDeclaration, mode]);
+
     const activePhotoUrl = useMemo(() => {
         if (!selectedPhotos || selectedPhotos.length === 0) return "";
         const idx = Math.min(Math.max(0, activePhotoIndex), selectedPhotos.length - 1);
@@ -678,7 +686,7 @@ export default function LostAndFoundMainGrid({ mode }) {
                         >
                             {cards.map((card) => (
                                 (() => {
-                                    const photos = extractPhotoUrls(card);
+                                    const photos = heading === "εύρεσης" ? extractPhotoUrls(card) : (card?.pet?.photoUrl ? [card.pet.photoUrl] : []);
                                     const primaryPhoto = photos[0] || "";
 
                                     const regionText = card?.location?.region || card?.location?.address || "-";
