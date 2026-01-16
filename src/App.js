@@ -76,7 +76,6 @@ function App() {
           <Route path="/vet" element={<Vet />} />
           <Route path="/vet/info" element={<VetProfile />} />
           <Route path="/vet/public-profile" element={<VetPublic />} />
-          <Route path="/vet/actions-history" element={<VetActionsHistory />} />
           <Route path="/vet/reviews" element={<VetReviews />} />
           <Route path="/vet/manage-pets" element={<VetManagePets />} />
           <Route path="/vet/manage-pets/register-pet" element={<RegisterPet />} />
@@ -89,6 +88,7 @@ function App() {
           <Route path="/vet/manage-pets/record-life-event/adoption" element={<Adoption />} />
           <Route path="/vet/manage-pets/record-life-event/transfer" element={<Transfer />} />
           <Route path="/vet/manage-pets/record-life-event/foster" element={<Foster />} />
+          <Route path="/vet/manage-pets/actions-history" element={<VetActionsHistory />} />
           <Route path = "/vet/manage-pets/record-life-event/death" element={<Death />} />
           <Route path="/vet/manage-pets/view-health-record" element={<ViewHealth />} />
           <Route path="/vet/manage-pets/record-life-event" element={<RegisterEvent />} />

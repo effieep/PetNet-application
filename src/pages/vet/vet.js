@@ -42,7 +42,7 @@ const Vet = () => {
       <Hero image={'/vet-hero.png'} title={"Κτηνίατρος"} subtitle={"Όλες οι υπηρεσίες για κτηνιάτρους σε ένα σημείο."} height={"50vh"}/>
         <Box sx ={{ display: "flex", gap: 60, justifyContent: "center" }}>
           <UButton 
-            text="Διαχείριση Κατοικιδίων"
+            text="Διαχείριση Ζώων"
             path="/vet/manage-pets" 
             bgColor="#0c0c0868"
             textColor="#ffffffff"

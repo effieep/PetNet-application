@@ -1,9 +1,17 @@
-import ProfileLayout from "../../components/profileLayout";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../auth/AuthContext";
 import { Box, Typography, CircularProgress, Alert, Card, CardContent, Chip, Divider, Stack, Collapse, IconButton } from "@mui/material";
 import { Vaccines, BugReport, Biotech, ContentCut, Medication, Event, CalendarMonth, Pets, ExpandMore, ExpandLess } from "@mui/icons-material";
 import { API_URL } from "../../api";
+import Submenu from "../../components/SubMenu";
+
+const submenuItems = [
+  { label: "Καταγραφή νέου Κατοικιδίου", path: "/vet/manage-pets/register-pet" },
+  { label: "Kαταγραφή Ιατρικής Πράξης", path: "/vet/manage-pets/record-medical-action" },
+  { label: "Καταγραφή Συμβάντος Ζωής", path: "/vet/manage-pets/record-life-event" },
+  { label: "Προβολή Βιβλιαρίου Υγείας", path: "/vet/manage-pets/view-health-record" },
+  { label: "Ιστορικό Ενεργειών", path: "/vet/manage-pets/actions-history" },
+];
 
 const VetActionsHistory = () => {
     const { isLoggedIn, user } = useAuth();
@@ -176,9 +184,10 @@ const VetActionsHistory = () => {
 
     return (
         (isLoggedIn && user?.role === "vet") ? (
-            <ProfileLayout role={user?.role || "vet"}>
-                <Box sx={{ mb: 4, width: '100%', maxWidth: '100%' }}>
-                    <Typography variant="h5" sx={{ mb: 4, fontWeight: "bold", color: "#373721" }}>
+            <Box sx={{ display: 'flex', p: 2, flexDirection: 'row'}}>
+                <Submenu submenuItems={submenuItems} />
+                <Box sx={{ pl: 3, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', width: '80%'}}>
+                    <Typography variant="h5" sx={{ mb: 4, fontWeight: "bold", color: "#000000ff" }}>
                       Ιστορικό Ενεργειών Κτηνιάτρου
                     </Typography>
 
@@ -296,7 +305,7 @@ const VetActionsHistory = () => {
 
                     </Stack>
                 </Box>
-            </ProfileLayout>
+            </Box>
         ) : (
             <Typography variant="h6" color="error" textAlign="center" sx={{ mt: 10 }}>
                 Παρακαλώ συνδεθείτε ως Κτηνίατρος για να δείτε το ιστορικό ενεργειών σας.

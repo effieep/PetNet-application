@@ -17,6 +17,7 @@ const submenuItems = [
   { label: "Kαταγραφή Ιατρικής Πράξης", path: "/vet/manage-pets/record-medical-action" },
   { label: "Καταγραφή Συμβάντος Ζωής", path: "/vet/manage-pets/record-life-event" },
   { label: "Προβολή Βιβλιαρίου Υγείας", path: "/vet/manage-pets/view-health-record" },
+  { label: "Ιστορικό Ενεργειών", path: "/vet/manage-pets/actions-history" },
 ];
 
 const RegisterMedical = () => {

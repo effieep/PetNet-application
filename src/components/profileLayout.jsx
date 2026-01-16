@@ -30,7 +30,6 @@ const ProfileLayout = ({ children, role = 'owner' }) => {
       ? [
           { text: 'Τα στοιχεία μου', icon: <PersonIcon />, path: '/vet/info' },
           { text: 'Δημόσιο Προφίλ', icon: <FaGlobe  />, path: '/vet/public-profile' },
-          { text: 'Iστορικό Ενεργειών', icon: <EventIcon  />, path: '/vet/actions-history' },
           { text: 'Οι αξιολογήσεις μου', icon: <IoStarHalf />, path: '/vet/reviews' },
         ]
       : [
