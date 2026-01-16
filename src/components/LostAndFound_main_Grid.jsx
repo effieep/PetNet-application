@@ -26,6 +26,9 @@ import KeyboardArrowUpRoundedIcon from "@mui/icons-material/KeyboardArrowUpRound
 import { API_URL } from "../api";
 
 const PAGE_SIZE = 12;
+const DEFAULT_SPECIES = { dog: false, cat: false, rabbit: false, hamster: false };
+const DEFAULT_SEX = { male: false, female: false };
+const DEFAULT_SORT = "newest";
 
 function normalizeText(value) {
     return String(value ?? "").trim().toLowerCase();
@@ -99,14 +102,9 @@ function shortenAddress(fullAddress, partsToShow = 2) {
 export default function LostAndFoundMainGrid({ mode }) {
     const [page, setPage] = useState(1);
     const [microchipQuery, setMicrochipQuery] = useState("");
-    const [sort, setSort] = useState("newest");
-    const [species, setSpecies] = useState({
-        dog: false,
-        cat: false,
-        rabbit: false,
-        hamster: false,
-    });
-    const [sex, setSex] = useState({ male: false, female: false });
+    const [sort, setSort] = useState(DEFAULT_SORT);
+    const [species, setSpecies] = useState(DEFAULT_SPECIES);
+    const [sex, setSex] = useState(DEFAULT_SEX);
     const [breed, setBreed] = useState("");
     const [areaQuery, setAreaQuery] = useState("");
 
@@ -207,17 +205,32 @@ export default function LostAndFoundMainGrid({ mode }) {
     const breedOptions = useMemo(() => {
         const set = new Set();
         for (const d of declarations) {
-            if (d?.type === "LOSS") {
-                const b = d?.pet?.breed;
-                if (b) set.add(String(b));
-            }
+            const b = d?.pet?.breed;
+            if (b) set.add(String(b));
         }
         return Array.from(set).sort((a, b) => a.localeCompare(b, "el"));
     }, [declarations]);
 
+    const clearFilters = () => {
+        setMicrochipQuery("");
+        setSort(DEFAULT_SORT);
+        setSpecies({ ...DEFAULT_SPECIES });
+        setSex({ ...DEFAULT_SEX });
+        setBreed("");
+        setAreaQuery("");
+        setPage(1);
+    };
+
     const filteredSorted = useMemo(() => {
         const qMicro = normalizeText(microchipQuery);
         const qArea = normalizeText(areaQuery);
+
+        const getCreatedTs = (d) => parseDdMmYyyyToTs(d?.createdAt, d?.createdTime);
+        const getEventTs = (d) => {
+            const date = mode === "lost" ? d?.lostDate : d?.foundDate;
+            const time = mode === "lost" ? d?.lostTime : d?.foundTime;
+            return parseDdMmYyyyToTs(date, time);
+        };
 
         const selectedSpeciesKeys = Object.entries(species)
             .filter(([, v]) => Boolean(v))
@@ -227,14 +240,16 @@ export default function LostAndFoundMainGrid({ mode }) {
         const filterFemale = Boolean(sex.female);
 
         const list = (declarations || []).filter((d) => {
-            // Only LOSS for now as requested.
             if (mode === "lost" && d?.type !== "LOSS") return false;
+            if (mode === "found" && d?.type !== "FOUND") return false;
 
             const micro = normalizeText(d?.pet?.microchip || d?.microchip);
             if (qMicro && !micro.includes(qMicro)) return false;
 
             const address = normalizeText(d?.location?.address);
-            if (qArea && !address.includes(qArea)) return false;
+            const region = normalizeText(d?.location?.region);
+            const areaHaystack = `${region} ${address}`.trim();
+            if (qArea && !areaHaystack.includes(qArea)) return false;
 
             if (breed) {
                 const petBreed = normalizeText(d?.pet?.breed);
@@ -261,10 +276,24 @@ export default function LostAndFoundMainGrid({ mode }) {
         });
 
         if (sort === "newest") {
+            list.sort((a, b) => getCreatedTs(b) - getCreatedTs(a));
+        } else if (sort === "oldest") {
+            list.sort((a, b) => getCreatedTs(a) - getCreatedTs(b));
+        } else if (sort === "eventNewest") {
+            list.sort((a, b) => getEventTs(b) - getEventTs(a));
+        } else if (sort === "eventOldest") {
+            list.sort((a, b) => getEventTs(a) - getEventTs(b));
+        } else if (sort === "regionAZ") {
             list.sort((a, b) => {
-                const aTs = parseDdMmYyyyToTs(a?.createdAt, a?.createdTime);
-                const bTs = parseDdMmYyyyToTs(b?.createdAt, b?.createdTime);
-                return bTs - aTs;
+                const aVal = String(a?.location?.region || a?.location?.address || "");
+                const bVal = String(b?.location?.region || b?.location?.address || "");
+                return aVal.localeCompare(bVal, "el");
+            });
+        } else if (sort === "regionZA") {
+            list.sort((a, b) => {
+                const aVal = String(a?.location?.region || a?.location?.address || "");
+                const bVal = String(b?.location?.region || b?.location?.address || "");
+                return bVal.localeCompare(aVal, "el");
             });
         }
 
@@ -366,10 +395,15 @@ export default function LostAndFoundMainGrid({ mode }) {
                     <Box
                         sx={{
                             width: { xs: "100%", md: 280 },
-                            backgroundColor: "#e8c173",
-                            borderRadius: 2,
+                            backgroundColor: "rgba(232, 193, 115, 0.55)",
+                            backgroundImage:
+                                "linear-gradient(135deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.06) 45%, rgba(0,0,0,0.03) 100%)",
+                            borderRadius: 3,
                             p: 2,
-                            boxShadow: "0 4px 15px rgba(0,0,0,0.06)",
+                            border: "1px solid rgba(255,255,255,0.55)",
+                            backdropFilter: "saturate(160%) blur(10px)",
+                            WebkitBackdropFilter: "saturate(160%) blur(10px)",
+                            boxShadow: "0 14px 34px rgba(0,0,0,0.12)",
                         }}
                     >
                         <TextField
@@ -378,7 +412,17 @@ export default function LostAndFoundMainGrid({ mode }) {
                             placeholder="Αριθμός Microchip"
                             size="small"
                             fullWidth
-                            sx={{ mb: 1.5, backgroundColor: "rgba(255,255,255,0.55)", borderRadius: 1 }}
+                            sx={{
+                                mb: 1.5,
+                                "& .MuiOutlinedInput-root": {
+                                    borderRadius: 2,
+                                    backgroundColor: "rgba(255,255,255,0.62)",
+                                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.6)",
+                                    "& fieldset": { borderColor: "rgba(0,0,0,0.12)" },
+                                    "&:hover fieldset": { borderColor: "rgba(0,0,0,0.20)" },
+                                    "&.Mui-focused fieldset": { borderColor: "rgba(0,0,0,0.28)" },
+                                },
+                            }}
                             InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start">
@@ -389,17 +433,73 @@ export default function LostAndFoundMainGrid({ mode }) {
                         />
 
                         <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
-                            <FormControl size="small" fullWidth>
+                            <FormControl
+                                size="small"
+                                fullWidth
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: 2,
+                                        backgroundColor: "rgba(255,255,255,0.62)",
+                                        boxShadow: "inset 0 1px 0 rgba(255,255,255,0.6)",
+                                        "& fieldset": { borderColor: "rgba(0,0,0,0.12)" },
+                                        "&:hover fieldset": { borderColor: "rgba(0,0,0,0.20)" },
+                                        "&.Mui-focused fieldset": { borderColor: "rgba(0,0,0,0.28)" },
+                                    },
+                                }}
+                            >
                                 <Select value={sort} onChange={(e) => setSort(e.target.value)}>
                                     <MenuItem value="newest">Νεότερες Αναρτήσεις</MenuItem>
+                                    <MenuItem value="oldest">Παλαιότερες Αναρτήσεις</MenuItem>
+                                    <MenuItem value="eventNewest">
+                                        {mode === "lost" ? "Πιο πρόσφατη απώλεια" : "Πιο πρόσφατη εύρεση"}
+                                    </MenuItem>
+                                    <MenuItem value="eventOldest">
+                                        {mode === "lost" ? "Παλαιότερη απώλεια" : "Παλαιότερη εύρεση"}
+                                    </MenuItem>
+                                    <MenuItem value="regionAZ">Περιοχή (Α-Ω)</MenuItem>
+                                    <MenuItem value="regionZA">Περιοχή (Ω-Α)</MenuItem>
                                 </Select>
                             </FormControl>
-                            <IconButton size="small" sx={{ backgroundColor: "rgba(255,255,255,0.35)" }}>
+                            <IconButton
+                                size="small"
+                                sx={{
+                                    width: 36,
+                                    height: 36,
+                                    borderRadius: 999,
+                                    border: "1px solid rgba(255,255,255,0.55)",
+                                    backgroundColor: "rgba(255,255,255,0.45)",
+                                    boxShadow: "0 8px 18px rgba(0,0,0,0.10)",
+                                    backdropFilter: "saturate(160%) blur(10px)",
+                                    WebkitBackdropFilter: "saturate(160%) blur(10px)",
+                                    "&:hover": { backgroundColor: "rgba(255,255,255,0.60)" },
+                                }}
+                            >
                                 <FilterAltIcon fontSize="small" />
                             </IconButton>
                         </Box>
 
-                        <Typography sx={{ fontWeight: 800, mb: 1 }}>Είδος Ζώου</Typography>
+                        <Button
+                            fullWidth
+                            variant="outlined"
+                            onClick={clearFilters}
+                            sx={{
+                                mb: 2,
+                                borderRadius: 999,
+                                backgroundColor: "rgba(255,255,255,0.35)",
+                                borderColor: "rgba(255,255,255,0.55)",
+                                color: "rgba(0,0,0,0.75)",
+                                textTransform: "none",
+                                fontWeight: 800,
+                                boxShadow: "0 10px 20px rgba(0,0,0,0.10)",
+                                backdropFilter: "saturate(160%) blur(10px)",
+                                WebkitBackdropFilter: "saturate(160%) blur(10px)",
+                                "&:hover": { backgroundColor: "rgba(255,255,255,0.50)", borderColor: "rgba(255,255,255,0.70)" },
+                            }}
+                        >
+                            Καθαρισμός φίλτρων
+                        </Button>
+
+                        <Typography sx={{ fontWeight: 900, mb: 1, letterSpacing: "-0.2px" }}>Είδος Ζώου</Typography>
                         <FormGroup sx={{ mb: 2 }}>
                             <FormControlLabel
                                 control={
@@ -443,8 +543,22 @@ export default function LostAndFoundMainGrid({ mode }) {
                             />
                         </FormGroup>
 
-                        <Typography sx={{ fontWeight: 800, mb: 1 }}>Φυλή Ζώου</Typography>
-                        <FormControl size="small" fullWidth sx={{ mb: 2 }}>
+                        <Typography sx={{ fontWeight: 900, mb: 1, letterSpacing: "-0.2px" }}>Φυλή Ζώου</Typography>
+                        <FormControl
+                            size="small"
+                            fullWidth
+                            sx={{
+                                mb: 2,
+                                "& .MuiOutlinedInput-root": {
+                                    borderRadius: 2,
+                                    backgroundColor: "rgba(255,255,255,0.62)",
+                                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.6)",
+                                    "& fieldset": { borderColor: "rgba(0,0,0,0.12)" },
+                                    "&:hover fieldset": { borderColor: "rgba(0,0,0,0.20)" },
+                                    "&.Mui-focused fieldset": { borderColor: "rgba(0,0,0,0.28)" },
+                                },
+                            }}
+                        >
                             <Select value={breed} onChange={(e) => setBreed(e.target.value)} displayEmpty>
                                 <MenuItem value="">
                                     <em>Φυλή Ζώου</em>
@@ -457,7 +571,7 @@ export default function LostAndFoundMainGrid({ mode }) {
                             </Select>
                         </FormControl>
 
-                        <Typography sx={{ fontWeight: 800, mb: 1 }}>Φύλο Ζώου</Typography>
+                        <Typography sx={{ fontWeight: 900, mb: 1, letterSpacing: "-0.2px" }}>Φύλο Ζώου</Typography>
                         <FormGroup sx={{ mb: 2 }}>
                             <FormControlLabel
                                 control={
@@ -481,14 +595,24 @@ export default function LostAndFoundMainGrid({ mode }) {
                             />
                         </FormGroup>
 
-                        <Typography sx={{ fontWeight: 800, mb: 1 }}>Περιοχή</Typography>
+                        <Typography sx={{ fontWeight: 900, mb: 1, letterSpacing: "-0.2px" }}>Περιοχή</Typography>
                         <TextField
                             value={areaQuery}
                             onChange={(e) => setAreaQuery(e.target.value)}
                             placeholder="π.χ. Διεύθυνση, Περιοχή, Πόλη"
                             size="small"
                             fullWidth
-                            sx={{ mb: 1.5, backgroundColor: "rgba(255,255,255,0.55)", borderRadius: 1 }}
+                            sx={{
+                                mb: 1.5,
+                                "& .MuiOutlinedInput-root": {
+                                    borderRadius: 2,
+                                    backgroundColor: "rgba(255,255,255,0.62)",
+                                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.6)",
+                                    "& fieldset": { borderColor: "rgba(0,0,0,0.12)" },
+                                    "&:hover fieldset": { borderColor: "rgba(0,0,0,0.20)" },
+                                    "&.Mui-focused fieldset": { borderColor: "rgba(0,0,0,0.28)" },
+                                },
+                            }}
                             InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start">
@@ -504,11 +628,16 @@ export default function LostAndFoundMainGrid({ mode }) {
                             startIcon={<LocationOnIcon />}
                             sx={{
                                 mb: 2,
-                                backgroundColor: "rgba(255,255,255,0.30)",
-                                borderColor: "rgba(0,0,0,0.25)",
+                                borderRadius: 999,
+                                backgroundColor: "rgba(255,255,255,0.45)",
+                                borderColor: "rgba(255,255,255,0.55)",
                                 color: "#1a1a1a",
                                 textTransform: "none",
                                 fontWeight: 600,
+                                boxShadow: "0 10px 22px rgba(0,0,0,0.10)",
+                                backdropFilter: "saturate(160%) blur(10px)",
+                                WebkitBackdropFilter: "saturate(160%) blur(10px)",
+                                "&:hover": { backgroundColor: "rgba(255,255,255,0.60)", borderColor: "rgba(255,255,255,0.70)" },
                             }}
                         >
                             Χρήση τρέχουσας τοποθεσίας
@@ -519,14 +648,14 @@ export default function LostAndFoundMainGrid({ mode }) {
                             variant="contained"
                             startIcon={<SearchIcon />}
                             sx={{
-                                backgroundColor: "#9bb8d3",
+                                backgroundColor: "rgba(155, 184, 211, 0.95)",
                                 color: "#1a1a1a",
                                 textTransform: "none",
-                                borderRadius: 2,
+                                borderRadius: 999,
                                 fontWeight: 800,
                                 py: 1.25,
-                                boxShadow: "none",
-                                "&:hover": { backgroundColor: "#9bb8d3", filter: "brightness(0.95)" },
+                                boxShadow: "0 14px 28px rgba(0,0,0,0.12)",
+                                "&:hover": { backgroundColor: "rgba(155, 184, 211, 0.95)", filter: "brightness(0.96)" },
                             }}
                         >
                             Αναζήτηση
@@ -571,17 +700,20 @@ export default function LostAndFoundMainGrid({ mode }) {
                                         if (e.key === "Enter" || e.key === " ") openDetails(card.id);
                                     }}
                                     sx={{
-                                        borderRadius: 2.5,
+                                        borderRadius: 3,
                                         overflow: "hidden",
                                         cursor: "pointer",
                                         outline: "none",
-                                        border: "1px solid rgba(0,0,0,0.12)",
-                                        boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
-                                        transition: "transform 160ms ease, box-shadow 160ms ease, filter 160ms ease",
+                                        border: "1px solid rgba(255,255,255,0.55)",
+                                        backgroundColor: "rgba(255,255,255,0.40)",
+                                        backdropFilter: "saturate(180%) blur(10px)",
+                                        WebkitBackdropFilter: "saturate(180%) blur(10px)",
+                                        boxShadow: "0 10px 28px rgba(0,0,0,0.12)",
+                                        transition: "transform 180ms ease, box-shadow 180ms ease, filter 180ms ease",
                                         "&:hover": {
-                                            filter: "brightness(0.99)",
-                                            transform: "translateY(-2px)",
-                                            boxShadow: "0 10px 26px rgba(0,0,0,0.12)",
+                                            filter: "brightness(1.02)",
+                                            transform: "translateY(-3px)",
+                                            boxShadow: "0 16px 40px rgba(0,0,0,0.16)",
                                         },
                                         "&:focus-visible": { outline: "2px solid rgba(0,0,0,0.35)", outlineOffset: 2 },
                                     }}
@@ -589,11 +721,11 @@ export default function LostAndFoundMainGrid({ mode }) {
                                     <Box
                                         sx={{
                                             height: 185,
-                                            backgroundColor: "#b7b487",
+                                            background: "linear-gradient(135deg, rgba(230,230,230,0.55) 0%, rgba(245,245,245,0.35) 100%)",
                                             display: "flex",
                                             alignItems: "center",
                                             justifyContent: "center",
-                                            px: 2,
+                                            p: 1.25,
                                         }}
                                     >
                                         {primaryPhoto ? (
@@ -606,6 +738,7 @@ export default function LostAndFoundMainGrid({ mode }) {
                                                     height: "100%",
                                                     objectFit: "cover",
                                                     display: "block",
+                                                    borderRadius: 2,
                                                 }}
                                             />
                                         ) : (
@@ -617,7 +750,9 @@ export default function LostAndFoundMainGrid({ mode }) {
 
                                     <Box
                                         sx={{
-                                            background: "linear-gradient(180deg, #d8d5a1 0%, #c9c58c 100%)",
+                                            backgroundColor: "rgba(255,255,255,0.55)",
+                                            backdropFilter: "saturate(180%) blur(10px)",
+                                            WebkitBackdropFilter: "saturate(180%) blur(10px)",
                                             px: 2,
                                             py: 1.5,
                                             display: "flex",
@@ -628,37 +763,29 @@ export default function LostAndFoundMainGrid({ mode }) {
                                         <Box
                                             sx={{
                                                 display: "flex",
-                                                alignItems: "flex-start",
-                                                gap: 1,
-                                                backgroundColor: "rgba(255,255,255,0.35)",
-                                                border: "1px solid rgba(0,0,0,0.08)",
-                                                borderRadius: 1.5,
+                                                flexDirection: "column",
+                                                gap: 0.75,
+                                                backgroundColor: "rgba(255,255,255,0.70)",
+                                                border: "1px solid rgba(0,0,0,0.10)",
+                                                borderRadius: 2,
+                                                boxShadow: "0 6px 16px rgba(0,0,0,0.08)",
                                                 px: 1.25,
                                                 py: 0.75,
                                             }}
                                         >
-                                            <LocationOnIcon fontSize="small" sx={{ opacity: 0.8, mt: "2px" }} />
-                                            <Typography sx={{ fontSize: 12, fontWeight: 800, lineHeight: 1.25, overflowWrap: "anywhere" }}>
-                                                {regionPreview}
-                                            </Typography>
-                                        </Box>
+                                            <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
+                                                <LocationOnIcon fontSize="small" sx={{ opacity: 0.75, mt: "2px" }} />
+                                                <Typography sx={{ fontSize: 12, fontWeight: 900, lineHeight: 1.25, overflowWrap: "anywhere" }}>
+                                                    {regionPreview}
+                                                </Typography>
+                                            </Box>
 
-                                        <Box
-                                            sx={{
-                                                display: "flex",
-                                                alignItems: "flex-start",
-                                                gap: 1,
-                                                backgroundColor: "rgba(255,255,255,0.35)",
-                                                border: "1px solid rgba(0,0,0,0.08)",
-                                                borderRadius: 1.5,
-                                                px: 1.25,
-                                                py: 0.75,
-                                            }}
-                                        >
-                                            <PhoneIcon fontSize="small" sx={{ opacity: 0.8, mt: "2px" }} />
-                                            <Typography sx={{ fontSize: 12, fontWeight: 800, lineHeight: 1.25, overflowWrap: "anywhere" }}>
-                                                {phoneText}
-                                            </Typography>
+                                            <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
+                                                <PhoneIcon fontSize="small" sx={{ opacity: 0.75, mt: "2px" }} />
+                                                <Typography sx={{ fontSize: 12, fontWeight: 800, lineHeight: 1.25, overflowWrap: "anywhere" }}>
+                                                    {phoneText}
+                                                </Typography>
+                                            </Box>
                                         </Box>
                                     </Box>
                                 </Box>
@@ -725,10 +852,12 @@ export default function LostAndFoundMainGrid({ mode }) {
                         sx={{
                             width: "100%",
                             maxWidth: 980,
-                            backgroundColor: "#ffffff",
-                            borderRadius: 2,
-                            border: "2px solid rgba(0,0,0,0.65)",
-                            boxShadow: "0 10px 30px rgba(0,0,0,0.25)",
+                            backgroundColor: "rgba(255,255,255,0.72)",
+                            borderRadius: 3,
+                            border: "1px solid rgba(255,255,255,0.65)",
+                            boxShadow: "0 18px 50px rgba(0,0,0,0.20)",
+                            backdropFilter: "saturate(180%) blur(14px)",
+                            WebkitBackdropFilter: "saturate(180%) blur(14px)",
                             position: "relative",
                             display: "flex",
                             flexDirection: "column",
@@ -843,12 +972,15 @@ export default function LostAndFoundMainGrid({ mode }) {
                                 <Box
                                     sx={{
                                         height: 220,
-                                        border: "2px solid rgba(0,0,0,0.65)",
-                                        backgroundColor: "#f4f1e5",
+                                        borderRadius: 3,
+                                        overflow: "hidden",
+                                        border: "1px solid rgba(255,255,255,0.65)",
+                                        background: "linear-gradient(135deg, rgba(255,255,255,0.55) 0%, rgba(245,245,245,0.35) 100%)",
+                                        boxShadow: "0 14px 34px rgba(0,0,0,0.16)",
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
-                                        px: 2,
+                                        p: 1,
                                     }}
                                 >
                                     {selectedPhotos.length > 0 ? (
@@ -861,6 +993,8 @@ export default function LostAndFoundMainGrid({ mode }) {
                                                 height: "100%",
                                                 objectFit: "cover",
                                                 display: "block",
+                                                borderRadius: 2.5,
+                                                boxShadow: "0 12px 22px rgba(0,0,0,0.16)",
                                             }}
                                         />
                                     ) : (
@@ -894,14 +1028,15 @@ export default function LostAndFoundMainGrid({ mode }) {
                                                     width: 72,
                                                     height: 54,
                                                     flex: "0 0 auto",
-                                                    borderRadius: 1,
+                                                    borderRadius: 2,
                                                     overflow: "hidden",
                                                     cursor: "pointer",
                                                     outline: "none",
                                                     border:
                                                         idx === activePhotoIndex
-                                                            ? "2px solid rgba(0,0,0,0.75)"
-                                                            : "2px solid rgba(0,0,0,0.15)",
+                                                            ? "1.5px solid rgba(0,0,0,0.45)"
+                                                            : "1px solid rgba(0,0,0,0.14)",
+                                                    boxShadow: "0 8px 16px rgba(0,0,0,0.10)",
                                                     "&:focus-visible": { outline: "2px solid rgba(0,0,0,0.35)", outlineOffset: 2 },
                                                 }}
                                             >
@@ -918,8 +1053,12 @@ export default function LostAndFoundMainGrid({ mode }) {
 
                                 <Box
                                     sx={{
-                                        border: "2px solid rgba(0,0,0,0.20)",
-                                        borderRadius: 1.5,
+                                        border: "1px solid rgba(0,0,0,0.10)",
+                                        borderRadius: 3,
+                                        backgroundColor: "rgba(255,255,255,0.55)",
+                                        boxShadow: "0 14px 30px rgba(0,0,0,0.10)",
+                                        backdropFilter: "saturate(160%) blur(10px)",
+                                        WebkitBackdropFilter: "saturate(160%) blur(10px)",
                                         p: 2,
                                     }}
                                 >
@@ -933,8 +1072,10 @@ export default function LostAndFoundMainGrid({ mode }) {
                                                 sx={{
                                                     minHeight: 34,
                                                     height: "auto",
-                                                    borderRadius: 1.2,
-                                                    backgroundColor: "#f1e9c9",
+                                                    borderRadius: 2,
+                                                    backgroundColor: "rgba(241,233,201,0.65)",
+                                                    border: "1px solid rgba(0,0,0,0.10)",
+                                                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55)",
                                                     display: "flex",
                                                     alignItems: "center",
                                                     px: 1.5,
@@ -956,8 +1097,10 @@ export default function LostAndFoundMainGrid({ mode }) {
                                                 sx={{
                                                     minHeight: 34,
                                                     height: "auto",
-                                                    borderRadius: 1.2,
-                                                    backgroundColor: "#f1e9c9",
+                                                    borderRadius: 2,
+                                                    backgroundColor: "rgba(241,233,201,0.65)",
+                                                    border: "1px solid rgba(0,0,0,0.10)",
+                                                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55)",
                                                     display: "flex",
                                                     alignItems: "center",
                                                     px: 1.5,
@@ -981,8 +1124,10 @@ export default function LostAndFoundMainGrid({ mode }) {
                                                 sx={{
                                                     minHeight: 34,
                                                     height: "auto",
-                                                    borderRadius: 1.2,
-                                                    backgroundColor: "#f1e9c9",
+                                                    borderRadius: 2,
+                                                    backgroundColor: "rgba(241,233,201,0.65)",
+                                                    border: "1px solid rgba(0,0,0,0.10)",
+                                                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55)",
                                                     display: "flex",
                                                     alignItems: "flex-start",
                                                     gap: 1,
@@ -1056,8 +1201,10 @@ export default function LostAndFoundMainGrid({ mode }) {
                                             <Box
                                                 sx={{
                                                     minHeight: 64,
-                                                    borderRadius: 1.2,
-                                                    backgroundColor: "#f1e9c9",
+                                                    borderRadius: 2,
+                                                    backgroundColor: "rgba(241,233,201,0.65)",
+                                                    border: "1px solid rgba(0,0,0,0.10)",
+                                                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55)",
                                                     px: 1.5,
                                                     py: 1,
                                                 }}
@@ -1096,8 +1243,10 @@ export default function LostAndFoundMainGrid({ mode }) {
                                                 sx={{
                                                     minHeight: 34,
                                                     height: "auto",
-                                                    borderRadius: 1.2,
-                                                    backgroundColor: "#f1e9c9",
+                                                    borderRadius: 2,
+                                                    backgroundColor: "rgba(241,233,201,0.65)",
+                                                    border: "1px solid rgba(0,0,0,0.10)",
+                                                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55)",
                                                     mb: 1.5,
                                                     display: "flex",
                                                     alignItems: "center",
@@ -1122,8 +1271,10 @@ export default function LostAndFoundMainGrid({ mode }) {
                                                 sx={{
                                                     minHeight: 34,
                                                     height: "auto",
-                                                    borderRadius: 1.2,
-                                                    backgroundColor: "#fbf3d6",
+                                                    borderRadius: 2,
+                                                    backgroundColor: "rgba(251,243,214,0.65)",
+                                                    border: "1px solid rgba(0,0,0,0.10)",
+                                                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55)",
                                                     display: "flex",
                                                     alignItems: "center",
                                                     px: 1.5,
@@ -1145,8 +1296,10 @@ export default function LostAndFoundMainGrid({ mode }) {
                                                 sx={{
                                                     minHeight: 34,
                                                     height: "auto",
-                                                    borderRadius: 1.2,
-                                                    backgroundColor: "#fbf3d6",
+                                                    borderRadius: 2,
+                                                    backgroundColor: "rgba(251,243,214,0.65)",
+                                                    border: "1px solid rgba(0,0,0,0.10)",
+                                                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55)",
                                                     display: "flex",
                                                     alignItems: "center",
                                                     px: 1.5,
@@ -1171,8 +1324,10 @@ export default function LostAndFoundMainGrid({ mode }) {
                                                 sx={{
                                                     minHeight: 34,
                                                     height: "auto",
-                                                    borderRadius: 1.2,
-                                                    backgroundColor: "#fbf3d6",
+                                                    borderRadius: 2,
+                                                    backgroundColor: "rgba(251,243,214,0.65)",
+                                                    border: "1px solid rgba(0,0,0,0.10)",
+                                                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55)",
                                                     display: "flex",
                                                     alignItems: "center",
                                                     px: 1.5,
@@ -1194,8 +1349,10 @@ export default function LostAndFoundMainGrid({ mode }) {
                                                 sx={{
                                                     minHeight: 34,
                                                     height: "auto",
-                                                    borderRadius: 1.2,
-                                                    backgroundColor: "#fbf3d6",
+                                                    borderRadius: 2,
+                                                    backgroundColor: "rgba(251,243,214,0.65)",
+                                                    border: "1px solid rgba(0,0,0,0.10)",
+                                                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55)",
                                                     display: "flex",
                                                     alignItems: "center",
                                                     px: 1.5,
@@ -1225,8 +1382,10 @@ export default function LostAndFoundMainGrid({ mode }) {
                                                 sx={{
                                                     minHeight: 34,
                                                     height: "auto",
-                                                    borderRadius: 1.2,
-                                                    backgroundColor: "#eef0d2",
+                                                    borderRadius: 2,
+                                                    backgroundColor: "rgba(238,240,210,0.65)",
+                                                    border: "1px solid rgba(0,0,0,0.10)",
+                                                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55)",
                                                     mb: 1.5,
                                                     display: "flex",
                                                     alignItems: "center",
@@ -1250,8 +1409,10 @@ export default function LostAndFoundMainGrid({ mode }) {
                                                 sx={{
                                                     minHeight: 34,
                                                     height: "auto",
-                                                    borderRadius: 1.2,
-                                                    backgroundColor: "#eef0d2",
+                                                    borderRadius: 2,
+                                                    backgroundColor: "rgba(238,240,210,0.65)",
+                                                    border: "1px solid rgba(0,0,0,0.10)",
+                                                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55)",
                                                     mb: 1.5,
                                                     display: "flex",
                                                     alignItems: "center",
@@ -1275,8 +1436,10 @@ export default function LostAndFoundMainGrid({ mode }) {
                                                 sx={{
                                                     minHeight: 34,
                                                     height: "auto",
-                                                    borderRadius: 1.2,
-                                                    backgroundColor: "#eef0d2",
+                                                    borderRadius: 2,
+                                                    backgroundColor: "rgba(238,240,210,0.65)",
+                                                    border: "1px solid rgba(0,0,0,0.10)",
+                                                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55)",
                                                     display: "flex",
                                                     alignItems: "center",
                                                     px: 1.5,
