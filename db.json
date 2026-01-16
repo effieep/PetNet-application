@@ -2025,6 +2025,57 @@
           "email": "yassinsammy2@gmail.com"
         }
       }
+    },
+    {
+      "id": "f440",
+      "type": "LOSS",
+      "status": "SUBMITTED",
+      "createdAt": "16-01-2026",
+      "createdTime": "17:41",
+      "petId": "p2",
+      "ownerId": "u1",
+      "lostDate": "01-01-2026",
+      "lostTime": "17:36",
+      "location": {
+        "address": "Γουδή, Αμπελόκηποι, 7η Κοινότητα Αθηνών, Αθήνα, Δήμος Αθηναίων, Περιφερειακή Ενότητα Κεντρικού Τομέα Αθηνών, Περιφέρεια Αττικής, Αποκεντρωμένη Διοίκηση Αττικής, 157 73, Ελλάδα",
+        "region": "Περιφέρεια Αττικής",
+        "lat": 37.98463988629141,
+        "lon": 23.77844820201788
+      },
+      "description": "",
+      "contact": {
+        "name": "Efthymia Papafili",
+        "phone": "6985595001",
+        "email": "epapafili2003@gmail.com"
+      }
+    },
+    {
+      "id": "4dcc",
+      "type": "LOSS",
+      "status": "SUBMITTED",
+      "createdAt": "16-01-2026",
+      "createdTime": "17:44",
+      "petId": "p3",
+      "ownerId": "u1",
+      "lostDate": "15-01-2026",
+      "lostTime": "17:00",
+      "location": {
+        "address": "Βριλησσού, Βριλήσσια, Δήμος Βριλησσίων, Περιφερειακή Ενότητα Βορείου Τομέα Αθηνών, Περιφέρεια Αττικής, Αποκεντρωμένη Διοίκηση Αττικής, 152 38, Ελλάδα",
+        "region": "Περιφέρεια Αττικής",
+        "lat": 38.04133164260481,
+        "lon": 23.848100233218368
+      },
+      "description": "bla bla blabla",
+      "contact": {
+        "name": "Efthymia Papafili",
+        "phone": "6985595001",
+        "email": "epapafili2003@gmail.com",
+        "alt": {
+          "name": "sam",
+          "phone": "1234567890",
+          "email": "yassinsammy2@gmail.com"
+        }
+      }
     }
   ],
   "temp-saved-vet-form": [],
