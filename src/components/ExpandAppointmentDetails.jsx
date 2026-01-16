@@ -1,9 +1,31 @@
 import { Box, Typography, Card, Divider, Button} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../api";
+import { useState } from "react";
+import ConfirmDialog from "./ConfirmDialog";
 
 const ExpandedAppointmentDetails = ({ appointment, onCancelSuccess }) => {
   const { pet, vet, date, time, status, reason, reviewed } = appointment;
+  const [confirmDial, setConfirmDial] = useState(false);
+
+  const handleConfirmClose = () => {
+    setConfirmDial(false);
+  }
+
+  const handleCancelClick = async () => {
+    setConfirmDial(true);
+  }
+
+  const cancelApp = async () => {
+
+    await fetch(`${API_URL}/appointments/${appointment.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: "CANCELLED" }),
+    });
+
+    onCancelSuccess(appointment.id);
+  }
 
   const navigate = useNavigate();
 
@@ -15,6 +37,16 @@ const ExpandedAppointmentDetails = ({ appointment, onCancelSuccess }) => {
       }
     });
   }
+
+  const handleViewVetDetails = () => {
+    navigate(`/owner/search-vet/vet-details`, { 
+      state: { 
+        vet: vet
+      } 
+    });
+  }
+
+
   // Μετατροπή dd-mm-yyyy σε δυναμικά στοιχεία
   const formatDate = (dateStr) => {
     if (!dateStr) return { dayNum: "-", dayName: "-", monthName: "-" };
@@ -130,10 +162,11 @@ const ExpandedAppointmentDetails = ({ appointment, onCancelSuccess }) => {
             <Button 
               variant="contained" 
               color="secondary" 
+              onClick={handleViewVetDetails}
               sx={{ 
                 borderRadius: "8px", 
                 fontWeight: "bold",
-                backgroundColor: "#A32CC4", // Το μωβ χρώμα της εικόνας σου
+                backgroundColor: "#A32CC4",
                 px: 3,
                 "&:hover": { backgroundColor: "#8a24a6" }
               }}
@@ -167,27 +200,15 @@ const ExpandedAppointmentDetails = ({ appointment, onCancelSuccess }) => {
         flexWrap: "wrap"
       }}
     >
-    {status === "PENDING" && (
+    {(status === "PENDING" || status === "CONFIRMED") && (
       <Button
         variant="contained"
         color="error"
-        onClick={async () => {
-          const ok = window.confirm("Θέλετε σίγουρα να ακυρώσετε το ραντεβού;");
-          if (!ok) return;
-
-          await fetch(`${API_URL}/appointments/${appointment.id}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ status: "CANCELLED" }),
-          });
-
-          onCancelSuccess(appointment.id);
-        }}
+        onClick={handleCancelClick}
       >
         ΑΚΥΡΩΣΗ ΡΑΝΤΕΒΟΥ
       </Button>)}
 
-  {/* ΔΕΞΙΑ ΠΛΕΥΡΑ: Αξιολόγηση ΚΑΙ Προβολή Κτηνιάτρου */}
       <Box sx={{ display: 'flex', gap: 2, alignItems: "center" }}>
         {status === "COMPLETED" && reviewed === false && (
           <Button 
@@ -213,6 +234,14 @@ const ExpandedAppointmentDetails = ({ appointment, onCancelSuccess }) => {
 
       </Box>
     </Box>
+    <ConfirmDialog 
+      open={confirmDial}
+      onClose={handleConfirmClose}
+      onConfirm={cancelApp}
+      title="Ακύρωση Ραντεβού"
+      message="Επιβεβαιώνετε ότι θέλετε να ακυρώσετε το ραντεβού;"
+    />
+        
     </Card>
     
   );

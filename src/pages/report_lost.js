@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
-import { Collapse, Divider } from "@mui/material";
+import { Autocomplete, Collapse, Divider, Chip } from "@mui/material";
 import { SwitchTransition } from "react-transition-group";
 import {
   Stepper,
@@ -13,6 +13,8 @@ import {
   TextField,
   Grid,
   MenuItem,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import LoginDialog from "../components/login";
@@ -20,25 +22,42 @@ import PetPreviewCard from "../components/PetPreviewCard";
 import PetDetailsCard from "../components/PetDetailsCard";
 import AddressPicker from "../components/AddressPicker";
 import { API_URL } from "../api";
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import EditIcon from '@mui/icons-material/Edit';
+
+const formatDateStr = (dateStr) => {
+  if (!dateStr) return "";
+  const date = dateStr.split("T")[0];
+  const [years, months, days] = date.split("-");
+  return `${days}/${months}/${years}`;
+};
 
 // ==============================================
 // SUB-COMPONENTS (ΤΟ ΠΕΡΙΕΧΟΜΕΝΟ ΤΩΝ ΒΗΜΑΤΩΝ)
 // ==============================================
 
-const StepLogin = ({ isLoggedIn, onOpenLogin }) => (
+const StepLogin = ({ isLoggedIn, user, onOpenLogin, logout }) => (
   <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-    {!isLoggedIn && (
+    {(!isLoggedIn || user.role !== 'owner') && (
       <>
         <Typography variant="h6" color="error" textAlign="center" sx={{ fontWeight: "bold" }}>
-          Απαιτείται σύνδεση για να κάνετε δήλωση απώλειας κατοικιδίου.
+          Απαιτείται σύνδεση {!isLoggedIn ? '' : 'ως ιδιοκτήτης'} για να κάνετε δήλωση απώλειας κατοικιδίου.
         </Typography>
         <Box sx={{ display: "flex", justifyContent: "center" }}>
           <Button
             variant="contained"
-            onClick={onOpenLogin}
-            sx={{ px: 4, py: 1, fontWeight: "bold" }}
+            onClick={onOpenLogin} 
+            sx={{ px: 4, py: 1, fontWeight: "bold", display: !isLoggedIn ? 'block' : 'none' }}
           >
             Σύνδεση
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={logout}
+            sx={{ px: 4, py: 1, fontWeight: "bold", display: isLoggedIn ? 'block' : 'none', ml:2 }}
+          >
+            Αποσύνδεση
           </Button>
         </Box>
       </>
@@ -98,6 +117,7 @@ const StepSelectPet = ({ pets, loading, selectedPetId, previewPetId, errorText, 
               cardSx={{
                 transition: "transform 150ms ease",
                 "&:hover": { transform: "translateY(-1px)" },
+                my: 1, mx: 1
               }}
             />
           </Box>
@@ -132,6 +152,7 @@ const StepLossDetails = ({ formData, updateField, errors }) => (
             variant="outlined"
             size="small"
             InputLabelProps={{ shrink: true }}
+            inputProps={{ max: new Date().toISOString().split("T")[0] }}
             value={formData.loss.date}
             onChange={(e) => updateField("loss", "date", e.target.value)}
             error={!!errors["loss.date"]}
@@ -155,6 +176,7 @@ const StepLossDetails = ({ formData, updateField, errors }) => (
             label="Διεύθυνση / Περιοχή που χάθηκε"
             value={formData.loss.area}
             onChange={(val) => updateField("loss", "area", val)}
+            onRegionChange={(val) => updateField("loss", "region", val)}
             coords={{
               lat: formData.loss.lat,
               lon: formData.loss.lon,
@@ -303,13 +325,29 @@ const StepContactDetails = ({ formData, updateField, errors, user, contactPreset
   </Box>
 );
 
-const StepConfirmation = ({ formData }) => (
+const StepConfirmation = ({ formData, submitError }) => (
   <Box>
     <Typography variant="h6" gutterBottom>
       Παρακαλώ ελέγξτε τα στοιχεία σας:
     </Typography>
+
+    {submitError && (
+      <Typography color="error" sx={{ fontWeight: 700, mb: 2 }}>
+        {submitError}
+      </Typography>
+    )}
+
     <Box sx={{ bgcolor: "#f5f5f5", p: 3, borderRadius: 2 }}>
-      <ul style={{ listStyle: "none", padding: 0, margin: 0, lineHeight: "2" }}>
+      <ul
+        style={{
+          listStyle: "none",
+          padding: 0,
+          margin: 0,
+          lineHeight: "2",
+          overflowWrap: "anywhere",
+          wordBreak: "break-word",
+        }}
+      >
         <li>
           <strong>Microchip:</strong> {formData.pet.microchip}
         </li>
@@ -322,6 +360,11 @@ const StepConfirmation = ({ formData }) => (
         <li>
           <strong>Ημερομηνία:</strong> {formData.loss.date}
         </li>
+        {formData.loss.time && (
+          <li>
+            <strong>Ώρα:</strong> {formData.loss.time}
+          </li>
+        )}
         <li>
           <strong>Τηλέφωνο:</strong> {formData.contact.phone}
         </li>
@@ -361,7 +404,7 @@ const StepSummary = () => (
       Έτοιμο!
     </Typography>
     <Typography>
-      (Placeholder) Η δήλωση απώλειας θα αποθηκευτεί όταν συνδέσουμε τη βάση.
+      Η δήλωση απώλειας καταχωρήθηκε επιτυχώς.
     </Typography>
   </Box>
 );
@@ -375,16 +418,19 @@ export default function ReportLostStepper() {
   const [errors, setErrors] = useState({});
   const [loginOpen, setLoginOpen] = useState(false);
   const navigate = useNavigate();
-  const { user, isLoggedIn } = useAuth();
+  const { user, isLoggedIn, logout } = useAuth();
 
   const [pets, setPets] = useState([]);
   const [petsLoading, setPetsLoading] = useState(false);
   const [petsError, setPetsError] = useState("");
   const [selectedPetId, setSelectedPetId] = useState(null);
   const [previewPetId, setPreviewPetId] = useState(null);
+  const [tempSavedData, setTempSavedData] = useState([]);
+  const [tempSavedDataId, setTempSavedDataId] = useState(null);
 
   const [formData, setFormData] = useState({
     pet: {
+      id: "",
       microchip: "",
       species: "",
       breed: "",
@@ -398,6 +444,7 @@ export default function ReportLostStepper() {
       date: "",
       time: "",
       area: "",
+      region: "",
       lat: null,
       lon: null,
       notes: "",
@@ -414,20 +461,49 @@ export default function ReportLostStepper() {
 
   const [contactPreset, setContactPreset] = useState("manual");
   const [showAltContact, setShowAltContact] = useState(false);
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "info" });
+
+  const openSnackbar = (message, severity = "info") => {
+    setSnackbar({ open: true, message, severity });
+  };
+
+  const closeSnackbar = () => {
+    setSnackbar({ open: false, message: "", severity: "info" });
+  };
+
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   useEffect(() => {
     setErrors({});
+    setSubmitError("");
   }, [activeStep]);
 
   useEffect(() => {
-    if (activeStep === 0 && isLoggedIn) {
+    if (activeStep === 0 && ( isLoggedIn && user.role === 'owner') ) {
       setLoginOpen(false);
       setActiveStep(1);
     }
-    if (activeStep > 0 && !isLoggedIn) {
+    if (activeStep > 0 && (!isLoggedIn || user.role !== 'owner') ) {
       setActiveStep(0);
     }
-  }, [activeStep, isLoggedIn]);
+    const fetchTempSavedData = async () => {
+      try{
+        const response = await fetch(`${API_URL}/temp-saved-lost-form`);
+        const data = await response.json();
+        let userTempData = [];
+        if(data.length > 0 ){
+          userTempData = data.filter(item => item.userId === (user?.id || null));
+        }
+        if (!response.ok) throw new Error("Αποτυχία φόρτωσης προσωρινών δεδομένων.");
+        setTempSavedData(userTempData);
+      }
+      catch (error) {
+        console.error("Error fetching temp saved data:", error);
+      }
+    };
+    fetchTempSavedData();
+  }, [activeStep, isLoggedIn, user]);
 
   useEffect(() => {
     // When entering the contact step, default to account details (only if fields are empty).
@@ -507,7 +583,7 @@ export default function ReportLostStepper() {
         if (!res.ok) throw new Error("Αποτυχία φόρτωσης κατοικιδίων");
         return res.json();
       })
-      .then((data) => setPets(Array.isArray(data) ? data : []))
+      .then((data) => setPets(data.filter(pet => pet.dateOfDeath === null || pet.dateOfDeath === undefined || pet.dateOfDeath === '')))
       .catch(() => setPetsError("Δεν ήταν δυνατή η φόρτωση των κατοικιδίων."))
       .finally(() => setPetsLoading(false));
   }, [isLoggedIn, user?.id]);
@@ -551,11 +627,106 @@ export default function ReportLostStepper() {
 
   const handleBack = () => setActiveStep((prev) => prev - 1);
 
+  const formatDateToDDMMYYYY = (dateStr) => {
+    if (!dateStr) return "";
+    // Already matches db.json style
+    if (/^\d{2}-\d{2}-\d{4}$/.test(dateStr)) return dateStr;
+    // From <input type="date"> (YYYY-MM-DD)
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+      const [yyyy, mm, dd] = dateStr.split("-");
+      return `${dd}-${mm}-${yyyy}`;
+    }
+    return dateStr;
+  };
+
+  const todayDDMMYYYY = () => {
+    const d = new Date();
+    const dd = String(d.getDate()).padStart(2, "0");
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const yyyy = String(d.getFullYear());
+    return `${dd}-${mm}-${yyyy}`;
+  };
+
+  const nowHHMM = () => {
+    const d = new Date();
+    const hh = String(d.getHours()).padStart(2, "0");
+    const min = String(d.getMinutes()).padStart(2, "0");
+    return `${hh}:${min}`;
+  };
+
   const handleSubmit = async () => {
-    // Placeholder: later connect to db/api
-    // eslint-disable-next-line no-console
-    console.log("Lost report submit (placeholder)", formData);
-    setActiveStep((prev) => prev + 1);
+    if (submitting) return;
+    setSubmitError("");
+
+    // Extra guards (should already be enforced by the wizard gating)
+    if (!isLoggedIn || !user?.id) {
+      setSubmitError("Απαιτείται σύνδεση.");
+      setActiveStep(0);
+      return;
+    }
+    if (!selectedPetId) {
+      setSubmitError("Επιλέξτε κατοικίδιο πριν την ολοκλήρωση.");
+      setActiveStep(1);
+      return;
+    }
+
+    const payload = {
+      type: "LOSS",
+      status: "SUBMITTED",
+      createdAt: todayDDMMYYYY(),
+      createdTime: nowHHMM(),
+      petId: String(selectedPetId),
+      ownerId: String(user.id),
+      lostDate: formatDateToDDMMYYYY(formData.loss.date),
+      lostTime: formData.loss.time || "",
+      location: {
+        address: formData.loss.area,
+        region: formData.loss.region || "",
+        ...(formData.loss.lat != null && formData.loss.lon != null
+          ? { lat: formData.loss.lat, lon: formData.loss.lon }
+          : {}),
+      },
+      description: formData.loss.notes || "",
+      contact: {
+        name: formData.contact.name,
+        phone: formData.contact.phone,
+        email: formData.contact.email,
+        ...(formData.contact.altName || formData.contact.altPhone || formData.contact.altEmail
+          ? {
+              alt: {
+                name: formData.contact.altName,
+                phone: formData.contact.altPhone,
+                email: formData.contact.altEmail,
+              },
+            }
+          : {}),
+      },
+    };
+
+    setSubmitting(true);
+    try {
+      const res = await fetch(`${API_URL}/declarations`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error("Αποτυχία αποθήκευσης δήλωσης.");
+
+      // Success: go to "Ολοκλήρωση"
+      if(tempSavedDataId){
+        const delres = await fetch(`${API_URL}/temp-saved-lost-form/${tempSavedDataId}`, {
+          method: "DELETE",
+        });
+        if(!delres.ok) throw new Error("Αποτυχία διαγραφής προσωρινών δεδομένων.");
+        setTempSavedDataId(null);
+        setTempSavedData(prevData => prevData.filter(item => item.id !== tempSavedDataId));
+      }
+      setActiveStep((prev) => prev + 1);
+    } catch (e) {
+      setSubmitError(e?.message || "Παρουσιάστηκε σφάλμα κατά την αποθήκευση.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleSelectPet = (pet) => {
@@ -565,6 +736,7 @@ export default function ReportLostStepper() {
       ...prev,
       pet: {
         ...prev.pet,
+        id: pet.id,
         microchip: pet.microchip || "",
         species: pet.species || "",
         breed: pet.breed || "",
@@ -581,7 +753,7 @@ export default function ReportLostStepper() {
   const getStepContent = (stepIndex) => {
     switch (stepIndex) {
       case 0:
-        return <StepLogin isLoggedIn={isLoggedIn} onOpenLogin={() => setLoginOpen(true)} />;
+        return <StepLogin isLoggedIn={isLoggedIn} user={user} onOpenLogin={() => setLoginOpen(true)} logout={logout} />;
       case 1:
         return (
           <StepSelectPet
@@ -610,7 +782,7 @@ export default function ReportLostStepper() {
           />
         );
       case 4:
-        return <StepConfirmation formData={formData} />;
+        return <StepConfirmation formData={formData} submitError={submitError} />;
       case 5:
         return <StepSummary />;
       default:
@@ -628,7 +800,7 @@ export default function ReportLostStepper() {
 
   const layout = (() => {
     // Step 1 (pet selection) needs room for horizontal cards + details preview.
-    if (activeStep === 1) return { paperMaxWidth: 1200, contentMaxWidth: "100%" };
+    if (activeStep === 1) return { paperMaxWidth: 1300, contentMaxWidth: "100%" };
     // Login step stays compact.
     if (activeStep === 0) return { paperMaxWidth: 760, contentMaxWidth: 520 };
     // Step 2 (loss details) includes the map + notes; make it wider but still centered.
@@ -636,6 +808,99 @@ export default function ReportLostStepper() {
     // Forms are medium width (avoid huge empty white area).
     return { paperMaxWidth: 980, contentMaxWidth: 520 };
   })();
+
+  const handleTempSave = async () => {
+    setActiveStep(0);
+    try{
+      const existingDraft = tempSavedData.find(item => item.id === tempSavedDataId);
+      if(existingDraft){
+        // Update existing
+        const response = await fetch(`${API_URL}/temp-saved-lost-form/${tempSavedDataId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            savedAt: new Date().toISOString(),
+            data: formData,
+          }),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error("Αποτυχία αποθήκευσης προσωρινών δεδομένων.");
+        openSnackbar("Τα προσωρινά δεδομένα αποθηκεύτηκαν επιτυχώς.", "success");
+        setTempSavedData(prevData => prevData.map(item => item.id === tempSavedDataId ? data : item));
+        return;
+      }
+      else{
+        const response = await fetch(`${API_URL}/temp-saved-lost-form`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: user?.id || null,
+            savedAt: new Date().toISOString(),
+            data: formData,
+          }),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error("Αποτυχία αποθήκευσης προσωρινών δεδομένων.");
+        openSnackbar("Τα προσωρινά δεδομένα αποθηκεύτηκαν επιτυχώς.", "success");
+        setTempSavedData(prevData => [...prevData, data]);
+      }
+    }
+    catch (error) {
+      openSnackbar("Σφάλμα κατά την αποθήκευση προσωρινών δεδομένων.", "error");
+      console.error("Error saving temp data:", error);
+    }
+  };
+
+  const handleTempChange = (event, newValue) => {
+    setTempSavedDataId(newValue?.id || null);
+    setFormData(newValue?.data || 
+    {
+      pet: {
+        id: "",
+        microchip: "",
+        species: "",
+        breed: "",
+        sex: "",
+        color: "",
+        size: "",
+        features: "",
+        photo: "",
+      },
+      loss: {
+        date: "",
+        time: "",
+        area: "",
+        lat: null,
+        lon: null,
+        notes: "",
+      },
+      contact: {
+        name: "",
+        phone: "",
+        email: "",
+        altName: "",
+        altPhone: "",
+        altEmail: "",
+      },
+  });
+  };
+
+  const handleTempDelete = async () => {
+    if (!tempSavedDataId) return;
+    try {
+      const response = await fetch(`${API_URL}/temp-saved-lost-form/${tempSavedDataId}`, {
+        method: "DELETE",
+      });
+      if(!response.ok) throw new Error("Αποτυχία διαγραφής προσωρινών δεδομένων.");
+      openSnackbar("Το προσωρινό αποθηκευμένο προσχέδιο διαγράφηκε επιτυχώς.", "success");
+      setTempSavedDataId(null);
+      setTempSavedData(prevData => prevData.filter(item => item.id !== tempSavedDataId));
+    }
+    catch (error) {
+      console.error("Error deleting temp saved data:", error);
+      openSnackbar("Σφάλμα κατά τη διαγραφή προσωρινών δεδομένων.", "error");
+    }
+  };
 
   return (
     
@@ -646,12 +911,40 @@ export default function ReportLostStepper() {
         justifyContent: "center",
         alignItems: "center",
         position: "relative",
+        flexDirection: 'column',
         px: 2,
       }}
     >
 
       <LoginDialog open={loginOpen} onClose={() => setLoginOpen(false)} />
-
+      <Box
+        sx={{
+          position: 'sticky',
+          top: 20,
+          zIndex: 1000,
+          mt: 2,
+          mb: 2,
+          backdropFilter: 'blur(8px)',
+          borderRadius: '20px',
+          p: 1,
+          display: 'flex',
+          justifyContent: 'center'
+        }}
+      >
+          <Chip
+            icon={tempSavedDataId ? <EditIcon /> : <AddCircleOutlineIcon />}
+            label={tempSavedDataId ? "Σε κατάσταση Επεξεργασίας Αποθηκευμένου Προσχεδίου" : "Σε κατάσταση Νέας Καταχώρησης"}
+            color={tempSavedDataId ? "warning" : "success"}
+            variant="filled"
+            sx={{
+              fontWeight: 'bold',
+              fontSize: '0.9rem',
+              py: 2.5,
+              px: 1,
+              borderRadius: 2,
+            }}
+          />
+      </Box>
       <Paper
         sx={{
           p: { xs: 2.5, sm: 3, md: 4 },
@@ -665,6 +958,27 @@ export default function ReportLostStepper() {
         <Typography variant="h4" align="center" sx={{ mb: 4, fontWeight: "bold", color: "#373721" }}>
           Δήλωση Απώλειας
         </Typography>
+        <Box sx={{ display: "flex", flexDirection: "row", gap: 2, justifyContent: "center", alignSelf: "center" }}>
+          <Autocomplete
+            value={tempSavedData.find(item => item.id === tempSavedDataId) || null}
+            options={tempSavedData}
+            getOptionLabel={(option) => `${formatDateStr(option.savedAt)} - ${pets.find(p => p.id === option.data.pet.id)?.name || 'Άγνωστο Κατοικίδιο'}`}
+            renderInput={(params) => <TextField {...params} label="Φόρτωση προσωρινής αποθήκευσης" variant="outlined" size="small" Inp />}
+            sx={{ mb: 3, width: "30vw", height: "5vh" }}
+            onChange={(event, newValue) => handleTempChange(event, newValue)}
+          />
+          <Button
+            variant="contained"
+            onClick={handleTempDelete}
+            sx={{ fontWeight: "bold", height: "5vh", textTransform: "none", 
+              color: '#ffffffff',
+              backgroundColor: '#bb3d3d',
+              '&:hover': { backgroundColor: '#ce5959' },
+            }}
+          >
+            Διαγραφή Επιλεγμένου Προσχεδίου
+          </Button>
+        </Box>
 
         <Box
           sx={{
@@ -748,6 +1062,7 @@ export default function ReportLostStepper() {
                 <Button
                   onClick={handleBack}
                   sx={{
+                    display: activeStep === 5 ? "none" : "block",
                     color: "#000000ff",
                     outline: "solid 1px #000000ff",
                     px: 4,
@@ -756,6 +1071,23 @@ export default function ReportLostStepper() {
                   ΠΙΣΩ
                 </Button>
               )}
+              <Button
+                disabled={formData.pet.id === ''}
+                variant="contained"
+                color="success"
+                onClick={handleTempSave}
+                sx={{ px: 4, py: 1, fontWeight: "bold", ml: "auto",
+                      borderColor: '#3b2004',
+                      color: '#3b2004',
+                      display: (activeStep === 4 || activeStep === 5) ? "none" : "block",
+                      backgroundColor: '#d38d1e',
+                      '&:hover': { 
+                        backgroundColor: '#eeaf49',
+                      }, 
+                 }}
+              >
+                Προσωρινη Αποθηκευση
+              </Button>
 
               {shouldShowFooterActions && (
                 isDone ? (
@@ -768,8 +1100,14 @@ export default function ReportLostStepper() {
                     ΕΠΙΣΤΡΟΦΗ
                   </Button>
                 ) : isConfirmStep ? (
-                  <Button variant="contained" color="success" onClick={handleSubmit} sx={{ px: 4, py: 1, fontWeight: "bold", ml: "auto" }}>
-                    ΟΛΟΚΛΗΡΩΣΗ
+                  <Button
+                    variant="contained"
+                    color="success"
+                    onClick={handleSubmit}
+                    disabled={submitting}
+                    sx={{ px: 4, py: 1, fontWeight: "bold", ml: "auto" }}
+                  >
+                    {submitting ? "..." : "ΟΛΟΚΛΗΡΩΣΗ"}
                   </Button>
                 ) : (
                   <Button variant="contained" onClick={handleNext} sx={{ px: 4, py: 1, fontWeight: "bold", ml: "auto" }}>
@@ -781,6 +1119,20 @@ export default function ReportLostStepper() {
           </Box>
         </Box>
       </Paper>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={closeSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert 
+          onClose={closeSnackbar} 
+          severity={snackbar.severity} 
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

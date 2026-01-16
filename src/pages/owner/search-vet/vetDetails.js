@@ -1,5 +1,5 @@
 import { 
-  Box, Typography, Paper, Avatar, Rating, Button, Container 
+  Box, Typography, Paper, Avatar, Rating, Button, Container, Snackbar, Alert
 } from '@mui/material';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import VetBio from '../../../components/VetBio';
@@ -7,14 +7,34 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import {Chip} from "@mui/material";
 import { useState, useEffect } from 'react';
 import { API_URL }from "../../../api";
+import VetReviews from '../../../components/VetReviewsCard';
+import VetAvailabilityCalendar from '../../../components/VetAvailabilityCalendar.jsx';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import 'dayjs/locale/el';
+import { useAuth } from '../../../auth/AuthContext.jsx';
+
+dayjs.extend(customParseFormat);
+dayjs.locale('el');
 
 const VetDetails = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
+    const { isLoggedIn, user } = useAuth();
     const [vet, setVet] = useState(location.state?.vet || null);
     const [activeTab, setActiveTab] = useState('bio');
+    const [authorsMap, setAuthorsMap] = useState({});
+    const [snackbarOpen, setSnackbarOpen] = useState({ open: false, message: '', severity: 'success' });
+    
+    const openSnackbar = (message, severity='success') => {
+        setSnackbarOpen({ open: true, message, severity });
+    };
 
+    const closeSnackbar = () => {
+        setSnackbarOpen({ open: false, message: '', severity: 'success' });
+    };
+    
     useEffect(() => {
     if (!vet) {
         const storedVetId = localStorage.getItem("activeVetId");
@@ -31,11 +51,58 @@ const VetDetails = () => {
     }
     }, [vet, navigate]);
 
+    useEffect(() => {
+        const fetchAuthors = async () => {
+        if (!vet || !vet.reviews || vet.reviews.length === 0) return;
+
+        try {
+            // Μαζεύουμε όλα τα μοναδικά authorIds από τα reviews
+            const uniqueAuthorIds = [...new Set(vet.reviews.map(r => r.authorId))];
+
+            // Fetch όλους τους χρήστες (ή αν το API υποστηρίζει φίλτρο: ?id=u1&id=u2...)
+            // Εδώ κάνω fetch all για απλότητα με JSON server
+            const res = await fetch(`${API_URL}/users`);
+            const allUsers = await res.json();
+
+            // Φτιάχνουμε ένα λεξικό: { "u1": "Μαρία Παπ.", "u2": "Γιάννης Κ." }
+            const map = {};
+            allUsers.forEach(u => {
+                if (uniqueAuthorIds.includes(u.id)) {
+                    map[u.id] = `${u.name} ${u.surname}`;
+                }
+            });
+
+            setAuthorsMap(map);
+        } catch (err) {
+            console.error("Failed to fetch review authors:", err);
+        }
+        };
+
+        fetchAuthors();
+    }, [vet]); // Τρέχει κάθε φορά που φορτώνει νέος vet
+
     const ratingValue = vet.reviews && vet.reviews.length > 0
     ? vet.reviews.reduce((acc, rev) => acc + rev.rating, 0) / vet.reviews.length
     : 0; 
     const reviewsCount = vet.reviews ? vet.reviews.length : 0;
 
+    
+    const onBookAppointment = (slotId) => {
+        if(!isLoggedIn || user.role !== 'owner') {
+            openSnackbar('Πρέπει να είστε συνδεδεμένος/η ως ιδιοκτήτης κατοικιδίου για να κλείσετε ραντεβού.', 'error');
+            return;
+        }
+        if(slotId) { 
+            navigate('/owner/search-vet/book-appointment', {
+                state: {
+                    vetId: vet.id,
+                    slotId: slotId,
+                }
+            });
+        }
+    }
+
+    
     // Αν δεν έχουν φορτώσει ακόμα τα δεδομένα, δεν δείχνουμε τίποτα (ή ένα Spinner)
     if (!vet) return null;
     return (
@@ -182,21 +249,38 @@ const VetDetails = () => {
             )}
 
             {activeTab === 'availability' && (
-                <Box sx={{ p: 2 }}>
-                    <Typography variant="h5" fontWeight="bold">Εδώ θα μπει το Calendar Component</Typography>
-                    <Typography>Οι ημέρες και ώρες...</Typography>
-                </Box>
+               <VetAvailabilityCalendar 
+                    availability={vet.availability}
+                    onBookAppointment={onBookAppointment} 
+                />
             )}
 
             {activeTab === 'reviews' && (
-                <Box sx={{ p: 2 }}>
-                    <Typography variant="h5" fontWeight="bold">Εδώ θα μπουν τα Reviews</Typography>
-                    <Typography>Λίστα κριτικών...</Typography>
+                <Box sx={{ mt: 4, px: 2 }}>
+                    <VetReviews 
+                        vet={vet} 
+                        authors={authorsMap} // Περνάμε το map με τα ονόματα
+                    />
                 </Box>
             )}
         </Container>
-
+        <Snackbar
+            open={snackbarOpen.open}
+            autoHideDuration={3000} // 3 seconds
+            onClose={closeSnackbar}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        >
+            <Alert
+                onClose={closeSnackbar}
+                severity={snackbarOpen.severity}
+                sx={{ width: '100%' }}
+            >
+                {snackbarOpen.message}
+            </Alert>
+        </Snackbar>
         </Box>
+      
+        
     );
 };
 

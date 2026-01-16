@@ -133,6 +133,7 @@ const BookAppointment = () => {
             time: slotData.time,
             status: 'PENDING',
             reason: appointmentType,
+            duration: slotData.duration,
             reviewed: false,
           }),
         });

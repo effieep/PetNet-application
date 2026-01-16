@@ -337,8 +337,6 @@ const VetCard = ({ vet, openSnackbar }) => {
                   variant="contained" 
                   onClick={() => onBookAppointment(visibleDays)}
                   sx={{ 
-                      position: 'absolute',
-                      bottom: 20,
                       bgcolor: '#6200EA', 
                       color: 'white', 
                       fontWeight: 'bold', 

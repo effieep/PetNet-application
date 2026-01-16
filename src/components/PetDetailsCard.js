@@ -1,12 +1,65 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Box, Typography, Grid, Paper, Divider, CircularProgress, Stack} from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
-import { API_URL } from '../api';
+import { API_URL, supabase } from '../api';
 
-const PetDetailsCard = ({ petId }) => {
+const PetDetailsCard = ({ petId, edit = false }) => {
   const [pet, setPet] = useState(null);
   const [owner, setOwner] = useState(null);
   const [loading, setLoading] = useState(true);
+  const fileInputRef = useRef(null);
+  const [uploading, setUploading] = useState(false);
+
+  const handleImageClick = () => {
+    if (edit && fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${petId}_${Date.now()}.${fileExt}`;
+      const filePath = `${fileName}`;
+      if(pet?.photoUrl && (pet.photoUrl !== '' || pet.photoUrl !== null || pet.photoUrl !== undefined)) {
+        const oldFileName = pet.photoUrl.split('/').pop();
+        const { error: deleteError } = await supabase.storage
+          .from('pet-photos')
+          .remove([oldFileName]);
+        if (deleteError) console.warn("Failed to delete old image:", deleteError);
+      }
+
+      const { error: uploadError } = await supabase.storage
+        .from('pet-photos') 
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('pet-photos')
+        .getPublicUrl(filePath);
+
+      const updateRes = await fetch(`${API_URL}/pets/${petId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ photoUrl: publicUrl })
+      });
+
+      if (!updateRes.ok) throw new Error("Failed to update pet record");
+
+      setPet(prev => ({ ...prev, photoUrl: publicUrl }));
+
+    } catch (error) {
+      console.error("Upload failed:", error);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,9 +106,61 @@ const PetDetailsCard = ({ petId }) => {
         <Grid item xs={12} md={7} sx={{ display: 'flex', gap: 3 }}>
           <Box sx={{ textAlign: 'center' }}>
             <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 2 }}>{pet.name}</Typography>
-            <Box sx={{ width: 120, height: 120, border: '1px solid #000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <CameraAltIcon sx={{ fontSize: 40 }} />
+            <Box 
+              onClick={handleImageClick}
+              sx={{ 
+                width: 120, 
+                height: 120, 
+                border: '1px solid #000', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                position: 'relative',
+                overflow: 'hidden',
+                cursor: (edit && !uploading) ? 'pointer' : 'default',
+                backgroundColor: '#fff',
+                '&:hover .edit-overlay': { 
+                    opacity: (edit && !uploading) ? 1 : 0 
+                }
+              }}
+            >
+                {uploading ? (
+                  <CircularProgress size={30} sx={{ color: '#000' }} />
+                ) : pet.photoUrl ? (
+                  <img src={pet.photoUrl} alt={pet.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <CameraAltIcon sx={{ fontSize: 40 }} />
+                )}
+
+                {edit && !uploading && (
+                  <Box
+                    className="edit-overlay"
+                    sx={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      backgroundColor: 'rgba(0,0,0,0.5)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      opacity: 0,
+                      transition: 'opacity 0.2s ease-in-out',
+                    }}
+                  >
+                    <EditIcon sx={{ color: '#fff', fontSize: 30 }} />
+                  </Box>
+                )}
             </Box>
+
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              style={{ display: 'none' }} 
+              accept="image/*" 
+              onChange={handleFileChange}
+            />
           </Box>
 
           <Box sx={{ flex: 1, minWidth: '250px', backgroundColor: 'rgba(255,255,255,0.2)', p: 2, borderRadius: '15px' }}>

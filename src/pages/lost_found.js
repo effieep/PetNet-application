@@ -33,59 +33,59 @@ const LostFound = () => {
         sx={{
           // backgroundColor: "#efe092",
           display: "flex",
+          gap: 2,
+          flexWrap: "wrap",
           justifyContent: "center",
           py: 2,
           px: { xs: 2, md: 3 },
         }}
       >
-        <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", justifyContent: "center" }}>
-          <Button
-            onClick={() => setMode("found")}
-            variant={mode === "found" ? "contained" : "outlined"}
-            sx={{
-              textTransform: "none",
-              fontWeight: 700,
-              borderRadius: 3,
-              px: { xs: 4, md: 6 },
-              py: { xs: 1, md: 1.5 },
-              fontSize: { xs: 16, md: 18 },
-              minWidth: { xs: 140, md: 180 },
+        <Button
+          onClick={() => setMode("found")}
+          variant={mode === "found" ? "contained" : "outlined"}
+          sx={{
+            textTransform: "none",
+            fontWeight: 700,
+            borderRadius: 3,
+            px: { xs: 4, md: 6 },
+            py: { xs: 1, md: 1.5 },
+            fontSize: { xs: 16, md: 18 },
+            minWidth: { xs: 140, md: 180 },
+            backgroundColor: mode === "found" ? "#444732" : "transparent",
+            color: mode === "found" ? "#ffffff" : "#1a1a1a",
+            borderColor: "#444732",
+            "&:hover": {
               backgroundColor: mode === "found" ? "#444732" : "transparent",
-              color: mode === "found" ? "#ffffff" : "#1a1a1a",
+              filter: "brightness(0.92)",
               borderColor: "#444732",
-              "&:hover": {
-                backgroundColor: mode === "found" ? "#444732" : "transparent",
-                filter: "brightness(0.92)",
-                borderColor: "#444732",
-              },
-            }}
-          >
-            Εύρεση
-          </Button>
+            },
+          }}
+        >
+          Εύρεση
+        </Button>
 
-          <Button
-            onClick={() => setMode("lost")}
-            variant={mode === "lost" ? "contained" : "outlined"}
-            sx={{
-              textTransform: "none",
-              fontWeight: 700,
-              borderRadius: 3,
-              px: { xs: 4, md: 6 },
-              py: { xs: 1, md: 1.5 },
-              fontSize: { xs: 16, md: 18 },
-              minWidth: { xs: 140, md: 180 },
+        <Button
+          onClick={() => setMode("lost")}
+          variant={mode === "lost" ? "contained" : "outlined"}
+          sx={{
+            textTransform: "none",
+            fontWeight: 700,
+            borderRadius: 3,
+            px: { xs: 4, md: 6 },
+            py: { xs: 1, md: 1.5 },
+            fontSize: { xs: 16, md: 18 },
+            minWidth: { xs: 140, md: 180 },
+            backgroundColor: mode === "lost" ? "#444732" : "transparent",
+            color: mode === "lost" ? "#ffffff" : "#1a1a1a",
+            borderColor: "#444732",
+            "&:hover": {
               backgroundColor: mode === "lost" ? "#444732" : "transparent",
-              color: mode === "lost" ? "#ffffff" : "#1a1a1a",
+              filter: "brightness(0.92)",
               borderColor: "#444732",
-              "&:hover": {
-                backgroundColor: mode === "lost" ? "#444732" : "transparent",
-                filter: "brightness(0.92)",
-                borderColor: "#444732",
-              },
-            }}
-          > Απώλεια
-          </Button>
-        </Box>
+            },
+          }}
+        > Απώλεια
+        </Button>
       </Box>
 
       <RequirementsComponent />

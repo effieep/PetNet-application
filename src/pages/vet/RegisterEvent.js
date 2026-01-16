@@ -1,25 +1,36 @@
 import Submenu from '../../components/SubMenu';
 import { useState, useEffect, Fragment } from 'react';
-import { Box, Typography, Autocomplete, TextField, Grid, Divider, Stack, Paper, MenuItem, Button } from '@mui/material';
+import { Box, Typography, Autocomplete, TextField, Grid, Divider, Stack, Paper, MenuItem, Button, Snackbar, Alert } from '@mui/material';
 import { useAuth } from '../../auth/AuthContext';
 import { API_URL } from '../../api';
 import { OwnerField, DetailRow } from '../../components/PetDetailsCard';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const submenuItems = [
   { label: "Καταγραφή νέου Κατοικιδίου", path: "/vet/manage-pets/register-pet" },
   { label: "Kαταγραφή Ιατρικής Πράξης", path: "/vet/manage-pets/record-medical-action" },
   { label: "Καταγραφή Συμβάντος Ζωής", path: "/vet/manage-pets/record-life-event" },
   { label: "Προβολή Βιβλιαρίου Υγείας", path: "/vet/manage-pets/view-health-record" },
+  { label: "Ιστορικό Ενεργειών", path: "/vet/manage-pets/actions-history" },
 ];
 
 const RegisterEvent = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [pets, setPets] = useState([]);
   const [action, setAction] = useState('');
   const [owners, setOwners] = useState([]);
   const [selectedPet, setSelectedPet] = useState(null);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+  
+  const openSnackbar = (message, severity) => {
+    setSnackbar({ open: true, message, severity });
+  }
+  
+  const closeSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  }
 
   const handleClickButton = () => {
     if(action === '') return;
@@ -74,7 +85,15 @@ const RegisterEvent = () => {
     };
     fetchOwners();
     fetchPets();
-  }, []);
+    if(location.state && location.state.successMessage) {
+      openSnackbar(location.state.successMessage, 'success');
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+    if(location.state && location.state.errorMessage) {
+      openSnackbar(location.state.errorMessage, 'error');
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location, navigate]);
 
   const { isLoggedIn, user } = useAuth();
 
@@ -134,7 +153,15 @@ const RegisterEvent = () => {
                         <Box sx={{ textAlign: 'center' }}>
                           <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 2 }}>{selectedPet.name}</Typography>
                           <Box sx={{ width: 120, height: 120, border: '1px solid #000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <CameraAltIcon sx={{ fontSize: 40 }} />
+                            {selectedPet.photoUrl ? (
+                              <img 
+                                src={selectedPet.photoUrl}
+                                alt={selectedPet.name}
+                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                              />
+                            ) : (
+                              <CameraAltIcon sx={{ fontSize: 40 }} />
+                            )}
                           </Box>
                         </Box>
 
@@ -235,6 +262,16 @@ const RegisterEvent = () => {
           })()}
         </Fragment>
       </Box>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={closeSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert onClose={closeSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

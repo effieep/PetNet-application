@@ -16,6 +16,7 @@ const statusBg = {
   CONFIRMED: "rgba(76, 175, 80, 0.18)",
   COMPLETED: "rgba(76, 175, 80, 0.18)",
   CANCELLED: "rgba(244, 67, 54, 0.18)",
+  UNCOMPLETED: "rgba(148, 99, 25, 0.18)",
 };
 
 const statusMap = {
@@ -23,6 +24,7 @@ const statusMap = {
   CONFIRMED: "Επιβεβαιωμένο",
   COMPLETED: "Ολοκληρωμένο",
   CANCELLED: "Ακυρωμένο",
+  UNCOMPLETED: "Μη Ολοκληρωμένο",
 };
 
 const AppointmentCard = ({ appointment, open, onToggle, onCancelSuccess }) => {
@@ -72,7 +74,7 @@ const AppointmentCard = ({ appointment, open, onToggle, onCancelSuccess }) => {
           {/* 🔽 ΒΕΛΟΣ */}
           <IconButton
             onClick={(e) => {
-              e.stopPropagation(); // 👈 για να μη διπλο-κάνει toggle
+              e.stopPropagation(); 
               onToggle();
             }}
           >

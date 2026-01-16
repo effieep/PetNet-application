@@ -20,7 +20,7 @@ const OwnerPets = () => {
 
     fetch(`${API_URL}/pets?ownerId=${user.id}`)
       .then(res => res.json())
-      .then(data => setPets(data))
+      .then(data => setPets(data.filter(pet => pet.dateOfDeath === null || pet.dateOfDeath === undefined || pet.dateOfDeath === '')))
       .catch(err => console.error(err));
   } , [isLoggedIn, user?.id]);
 
@@ -36,7 +36,7 @@ const OwnerPets = () => {
   };
 
   return (
-    isLoggedIn ?
+    isLoggedIn && user?.role === 'owner' ?
     (<ProfileLayout role="owner">
       <Typography variant="h5" sx={{ mb: 4, fontWeight: "bold", color: "#373721" }}>
         Τα κατοικίδιά μου
@@ -69,13 +69,13 @@ const OwnerPets = () => {
                 ΒΙΒΛΙΑΡΙΟ ΥΓΕΙΑΣ
             </Button>
           </Box>
-          <PetDetailsCard petId={selectedId} />
+          <PetDetailsCard petId={selectedId} edit={true} />
         </Box>
       )}
     </ProfileLayout>
   ) : (
     <Typography variant="h6" color="error" textAlign="center" sx={{ mt: 10 }}>
-      Παρακαλώ συνδεθείτε για να δείτε τα κατοικίδιά σας.
+      Παρακαλώ συνδεθείτε ως Ιδιοκτήτης για να δείτε τα κατοικίδιά σας.
     </Typography>
   )
   );

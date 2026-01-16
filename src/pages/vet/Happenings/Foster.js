@@ -1,12 +1,12 @@
-import { Box, Typography, Autocomplete, TextField, Button, Snackbar, Alert, CircularProgress } from '@mui/material';
+import { Box, Typography, Autocomplete, TextField, Button, CircularProgress } from '@mui/material';
 import { MdAlternateEmail } from 'react-icons/md';
 import { FaPhoneAlt  } from 'react-icons/fa';
 import { FaLocationDot } from 'react-icons/fa6';
 import { useEffect, useState, Fragment } from 'react';
 import { API_URL } from '../../../api';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../auth/AuthContext';
 
-const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 const reverseDate = (dateStr) => {
   const [year, month, day] = dateStr.split('-');
@@ -14,6 +14,8 @@ const reverseDate = (dateStr) => {
 }
 
 const Foster = () => {
+
+  const { user } = useAuth();
 
   const navigate = useNavigate();
 
@@ -25,7 +27,6 @@ const Foster = () => {
   const [pet, setPet] = useState(null);
   const [loading, setLoading] = useState(false);
   const [owners, setOwners] = useState([]);
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const [formData, setFormData] = useState({
     newOwnerId: '',
     type: 'foster',
@@ -64,15 +65,6 @@ const Foster = () => {
     }
   }, [owners, pet]);
 
-  const closeSnackbar = () => {
-    setSnackbar({ ...snackbar, open: false });
-  }
-
-  const openSnackbar = (message, severity) => {
-    setSnackbar({ open: true, message, severity });
-  }
-
-
   const handleSubmit = async () => {
     try {
       setLoading(true);
@@ -94,7 +86,8 @@ const Foster = () => {
                   OwnerId: pet.ownerId,
                   tempOwnerId: formData.newOwnerId,
                   duration: formData.duration,
-                  reason: formData.reason
+                  reason: formData.reason,
+                  vetId: user.id
                 }
               ],
             }
@@ -102,9 +95,7 @@ const Foster = () => {
         }),
       });
       if(response.ok) {
-        openSnackbar('Η αναδοχή καταχωρήθηκε με επιτυχία!', 'success');
-        await wait(5000);
-        navigate('/vet/manage-pets/record-life-event');
+        navigate('/vet/manage-pets/record-life-event', { state: { successMessage: 'Η αναδοχή καταχωρήθηκε με επιτυχία!' } });
         setLoading(false);
         setPet(
           { ...pet, 
@@ -121,7 +112,8 @@ const Foster = () => {
                     OwnerId: pet.ownerId,
                     tempOwnerId: formData.newOwnerId,
                     duration: formData.duration,
-                    reason: formData.reason
+                    reason: formData.reason,
+                    vetId: user.id
                   }
                 ]
               }
@@ -129,7 +121,8 @@ const Foster = () => {
           }
         )
       } else {
-        openSnackbar('Σφάλμα κατά την καταχώρηση της αναδοχής. Παρακαλώ δοκιμάστε ξανά.', 'error');
+        navigate('/vet/manage-pets/record-life-event', { state: { errorMessage: 'Σφάλμα κατά την καταχώρηση της μεταβίβασης. Παρακαλώ δοκιμάστε ξανά.' } });
+        setLoading(false);
       }
     } catch (error) {
       console.error('Error submitting foster:', error);
@@ -142,20 +135,6 @@ const Foster = () => {
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
         <CircularProgress />
       </Box>
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={4000}
-        onClose={closeSnackbar}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      >
-        <Alert
-          onClose={closeSnackbar}
-          severity={snackbar.severity}
-          variant="filled"
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
     </>
   );
 }
@@ -310,7 +289,13 @@ const Foster = () => {
         fullWidth
         multiline
         value={formData.duration || ''}
-        onChange={(e) => setFormData(prev => ({ ...prev, duration: e.target.value }))}
+        onChange={(e) => {
+          const regex = /^[0-9\b]+$/;
+
+          if (e.target.value === "" || regex.test(e.target.value)) {
+            setFormData(prev => ({ ...prev, duration: e.target.value }));
+          }
+        }}
         sx={{ width: "20vw", mt: 2, backgroundColor: '#fff', borderRadius: 1 }}
       />
       <Button
@@ -338,20 +323,6 @@ const Foster = () => {
         Καταχώρηση Αναδοχής
       </Button>
       </Box>
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={4000}
-        onClose={closeSnackbar}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      >
-        <Alert
-          onClose={closeSnackbar}
-          severity={snackbar.severity}
-          variant="filled"
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 }

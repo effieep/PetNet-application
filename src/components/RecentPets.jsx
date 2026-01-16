@@ -16,6 +16,8 @@ const RecentPets = ({ pets }) => {
     });
   };
 
+  const IMAGE_HEIGHT = 180;
+
   return (
     <Box sx={{ mt: 6 }}>
       <Typography fontWeight="bold" mb={3}>
@@ -24,19 +26,22 @@ const RecentPets = ({ pets }) => {
 
       {/* WRAPPER */}
       <Box sx={{ position: "relative" }}>
+        
         {/* LEFT ARROW */}
         <IconButton
           onClick={() => scroll("left")}
           sx={{
             position: "absolute",
-            left: -10,
-            top: "50%",
+            left: -20,
+            top: IMAGE_HEIGHT / 2, 
             transform: "translateY(-50%)",
             zIndex: 2,
             backgroundColor: "#ffffff",
+            boxShadow: 3,
+            "&:hover": { backgroundColor: "#f0f0f0" },
           }}
         >
-          <ArrowBackIosNewIcon />
+          <ArrowBackIosNewIcon fontSize="small" />
         </IconButton>
 
         {/* SCROLL CONTAINER */}
@@ -51,20 +56,26 @@ const RecentPets = ({ pets }) => {
             "&::-webkit-scrollbar": { display: "none" },
           }}
         >
-          {pets.map((pet) => (
+          {pets.map((pet, index) => (
             <Box
-              key={pet.id}
+              key={index}
               sx={{
-                minWidth: { xs: 180, sm: 220, md: 260 },
+                maxWidth: { xs: 180, sm: 220, md: 180 },
                 scrollSnapAlign: "start",
+                flexShrink: 0,
+                mx: 2,
               }}
             >
               <Box
+                component="img"
+                src={pet.image}
+                alt={"Photo of the lost pet"}
                 sx={{
-                  height: 180,
+                  width: "100%",
+                  objectFit: "cover",
+                  height: IMAGE_HEIGHT,
                   borderRadius: 3,
                   backgroundColor: "#bcbc8a",
-                  backgroundImage: `url(${pet.image})`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                 }}
@@ -84,14 +95,16 @@ const RecentPets = ({ pets }) => {
           onClick={() => scroll("right")}
           sx={{
             position: "absolute",
-            right: -10,
-            top: "50%",
+            right: -20, 
+            top: IMAGE_HEIGHT / 2, 
             transform: "translateY(-50%)",
             zIndex: 2,
             backgroundColor: "#ffffff",
+            boxShadow: 3,
+            "&:hover": { backgroundColor: "#f0f0f0" },
           }}
         >
-          <ArrowForwardIosIcon />
+          <ArrowForwardIosIcon fontSize="small" />
         </IconButton>
       </Box>
     </Box>

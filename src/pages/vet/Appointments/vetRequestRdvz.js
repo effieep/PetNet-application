@@ -45,6 +45,34 @@ const VetRequestRdvz = () => {
       if(!response.ok) throw new Error('Failed to decline appointment');
       
       setAppointments(prev => prev.filter(app => app.id !== appointmentId));
+
+      const availabilityResponse = await fetch(`${API_URL}/users/${user.id}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (!availabilityResponse.ok) throw new Error('Failed to update availability');
+
+      const vetData = await availabilityResponse.json();
+      const appointment = appointments.find(app => app.id === appointmentId);
+      if (appointment) {
+        await fetch(`${API_URL}/users/${user.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            availability: 
+            [...(vetData.availability || []), 
+              { 
+                id: Date.now(),
+                date: (appointment.date).replaceAll('-', '/'),
+                time: appointment.time,
+                duration: appointment.duration
+              }
+            ] 
+          }
+        ),
+        });
+      }
+
     }
     catch (error) {
       console.error("Error declining appointment:", error);

@@ -13,13 +13,14 @@ import { Snackbar, Alert } from '@mui/material';
 import dayjs from 'dayjs';
 import 'dayjs/locale/el';
 import { API_URL } from '../../../api.js';
+import ConfirmDialog from '../../../components/ConfirmDialog.jsx';
 
-// Plugins
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import weekday from 'dayjs/plugin/weekday';
 import localeData from 'dayjs/plugin/localeData';
+import customParseFormat from 'dayjs/plugin/customParseFormat'; 
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'; 
 
-// Icons
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import CloseIcon from '@mui/icons-material/Close';
 import EventBusyIcon from '@mui/icons-material/EventBusy';
@@ -31,7 +32,9 @@ import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 dayjs.extend(isSameOrBefore);
 dayjs.extend(weekday);
 dayjs.extend(localeData);
-dayjs.locale('el'); 
+dayjs.extend(customParseFormat); 
+dayjs.extend(isSameOrAfter);
+dayjs.locale('el');
 
 const VetAvailability = () => {
   const { user, isLoggedIn } = useAuth();
@@ -48,6 +51,15 @@ const VetAvailability = () => {
   // Εύρος Ημερομηνιών 
   const [rangeStart, setRangeStart] = useState(dayjs());
   const [rangeEnd, setRangeEnd] = useState(dayjs().add(1, 'month')); 
+  const [ConfirmDial, setConfirmOpen] = useState(false);
+
+  const confirmClose = () => {
+    setConfirmOpen(false);
+  }
+
+  const confirmOpen = () => {
+    setConfirmOpen(true);
+  }
 
   // Single Slot States (Για τη μεμονωμένη προσθήκη)
   const [singleDate, setSingleDate] = useState(dayjs());
@@ -83,14 +95,40 @@ const VetAvailability = () => {
     setSnackbar(prev => ({ ...prev, open: false }));
   };
 
-  // --- FETCH DATA ---
+// --- FETCH DATA & AUTO CLEANUP ---
   useEffect(() => {
     if (user?.id) {
       fetch(`${API_URL}/users/${user.id}`)
         .then(res => res.json())
         .then(data => {
-          setAvailabilities(data.availability || []);
+          const allSlots = data.availability || [];
+          
+          // Τρέχουσα ημερομηνία (χωρίς ώρα, για σύγκριση ημερών)
+          const today = dayjs().startOf('day');
+
+          // Φιλτράρισμα: Κρατάμε μόνο όσα είναι ΣΗΜΕΡΑ ή στο ΜΕΛΛΟΝ
+          const validSlots = allSlots.filter(slot => {
+            // Μετατροπή του string "DD/MM/YYYY" σε dayjs object
+            const slotDate = dayjs(slot.date, 'DD/MM/YYYY');
+            // Κρατάμε το slot αν η ημερομηνία είναι ίδια ή μεταγενέστερη του "σήμερα"
+            return slotDate.isSameOrAfter(today, 'day');
+          });
+
+          // Ενημερώνουμε το State με τα καθαρά slots
+          setAvailabilities(validSlots);
           setLoading(false);
+
+          // Αν βρέθηκαν και αφαιρέθηκαν παλιά slots, ενημερώνουμε τη βάση αυτόματα
+          if (validSlots.length < allSlots.length) {
+            console.log("Cleaning up old slots...");
+            fetch(`${API_URL}/users/${user.id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ availability: validSlots })
+              })
+              .then(() => console.log("Old slots removed from database."))
+              .catch(err => console.error("Auto-cleanup failed:", err));
+          }
         })
         .catch(err => {
           console.error("Error fetching availability:", err);
@@ -232,24 +270,21 @@ const VetAvailability = () => {
     updateDatabase(updatedList);
   };
 
-  const handleDeleteAll = async () => { // 👈 Βάλε async εδώ
-    if(window.confirm("Είστε σίγουροι; Αυτό θα διαγράψει ΟΛΕΣ τις μελλοντικές διαθεσιμότητες.")) {
+  const handleDeleteAll = async () => { 
         
-        setLoading(true); // 1. Βάζουμε loading για να μην πατήσει τίποτα άλλο ο χρήστης
+        setLoading(true); //Βάζουμε loading για να μην πατήσει τίποτα άλλο ο χρήστης
         
         try {
-            // 2. Περιμένουμε να τελειώσει η βάση
+            //Περιμένουμε να τελειώσει η βάση
             await updateDatabase([]); 
             
-            // 3. Αφού πέτυχε, καθαρίζουμε και την οθόνη
+            //Αφού πέτυχε, καθαρίζουμε και την οθόνη
             setAvailabilities([]); 
         } catch (error) {
             alert("Υπήρξε πρόβλημα κατά τη διαγραφή. Παρακαλώ δοκιμάστε ξανά.");
-            // Προαιρετικά: ξαναφορτώνουμε τα δεδομένα για να είμαστε σίγουροι τι βλέπει ο χρήστης
         } finally {
-            setLoading(false); // 4. Βγάζουμε το loading
+            setLoading(false); 
         }
-    }
   }
 
   const handleDelete = (id) => {
@@ -258,7 +293,6 @@ const VetAvailability = () => {
     updateDatabase(updatedList);
   };
 
-  // --- RENDER ---
   return ( isLoggedIn && user?.role === 'vet' ? (
     <Box sx={{ display: 'flex', minHeight: '100vh'}}> 
       
@@ -287,12 +321,12 @@ const VetAvailability = () => {
               minWidth: '45vw' 
             }}>
             
-            {/* A. ΕΒΔΟΜΑΔΙΑΙΟΣ WIZARD */}
+            {/* A. ΕΒΔΟΜΑΔΙΑΙΟ ΠΡΟΓΡΑΜΜΑ */}
             <Paper elevation={3} sx={{ p: 3, borderRadius: 3, mb: 4 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                   <UpdateIcon color="primary" />
                   <Typography variant="h6" fontWeight="bold">
-                    Αυτόματη Γεννήτρια Προγράμματος
+                      Ορισμός Εβδομαδιαίου Προγράμματος 
                   </Typography>
               </Box>
               
@@ -482,7 +516,7 @@ const VetAvailability = () => {
                         📅 Τρέχουσες Διαθεσιμότητες
                     </Typography>
                     {availabilities.length > 0 && (
-                        <Button startIcon={<DeleteSweepIcon />} color="error" size="small" onClick={handleDeleteAll}>
+                        <Button startIcon={<DeleteSweepIcon />} color="error" size="small" onClick={confirmOpen}>
                             Καθαρισμος
                         </Button>
                     )}
@@ -575,6 +609,13 @@ const VetAvailability = () => {
           {snackbar.message}
         </Alert>
       </Snackbar>
+      <ConfirmDialog 
+        open={ConfirmDial}
+        onClose={confirmClose}
+        onConfirm={handleDeleteAll}
+        title="Επιβεβαίωση καθαρισμού"
+        message="Επιβεβαιώνετε ότι θέλετε να καθαρίσετε όλες τις διαθεσιμότητες;"
+      />
     </Box>
   ) : ( 
     <Typography variant="h6" color="error" textAlign="center" sx={{ mt: 10 }}>

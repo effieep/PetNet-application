@@ -1,4 +1,5 @@
 import './App.css';
+import { useEffect } from 'react';
 import NavBar from './components/NavBar';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import Home from './pages/home.js';
@@ -17,12 +18,13 @@ import MedicalHistory from './pages/healthRecord/medicalHistory.js';
 import PetInfo from './pages/healthRecord/petInfo.js';
 import SignUp from './pages/signup.js';
 import ReportLost from './pages/report_lost.js';
+import ReportFound from './pages/report_found.js';
 import Error404 from './pages/404.js';
 import Footer from './components/footer.jsx';
 import SearchVet from './pages/owner/search-vet/search-vet.js';
 import VetDetails from './pages/owner/search-vet/vetDetails.js';
 import VetProfile from './pages/vet/vetProfile.js';
-import VetRandezvousHistory from './pages/vet/vetHistory.js';
+import VetActionsHistory from './pages/vet/VetActionsHistory.js';
 import VetReviews from './pages/vet/vetReviews.js';
 import VetPublic from './pages/vet/vetPublic.js';
 import VetManagePets from './pages/vet/VetManagePets.js';
@@ -49,6 +51,9 @@ import { Box } from "@mui/material";
 
 function App() {
   const location = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location]);
   const hideNav =
     location.pathname === "/signup";
     // ||
@@ -71,7 +76,6 @@ function App() {
           <Route path="/vet" element={<Vet />} />
           <Route path="/vet/info" element={<VetProfile />} />
           <Route path="/vet/public-profile" element={<VetPublic />} />
-          <Route path="/vet/randezvous-history" element={<VetRandezvousHistory />} />
           <Route path="/vet/reviews" element={<VetReviews />} />
           <Route path="/vet/manage-pets" element={<VetManagePets />} />
           <Route path="/vet/manage-pets/register-pet" element={<RegisterPet />} />
@@ -84,6 +88,7 @@ function App() {
           <Route path="/vet/manage-pets/record-life-event/adoption" element={<Adoption />} />
           <Route path="/vet/manage-pets/record-life-event/transfer" element={<Transfer />} />
           <Route path="/vet/manage-pets/record-life-event/foster" element={<Foster />} />
+          <Route path="/vet/manage-pets/actions-history" element={<VetActionsHistory />} />
           <Route path = "/vet/manage-pets/record-life-event/death" element={<Death />} />
           <Route path="/vet/manage-pets/view-health-record" element={<ViewHealth />} />
           <Route path="/vet/manage-pets/record-life-event" element={<RegisterEvent />} />
@@ -97,6 +102,7 @@ function App() {
           <Route path="/owner/search-vet/book-appointment" element={<BookAppointment />} />
           <Route path="/lost-found" element={<LostFound />} />
           <Route path="/lost-found/lost_pet" element={<ReportLost />} />
+          <Route path="/lost-found/found_pet" element={<ReportFound />} />
           <Route path="/help" element={<Help />} />
           <Route path="/owner/info" element={<OwnerProfile />} />
           <Route path="/owner/pets" element={<OwnerPets />} />

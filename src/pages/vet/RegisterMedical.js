@@ -17,6 +17,7 @@ const submenuItems = [
   { label: "Kαταγραφή Ιατρικής Πράξης", path: "/vet/manage-pets/record-medical-action" },
   { label: "Καταγραφή Συμβάντος Ζωής", path: "/vet/manage-pets/record-life-event" },
   { label: "Προβολή Βιβλιαρίου Υγείας", path: "/vet/manage-pets/view-health-record" },
+  { label: "Ιστορικό Ενεργειών", path: "/vet/manage-pets/actions-history" },
 ];
 
 const RegisterMedical = () => {
@@ -143,7 +144,15 @@ const RegisterMedical = () => {
                         <Box sx={{ textAlign: 'center' }}>
                           <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 2 }}>{selectedPet.name}</Typography>
                           <Box sx={{ width: 120, height: 120, border: '1px solid #000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <CameraAltIcon sx={{ fontSize: 40 }} />
+                            {selectedPet.photoUrl ? (
+                              <img 
+                                src={selectedPet.photoUrl}
+                                alt={selectedPet.name}
+                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                              />
+                            ) : (
+                              <CameraAltIcon sx={{ fontSize: 40 }} />
+                            )}
                           </Box>
                         </Box>
 

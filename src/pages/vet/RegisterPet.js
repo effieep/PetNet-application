@@ -1,5 +1,5 @@
 import Submenu from '../../components/SubMenu';
-import { Box, Typography, Stepper, Step, StepLabel, StepConnector, Button, TextField, Divider, Snackbar, Alert, Autocomplete, Paper, Grid, Stack } from '@mui/material';
+import { Box, Typography, Stepper, Step, StepLabel, StepConnector, Button, TextField, Divider, Snackbar, Alert, Autocomplete, Paper, Grid, Stack, Chip } from '@mui/material';
 import { useState, Fragment, useEffect } from 'react';
 import { useAuth } from '../../auth/AuthContext';
 import { styled } from '@mui/material/styles';
@@ -10,6 +10,8 @@ import { FaPhoneAlt  } from 'react-icons/fa';
 import { FaLocationDot } from 'react-icons/fa6';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import { OwnerField, DetailRow } from '../../components/PetDetailsCard';
+import EditIcon from '@mui/icons-material/Edit';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 const steps = ['Στοιχεία Κατοικιδίου', 'Ανάθεση σε Ιδιοκτήτη', 'Επιβεβαίωση & Υποβολή'];
 
@@ -20,7 +22,7 @@ const reverseDateString = (dateStr) => {
 const PetItems = [
   { label: "Φυλή", type: "text", name: "breed" },
   { label: "Χρώμα", type: "text", name: "color" },
-  { label: "Είδος", type: "select", name: "species", options: ["Σκύλος", "Γάτα", "Πουλί", "Άλλο"] },
+  { label: "Είδος", type: "select", name: "species", options: ["Σκύλος", "Γάτα"] },
   { label: "Φύλο", type: "select", name: "gender", options: ["Αρσενικό", "Θηλυκό"] },
   { label: "Βάρος (kg)", type: "text", name: "weight", inputProps: { type: "number", min: 0, max: 100 } },
   { label: "Ημερομηνία Γέννησης", type: "date", name: "birthDate" },
@@ -33,6 +35,7 @@ const submenuItems = [
   { label: "Kαταγραφή Ιατρικής Πράξης", path: "/vet/manage-pets/record-medical-action" },
   { label: "Καταγραφή Συμβάντος Ζωής", path: "/vet/manage-pets/record-life-event" },
   { label: "Προβολή Βιβλιαρίου Υγείας", path: "/vet/manage-pets/view-health-record" },
+  { label: "Ιστορικό Ενεργειών", path: "/vet/manage-pets/actions-history" },
 ];
 
 // Adjust top to match your StepIcon height
@@ -55,6 +58,8 @@ const ColorlibConnector = styled(StepConnector)(() => ({
 
 const RegisterPet = () => {
   const [manualMode, setManualMode] = useState(false);
+  const [tempSavedData, setTempSavedData] = useState([]);
+  const [tempSavedDataId, setTempSavedDataId] = useState(null);
   const [formData, setFormData] = useState({
     microchip: '',
     weight: '',
@@ -130,9 +135,164 @@ const RegisterPet = () => {
         console.error('Error fetching microchips:', error);
       }
     };
+    const fetchAllTempSavedData = async () => {
+      try {
+        const response = await fetch(`${API_URL}/temp-saved-vet-form`);
+        const data = await response.json();
+        if(data.length > 0) {
+          const myData = data.filter(item => item.vetId === user.id);
+          setTempSavedData(myData);
+        }
+        else {
+          setTempSavedData([]);
+        }
+
+      } catch (error) {
+        console.error('Error fetching temp saved data:', error);
+      }
+    };
+    fetchAllTempSavedData();
     fetchOwners();
     fetchAllMicrochips();
-  }, []);
+  }, [user]);
+
+
+  const handleTempChange = (e, newValue) => {
+    setFormData(newValue ? newValue.formData : {
+      microchip: '',
+      weight: '',
+      name: '',
+      breed: '',
+      color: '',
+      species: '',
+      gender: '',
+      birthDate: '',
+      ownerId: '',
+      health: 
+      { 
+        neutered: false, 
+        overview: {
+          lastVaccine: {
+            name: '',
+            date: '',
+            nextDate: '',
+          },
+          lastDeworming: {
+            internal: '',
+            external: '',
+            nextInternal: '',
+            nextExternal: '',
+          },
+          activeMedication: {
+            name: '',
+            instructions: '',
+            endDate: '',
+          },
+        },
+        history: {
+          vaccinations: [],
+          deworming: [],
+          medicalActs: {
+            tests: [],
+            surgeries: [],
+            medication: [],
+          },
+          lifeEvents: [],
+        }
+      },
+    });
+    setTempSavedDataId(newValue ? newValue.id : null);
+  }
+
+  const handleTempSave = async () => {
+
+    try {
+      const response = await fetch(`${API_URL}/temp-saved-vet-form?vetId=${user.id}`);
+      const myDrafts = await response.json();
+
+      let existingDraft = myDrafts.find(item => ((item.id === tempSavedDataId) || (item.formData.microchip === formData.microchip)));
+      if (existingDraft) {
+
+        await fetch(`${API_URL}/temp-saved-vet-form/${existingDraft.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            formData: formData
+          }),
+        });
+
+        openSnackbar('Η ενημέρωση της προσωρινής αποθήκευσης ολοκληρώθηκε', 'success');
+        setTempSavedData(prevData => prevData.map(draft =>
+          ((draft.id === tempSavedDataId) || (draft.formData.microchip === formData.microchip))
+            ? { ...draft, formData: formData }
+            : draft
+        ));
+
+      } else {
+        const createRes = await fetch(`${API_URL}/temp-saved-vet-form`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            vetId: user.id,
+            formData: formData
+          }),
+        });
+
+        const newDraft = await createRes.json();
+        setTempSavedData(prevData => [...prevData, newDraft]);
+
+        openSnackbar('Η προσωρινή αποθήκευση δημιουργήθηκε', 'success');
+
+        setFormData({
+          microchip: '',
+          weight: '',
+          name: '',
+          breed: '',
+          color: '',
+          species: '',
+          gender: '',
+          birthDate: '',
+          ownerId: '',
+          health: 
+          { 
+            neutered: false, 
+            overview: {
+              lastVaccine: {
+                name: '',
+                date: '',
+                nextDate: '',
+              },
+              lastDeworming: {
+                internal: '',
+                external: '',
+                nextInternal: '',
+                nextExternal: '',
+              },
+              activeMedication: {
+                name: '',
+                instructions: '',
+                endDate: '',
+              },
+            },
+            history: {
+              vaccinations: [],
+              deworming: [],
+              medicalActs: {
+                tests: [],
+                surgeries: [],
+                medication: [],
+              },
+              lifeEvents: [],
+            }
+          },
+        });
+      }
+
+    } catch (error) {
+      console.error("Save failed", error);
+      openSnackbar('Σφάλμα αποθήκευσης', 'error');
+    }
+  };
 
   const handleNext = () => {
     if(!validateForm()) {
@@ -152,6 +312,10 @@ const RegisterPet = () => {
       } else {
         newValue = "";
       }
+    }
+
+    if(name === "microchip") {
+      newValue = newValue.slice(0, 15);
     }
     
     setFormData(prevData => ({
@@ -204,6 +368,7 @@ const RegisterPet = () => {
           variant="outlined"
           name={name}
           fullWidth
+          inputProps={{ max: (new Date()).toISOString().split("T")[0] }}
           helperText={errors[name]} error={Boolean(errors[name])}
           onChange={handleChange}
           InputLabelProps={{
@@ -221,6 +386,36 @@ const RegisterPet = () => {
   const closeSnackbar = () => {
     setSnackbar(prev => ({ ...prev, open: false }));
   };
+
+  const handleTempDelete = async () => {
+    try {
+      await fetch(`${API_URL}/temp-saved-vet-form/${tempSavedDataId}`, {
+        method: 'DELETE',
+      });
+      setTempSavedData(prevData => prevData.filter(item => item.id !== tempSavedDataId));
+      setTempSavedDataId(null);
+      openSnackbar('Η προσωρινή αποθήκευση διαγράφηκε επιτυχώς', 'success');
+    } catch (error) {
+      console.error('Error deleting temp saved data:', error);
+      openSnackbar('Σφάλμα κατά τη διαγραφή της προσωρινής αποθήκευσης', 'error');
+    }
+  };
+
+  const checkTempSaveDisabled = () => {
+    const trimmedmicrochip = formData.microchip.trim();
+    const trimmedname = formData.name.trim();
+
+    if (trimmedmicrochip === '' || isNaN(Number(trimmedmicrochip)) || !/^\d{15}$/.test(trimmedmicrochip)) {
+      return true;
+    }
+    if (trimmedname === '') {
+      return true;
+    }
+    if(existingMicrochips.includes(trimmedmicrochip)) {
+      return true;
+    }
+    return false;
+  }
 
   const validateForm = () => {
     const newErrors = {};
@@ -259,6 +454,13 @@ const RegisterPet = () => {
           body: JSON.stringify({ ...formData, birthDate: reverseDateString(formData.birthDate) }),
         });
         openSnackbar('Το κατοικίδιο καταχωρήθηκε επιτυχώς!', 'success');
+        if(tempSavedDataId) {
+            await fetch(`${API_URL}/temp-saved-vet-form/${tempSavedDataId}`, {
+            method: 'DELETE',
+          });
+        }
+        setTempSavedData(prevData => prevData.filter(item => item.id !== tempSavedDataId));
+        setTempSavedDataId(null);
         setActiveStep(0);
         setFormData({
           microchip: '',
@@ -318,7 +520,7 @@ const RegisterPet = () => {
   const stepsContent = [
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       <Box sx={{ display: 'flex', flexDirection: 'row', gap: 8}}>
-        <TextField label="Αριθμός Microchip" variant="outlined" fullWidth name="microchip" type="number" value={formData["microchip"]} onChange={handleChange} 
+        <TextField label="Αριθμός Microchip" variant="outlined" fullWidth name="microchip" type="number" value={formData["microchip"]}  onChange={handleChange} 
           sx={{
             '& input[type=number]::-webkit-outer-spin-button': {
               '-webkit-appearance': 'none',
@@ -538,6 +740,40 @@ const RegisterPet = () => {
         <Typography variant="h4" sx={{ color: '#000000', fontWeight: 'bold' }}>
           Καταγραφή Νέου Κατοικιδίου
         </Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap : 2 }}>
+          <Autocomplete
+            key="auto-1"
+            value={tempSavedData.find(item => item.id === tempSavedDataId) || null}
+            sx={{ mt: 2, mb: 1, width: '30vw', backgroundColor: '#ffffff' }}
+            options={tempSavedData ? tempSavedData : []}
+            getOptionLabel={(option) => `${option.formData.microchip} - ${option.formData.name}`}
+            onChange={(e, newValue) => handleTempChange(e, newValue)}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Φόρτωση Προσωρινά Αποθηκευμένων Δεδομένων"
+                variant="outlined"
+              />
+            )}
+          />
+          <Button
+            variant="contained"
+            disabled={!tempSavedDataId}
+            onClick={handleTempDelete}
+            sx={{
+              color: '#000000',
+              backgroundColor: '#bb3d3d',
+              '&:hover': { backgroundColor: '#ce5959' },
+              borderRadius: 2,
+              mt: 1,
+            }}
+          >
+            Διαγραφή Επιλεγμένης Αποθήκευσης
+          </Button>
+        </Box>
+        <Typography variant="body2" sx={{ color: '#000000', fontStyle: 'italic' }}>
+          *Για προσωρινή αποθήκευση της φόρμας, παρακαλώ συμπληρώστε έγκυρο Αριθμό Microchip και το όνομα του κατοικιδίου
+        </Typography>
 
         <Box sx={{ width: '100%', mt: 4 }}>
           <Stepper
@@ -563,6 +799,27 @@ const RegisterPet = () => {
         </Box>
 
 
+        <Box sx={{mt: 2, display: 'flex', gap: 2, alignItems: 'center' }}>
+
+          <Chip
+            icon={tempSavedDataId ? <EditIcon /> : <AddCircleOutlineIcon />}
+            
+            label={tempSavedDataId ? "Σε κατάσταση Επεξεργασίας Αποθηκευμένου Προσχεδίου" : "Σε κατάσταση Νέας Καταχώρησης"}
+            
+            color={tempSavedDataId ? "warning" : "success"}
+            
+            variant="filled"
+            
+            sx={{ 
+              fontWeight: 'bold',
+              fontSize: '0.9rem',
+              py: 2.5,
+              px: 1,
+              borderRadius: 2,
+            }}
+          />
+
+        </Box>
         <Box sx={{ width: '70vw', ml: 3, boxShadow: 3, backgroundColor: '#ffffff9f', mt: 3, mb: 3, borderRadius: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <Box sx={{ m: 4, display: 'flex', flexDirection: 'column', gap: 4, width: '60vw', alignItems: 'center' }}>
             {stepsContent[activeStep]}
@@ -577,6 +834,21 @@ const RegisterPet = () => {
             }}
           >
             Προηγούμενο
+          </Button>
+          <Button 
+            variant="contained"
+            disabled={checkTempSaveDisabled()}
+            onClick={handleTempSave}
+            sx = {{
+              borderColor: '#3b2004',
+              color: '#3b2004',
+              backgroundColor: '#d38d1e',
+              '&:hover': { 
+                backgroundColor: '#eeaf49',
+              },
+            }}
+          >
+            Προσωρινή Αποθήκευση
           </Button>
           <Button variant="contained" color="primary" onClick={() => nextOrCompleteFunction(activeStep)} 
             disabled={activeStep === 1 && !formData.ownerId}

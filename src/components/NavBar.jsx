@@ -291,42 +291,71 @@ function NavBar() {
             }
             </Button>
             <Menu
-              id="owner-menu"
-              anchorEl={ownerAnchorEl}
-              open={ownerOpen}
-              onClose={handleOwnerClose}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "center",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "center",
-              }}
-              PaperProps={{
-                sx: {
-                  "& .MuiMenuItem-root": {
-                    border: "0.5px inset #57522aff",
-                    justifyContent: "center",
-                    textAlign: "center",
-                    backgroundColor: "#DCB342",
-                    transition: "background-color 0.25s ease-in-out",
-                    "&:hover": {
-                      backgroundColor: "#fcd445ff",
-                    },
-                  },
+            id="owner-menu"
+            anchorEl={ownerAnchorEl}
+            open={ownerOpen}
+            onClose={handleOwnerClose}
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            transformOrigin={{ vertical: "top", horizontal: "center" }}
+            PaperProps={{
+              elevation: 3,
+              sx: {
+                mt: 1.5,
+                minWidth: 200,
+                borderRadius: 3,
+                backgroundColor: "#DCB342",
+                overflow: "visible",
+                '&:before': {
+                  content: '""',
+                  display: 'block',
+                  position: 'absolute',
+                  top: 0,
+                  right: '50%',
+                  transform: 'translate(50%, -50%) rotate(45deg)',
+                  width: 10,
+                  height: 10,
+                  bgcolor: 'background.paper',
+                  zIndex: 0,
+                  backgroundColor: "#DCB342",
                 },
-              }}
-              MenuListProps={{
-                disablePadding: true,
-                borderRadius: 10,
-              }}  
-            >
-              <MenuItem onClick={handleOwnerClose} component={Link} to = "/owner">Δυνατότητες</MenuItem>
-              <MenuItem onClick={handleOwnerClose} component={Link} to = "/owner/search-vet">Αναζήτηση Κτηνιάτρου</MenuItem>
-              <MenuItem onClick={handleOwnerClose} component={Link} to = "/lost-found">Χάθηκε/Βρέθηκε Ζώο</MenuItem>
-              <MenuItem onClick={handleOwnerClose} component={Link} to = "/owner/info">Το προφίλ μου</MenuItem>
-            </Menu>
+              },
+            }}
+            MenuListProps={{
+              sx: { p: 1 } 
+            }}
+          >
+            {[
+              { label: "Δυνατότητες", link: "/vet" },
+              { label: "Αναζήτηση Κτηνιάτρου", link: "/owner/search-vet" },
+              { label: "Χάθηκε/Βρέθηκε Ζώο", link: "/lost-found" },
+              { label: "Το προφίλ μου", link: "/owner/info" }
+            ].map((item) => (
+              <>
+              <MenuItem 
+                key={item.label}
+                onClick={handleOwnerClose}
+                component={Link}
+                to={item.link}
+                sx={{
+                  textAlign: "center",
+                  justifyContent: "center",
+                  borderRadius: 2, 
+                  color: "#373721", 
+                  fontWeight: 600,
+                  my: 0.5, 
+                  transition: "all 0.2s",
+                  "&:hover": {
+                    backgroundColor: "#e9c258",
+                    transform: "scale(1.02)" 
+                  }
+                }}
+              >
+                {item.label}
+              </MenuItem>
+              {item.label !== "Το προφίλ μου" && <Box sx={{ borderBottom: '1px solid #57522aff'}} />}
+            </>
+            ))}
+          </Menu>
           <Button
               onClick={handleVetClick}
               id="vet"
@@ -349,44 +378,72 @@ function NavBar() {
               />
             }
             </Button>
-            <Menu
-              id="vet-menu"
-              anchorEl={vetAnchorEl}
-              open={vetOpen}
-              onClose={handleVetClose}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "center",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "center",
-              }}
-
-              PaperProps={{
-                sx: {
-                  "& .MuiMenuItem-root": {
-                    border: "0.5px inset #57522aff",
-                    justifyContent: "center",
-                    textAlign: "center",
-                    backgroundColor: "#DCB342",
-                    transition: "background-color 0.25s ease-in-out",
-                    "&:hover": {
-                      backgroundColor: "#fcd445ff",
-                    },
-                  },
+          <Menu
+            id="vet-menu"
+            anchorEl={vetAnchorEl}
+            open={vetOpen}
+            onClose={handleVetClose}
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            transformOrigin={{ vertical: "top", horizontal: "center" }}
+            PaperProps={{
+              elevation: 3,
+              sx: {
+                mt: 1.5,
+                minWidth: 200,
+                borderRadius: 3,
+                backgroundColor: "#DCB342",
+                overflow: "visible",
+                '&:before': {
+                  content: '""',
+                  display: 'block',
+                  position: 'absolute',
+                  top: 0,
+                  right: '50%',
+                  transform: 'translate(50%, -50%) rotate(45deg)',
+                  width: 10,
+                  height: 10,
+                  bgcolor: 'background.paper',
+                  zIndex: 0,
+                  backgroundColor: "#DCB342",
                 },
-              }}
-              MenuListProps={{
-                disablePadding: true,
-                borderRadius: 10,
-              }}
-            >
-              <MenuItem onClick={handleVetClose} component={Link} to ="/vet" >Δυνατότητες</MenuItem>
-              <MenuItem onClick={handleVetClose} component={Link} to ="/vet/manage-pets" >Διαχείριση Ζώων</MenuItem>
-              <MenuItem onClick={handleVetClose} component={Link} to ="/vet/manage-appointments" >Διαχείριση Ραντεβού</MenuItem>
-              <MenuItem onClick={handleVetClose} component={Link} to = "/vet/info">Το προφίλ μου</MenuItem>
-            </Menu>
+              },
+            }}
+            MenuListProps={{
+              sx: { p: 1 } 
+            }}
+          >
+            {[
+              { label: "Δυνατότητες", link: "/vet" },
+              { label: "Διαχείριση Ζώων", link: "/vet/manage-pets" },
+              { label: "Διαχείριση Ραντεβού", link: "/vet/manage-appointments" },
+              { label: "Το προφίλ μου", link: "/vet/info" }
+            ].map((item) => (
+              <>
+              <MenuItem 
+                key={item.label}
+                onClick={handleVetClose}
+                component={Link}
+                to={item.link}
+                sx={{
+                  textAlign: "center",
+                  justifyContent: "center",
+                  borderRadius: 2, 
+                  color: "#373721", 
+                  fontWeight: 600,
+                  my: 0.5, 
+                  transition: "all 0.2s",
+                  "&:hover": {
+                    backgroundColor: "#e9c258",
+                    transform: "scale(1.02)" 
+                  }
+                }}
+              >
+                {item.label}
+              </MenuItem>
+              {item.label !== "Το προφίλ μου" && <Box sx={{ borderBottom: '1px solid #57522aff'}} />}
+            </>
+            ))}
+          </Menu>
           <Button
               component={Link}
               to ="/lost-found"

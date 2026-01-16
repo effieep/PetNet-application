@@ -32,7 +32,7 @@ const AppointmentHistoryCard = ({ appointment }) => {
         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography variant="body2" sx={{ color: '#5A6663', fontWeight: 'bold' }}>Κατάσταση</Typography>
           <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#1A1A1A' }}>
-            {appointment.status === 'COMPLETED' ? 'Ολοκληρωμένο' : 'Ακυρωμένο'}
+            {appointment.status === 'COMPLETED' ? 'Ολοκληρωμένο' : appointment.status === 'CANCELLED' ? 'Ακυρωμένο' : 'Μη Ολοκληρωμένο'}
           </Typography>
         </Box>
 
