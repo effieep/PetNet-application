@@ -143,10 +143,10 @@ const OwnerAppointments = () => {
     a.status === "UNCOMPLETED"
   );
 
-  if (!isLoggedIn) {
+  if (!isLoggedIn || user?.role !== 'owner') {
     return (
       <Typography variant="h6" color="error" textAlign="center" sx={{ mt: 10 }}>
-        Παρακαλώ συνδεθείτε για να δείτε τα ραντεβού σας.
+        Παρακαλώ συνδεθείτε ως Ιδιοκτήτης για να δείτε τα ραντεβού σας.
       </Typography>
     );
   }

@@ -15,14 +15,12 @@ import 'dayjs/locale/el';
 import { API_URL } from '../../../api.js';
 import ConfirmDialog from '../../../components/ConfirmDialog.jsx';
 
-// Plugins
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import weekday from 'dayjs/plugin/weekday';
 import localeData from 'dayjs/plugin/localeData';
-import customParseFormat from 'dayjs/plugin/customParseFormat'; // <-- ΝΕΟ
-import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'; // <-- ΝΕΟ
+import customParseFormat from 'dayjs/plugin/customParseFormat'; 
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'; 
 
-// Icons
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import CloseIcon from '@mui/icons-material/Close';
 import EventBusyIcon from '@mui/icons-material/EventBusy';
@@ -30,7 +28,7 @@ import UpdateIcon from '@mui/icons-material/Update';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 
-// ... extensions
+
 dayjs.extend(isSameOrBefore);
 dayjs.extend(weekday);
 dayjs.extend(localeData);
@@ -272,21 +270,20 @@ const VetAvailability = () => {
     updateDatabase(updatedList);
   };
 
-  const handleDeleteAll = async () => { // 👈 Βάλε async εδώ
+  const handleDeleteAll = async () => { 
         
-        setLoading(true); // 1. Βάζουμε loading για να μην πατήσει τίποτα άλλο ο χρήστης
+        setLoading(true); //Βάζουμε loading για να μην πατήσει τίποτα άλλο ο χρήστης
         
         try {
-            // 2. Περιμένουμε να τελειώσει η βάση
+            //Περιμένουμε να τελειώσει η βάση
             await updateDatabase([]); 
             
-            // 3. Αφού πέτυχε, καθαρίζουμε και την οθόνη
+            //Αφού πέτυχε, καθαρίζουμε και την οθόνη
             setAvailabilities([]); 
         } catch (error) {
             alert("Υπήρξε πρόβλημα κατά τη διαγραφή. Παρακαλώ δοκιμάστε ξανά.");
-            // Προαιρετικά: ξαναφορτώνουμε τα δεδομένα για να είμαστε σίγουροι τι βλέπει ο χρήστης
         } finally {
-            setLoading(false); // 4. Βγάζουμε το loading
+            setLoading(false); 
         }
   }
 
@@ -296,7 +293,6 @@ const VetAvailability = () => {
     updateDatabase(updatedList);
   };
 
-  // --- RENDER ---
   return ( isLoggedIn && user?.role === 'vet' ? (
     <Box sx={{ display: 'flex', minHeight: '100vh'}}> 
       
@@ -325,12 +321,12 @@ const VetAvailability = () => {
               minWidth: '45vw' 
             }}>
             
-            {/* A. ΕΒΔΟΜΑΔΙΑΙΟΣ WIZARD */}
+            {/* A. ΕΒΔΟΜΑΔΙΑΙΟ ΠΡΟΓΡΑΜΜΑ */}
             <Paper elevation={3} sx={{ p: 3, borderRadius: 3, mb: 4 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                   <UpdateIcon color="primary" />
                   <Typography variant="h6" fontWeight="bold">
-                    Αυτόματη Γεννήτρια Προγράμματος
+                      Ορισμός Εβδομαδιαίου Προγράμματος 
                   </Typography>
               </Box>
               

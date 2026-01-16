@@ -36,7 +36,7 @@ const OwnerPets = () => {
   };
 
   return (
-    isLoggedIn ?
+    isLoggedIn && user?.role === 'owner' ?
     (<ProfileLayout role="owner">
       <Typography variant="h5" sx={{ mb: 4, fontWeight: "bold", color: "#373721" }}>
         Τα κατοικίδιά μου
@@ -75,7 +75,7 @@ const OwnerPets = () => {
     </ProfileLayout>
   ) : (
     <Typography variant="h6" color="error" textAlign="center" sx={{ mt: 10 }}>
-      Παρακαλώ συνδεθείτε για να δείτε τα κατοικίδιά σας.
+      Παρακαλώ συνδεθείτε ως Ιδιοκτήτης για να δείτε τα κατοικίδιά σας.
     </Typography>
   )
   );

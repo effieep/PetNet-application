@@ -155,10 +155,10 @@ const OwnerDeclarations = () => {
     [foundDeclarations, foundSort]
   );
 
-  if (!isLoggedIn) {
+  if (!isLoggedIn || user?.role !== 'owner') {
     return (
       <Typography variant="h6" color="error" textAlign="center" sx={{ mt: 10 }}>
-        Παρακαλώ συνδεθείτε για να δείτε τις δηλώσεις σας.
+        Παρακαλώ συνδεθείτε ως Ιδιοκτήτης για να δείτε τις δηλώσεις σας.
       </Typography>
     );
   }
