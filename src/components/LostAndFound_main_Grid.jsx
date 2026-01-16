@@ -1242,7 +1242,7 @@ export default function LostAndFoundMainGrid({ mode }) {
                                         Στοιχεία κατοικιδίου
                                     </Typography>
 
-                                    {mode === "found" && hasPetType && (
+                                    {(mode === "found" && hasPetType) ? (
                                         <>
                                             <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
                                                 Τύπος ζώου
@@ -1267,6 +1267,31 @@ export default function LostAndFoundMainGrid({ mode }) {
                                                 </Typography>
                                             </Box>
                                         </>
+                                    ) : (
+                                      <>
+                                      <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
+                                          Τύπος ζώου
+                                      </Typography>
+                                      <Box
+                                          sx={{
+                                              minHeight: 34,
+                                              height: "auto",
+                                              borderRadius: 2,
+                                              backgroundColor: "rgba(241,233,201,0.65)",
+                                              border: "1px solid rgba(0,0,0,0.10)",
+                                              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55)",
+                                              mb: 1.5,
+                                              display: "flex",
+                                              alignItems: "center",
+                                              px: 1.5,
+                                              py: 0.75,
+                                          }}
+                                      >
+                                          <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
+                                              {pet?.species}
+                                          </Typography>
+                                      </Box>
+                                      </>
                                     )}
 
                                     <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 2, mb: 1.5 }}>
