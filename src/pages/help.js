@@ -202,7 +202,7 @@ const Help = () => {
             <Typography variant="h6" sx={{ mt: 2, maxWidth: 600, color: '#555555' }}>
               Πάτα στην αντίστοιχη καρτέλα και θα πάρεις τις απαντήσεις που θες!
             </Typography>
-            <Box sx={{ mt: 5, mb: 10, display: 'flex', flexDirection: 'row', gap: 20, flexWrap: 'wrap', justifyContent: 'center' }}>
+            <Box sx={{ mt: 5, mb: 10, display: 'flex', flexDirection: 'row', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
               {cards.map((card, idx) => {
                 return (
                   <Box key={idx} sx={{ mb: 2, backgroundColor: card.boxColor, width: 350, height: "100%", borderRadius: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', boxShadow: 3, border: '2px solid #000000', 
