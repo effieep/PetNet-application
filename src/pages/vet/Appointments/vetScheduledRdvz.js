@@ -98,7 +98,7 @@ const VetScheduledRdvz = () => {
       const [daysB, monthsB, yearsB] = b.date.split('-').map(Number);
       const [hoursA, minutesA] = a.time.split(':').map(Number);
       const [hoursB, minutesB] = b.time.split(':').map(Number);
-      return new Date(yearsA, monthsA - 1, daysA, hoursA, minutesA) - new Date(yearsB, monthsB - 1, daysB, hoursB, minutesB);
+      return new Date(yearsB, monthsB - 1, daysB, hoursB, minutesB) - new Date(yearsA, monthsA - 1, daysA, hoursA, minutesA);
     });
   }
 
@@ -130,13 +130,10 @@ const VetScheduledRdvz = () => {
         ) : (
           <Paper elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0', overflow: 'hidden' }}>
             <Box sx={{ display: 'flex', bgcolor: '#F9FAFB', p: 2, borderBottom: '1px solid #e0e0e0' }}>
-              <Box sx={{ flex: 1, ...headerStyle }}>Ημερομηνία</Box>
+              <Box sx={{ flex: 1, ...headerStyle }}>Ημερομηνια</Box>
               <Box sx={{ flex: 1, ...headerStyle }}>Ώρα</Box>
               <Box sx={{ flex: 2, ...headerStyle }}>Στοιχεια Πελατη</Box>
-              <Box sx={{ flex: 1, ...headerStyle, textAlign: 'right' }}>
-                <Typography>ΚΑΤΑΣΤΑΣΗ / ΕΝΕΡΓΕΙΕΣ</Typography>
-                <Typography variant="caption" color="text.secondary" sx = {{ textTransform: 'none' }}>(Ολοκλήρωση / Μη Ολοκλήρωση)</Typography>
-              </Box>
+              <Box sx={{ flex: 1, ...headerStyle, textAlign: 'right' }}> Ολοκληρωση / Μη ολοκληρωση</Box>
             </Box>
 
             <TransitionGroup>

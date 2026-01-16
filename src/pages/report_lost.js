@@ -971,7 +971,7 @@ export default function ReportLostStepper() {
             variant="contained"
             onClick={handleTempDelete}
             sx={{ fontWeight: "bold", height: "5vh", textTransform: "none", 
-              color: '#dfdddd',
+              color: '#ffffffff',
               backgroundColor: '#bb3d3d',
               '&:hover': { backgroundColor: '#ce5959' },
             }}
