@@ -26,7 +26,6 @@ import KeyboardArrowUpRoundedIcon from "@mui/icons-material/KeyboardArrowUpRound
 import { API_URL } from "../api";
 
 const PAGE_SIZE = 12;
-const DEFAULT_SPECIES = { dog: false, cat: false, rabbit: false, hamster: false };
 const DEFAULT_SEX = { male: false, female: false };
 const DEFAULT_SORT = "newest";
 
@@ -60,13 +59,27 @@ function parseDdMmYyyyToTs(dateStr, timeStr) {
     return Number.isFinite(ts) ? ts : 0;
 }
 
-function getSpeciesKeyFromGreekLabel(label) {
-    const normalized = normalizeText(label);
-    if (normalized.includes("σκύ")) return "dog";
-    if (normalized.includes("γάτ") || normalized.includes("γατ")) return "cat";
-    if (normalized.includes("κουν")) return "rabbit";
-    if (normalized.includes("χάμ") || normalized.includes("χαμ")) return "hamster";
-    return null;
+function formatRelativeCreatedLabel(createdAt, createdTime) {
+    const ts = parseDdMmYyyyToTs(createdAt, createdTime);
+    if (!ts) return "";
+
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+
+    const created = new Date(ts);
+    const createdStart = new Date(created.getFullYear(), created.getMonth(), created.getDate()).getTime();
+
+    const diffMs = Math.max(0, todayStart - createdStart);
+    const diffDays = Math.floor(diffMs / (24 * 60 * 60 * 1000));
+
+    if (diffDays === 0) return "Σήμερα";
+    if (diffDays === 1) return "Χθες";
+    return `Πριν από ${diffDays} ημέρες`;
+}
+
+function getSpeciesLabelFromDeclaration(declaration) {
+    const raw = declaration?.petType || declaration?.pet?.species || "";
+    return String(raw ?? "").trim();
 }
 
 function extractPhotoUrls(declaration) {
@@ -103,7 +116,7 @@ export default function LostAndFoundMainGrid({ mode }) {
     const [page, setPage] = useState(1);
     const [microchipQuery, setMicrochipQuery] = useState("");
     const [sort, setSort] = useState(DEFAULT_SORT);
-    const [species, setSpecies] = useState(DEFAULT_SPECIES);
+    const [speciesLabel, setSpeciesLabel] = useState("");
     const [sex, setSex] = useState(DEFAULT_SEX);
     const [breed, setBreed] = useState("");
     const [areaQuery, setAreaQuery] = useState("");
@@ -200,7 +213,7 @@ export default function LostAndFoundMainGrid({ mode }) {
     // Reset to page 1 when filters / mode changes.
     useEffect(() => {
         setPage(1);
-    }, [mode, microchipQuery, sort, species, sex, breed, areaQuery]);
+    }, [mode, microchipQuery, sort, speciesLabel, sex, breed, areaQuery]);
 
     const breedOptions = useMemo(() => {
         const set = new Set();
@@ -214,7 +227,7 @@ export default function LostAndFoundMainGrid({ mode }) {
     const clearFilters = () => {
         setMicrochipQuery("");
         setSort(DEFAULT_SORT);
-        setSpecies({ ...DEFAULT_SPECIES });
+        setSpeciesLabel("");
         setSex({ ...DEFAULT_SEX });
         setBreed("");
         setAreaQuery("");
@@ -232,9 +245,7 @@ export default function LostAndFoundMainGrid({ mode }) {
             return parseDdMmYyyyToTs(date, time);
         };
 
-        const selectedSpeciesKeys = Object.entries(species)
-            .filter(([, v]) => Boolean(v))
-            .map(([k]) => k);
+        const qSpecies = normalizeText(speciesLabel);
 
         const filterMale = Boolean(sex.male);
         const filterFemale = Boolean(sex.female);
@@ -256,9 +267,9 @@ export default function LostAndFoundMainGrid({ mode }) {
                 if (petBreed !== normalizeText(breed)) return false;
             }
 
-            if (selectedSpeciesKeys.length > 0) {
-                const key = getSpeciesKeyFromGreekLabel(d?.petType || d?.pet?.species);
-                if (!key || !selectedSpeciesKeys.includes(key)) return false;
+            if (qSpecies) {
+                const label = normalizeText(getSpeciesLabelFromDeclaration(d));
+                if (!label || label !== qSpecies) return false;
             }
 
             if (filterMale || filterFemale) {
@@ -298,7 +309,73 @@ export default function LostAndFoundMainGrid({ mode }) {
         }
 
         return list;
-    }, [declarations, microchipQuery, areaQuery, species, sex, breed, sort, mode]);
+    }, [declarations, microchipQuery, areaQuery, speciesLabel, sex, breed, sort, mode]);
+
+    const speciesCounts = useMemo(() => {
+        const qMicro = normalizeText(microchipQuery);
+        const qArea = normalizeText(areaQuery);
+
+        const filterMale = Boolean(sex.male);
+        const filterFemale = Boolean(sex.female);
+
+        const map = new Map();
+
+        for (const d of declarations || []) {
+            if (mode === "lost" && d?.type !== "LOSS") continue;
+            if (mode === "found" && d?.type !== "FOUND") continue;
+
+            const micro = normalizeText(d?.pet?.microchip || d?.microchip);
+            if (qMicro && !micro.includes(qMicro)) continue;
+
+            const address = normalizeText(d?.location?.address);
+            const region = normalizeText(d?.location?.region);
+            const areaHaystack = `${region} ${address}`.trim();
+            if (qArea && !areaHaystack.includes(qArea)) continue;
+
+            if (breed) {
+                const petBreed = normalizeText(d?.pet?.breed);
+                if (petBreed !== normalizeText(breed)) continue;
+            }
+
+            if (filterMale || filterFemale) {
+                const gender = normalizeText(d?.pet?.gender);
+                const isMale = gender.includes("αρσ");
+                const isFemale = gender.includes("θηλ");
+                if (filterMale && !isMale && !filterFemale) continue;
+                if (filterFemale && !isFemale && !filterMale) continue;
+                if (filterMale && filterFemale) {
+                    if (!isMale && !isFemale) continue;
+                }
+            }
+
+            const label = getSpeciesLabelFromDeclaration(d);
+            const norm = normalizeText(label);
+            if (!norm) continue;
+
+            const prev = map.get(norm);
+            if (prev) {
+                prev.count += 1;
+            } else {
+                map.set(norm, { label, count: 1 });
+            }
+        }
+
+        return Array.from(map.values()).sort((a, b) => {
+            if (b.count !== a.count) return b.count - a.count;
+            return String(a.label).localeCompare(String(b.label), "el");
+        });
+    }, [declarations, microchipQuery, areaQuery, sex, breed, mode]);
+
+    const totalInSpeciesBase = useMemo(() => {
+        return (speciesCounts || []).reduce((acc, item) => acc + (Number(item.count) || 0), 0);
+    }, [speciesCounts]);
+
+    useEffect(() => {
+        if (!speciesLabel) return;
+        const wanted = normalizeText(speciesLabel);
+        const exists = (speciesCounts || []).some((s) => normalizeText(s.label) === wanted);
+        if (!exists) setSpeciesLabel("");
+    }, [speciesCounts, speciesLabel]);
 
     const totalAnnouncements = filteredSorted.length;
     const pageCount = Math.max(1, Math.ceil(totalAnnouncements / PAGE_SIZE));
@@ -508,48 +585,36 @@ export default function LostAndFoundMainGrid({ mode }) {
                         </Button>
 
                         <Typography sx={{ fontWeight: 900, mb: 1, letterSpacing: "-0.2px" }}>Είδος Ζώου</Typography>
-                        <FormGroup sx={{ mb: 2 }}>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={species.dog}
-                                        onChange={(e) => setSpecies((s) => ({ ...s, dog: e.target.checked }))}
-                                        size="small"
-                                    />
-                                }
-                                label="Σκύλος"
-                            />
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={species.cat}
-                                        onChange={(e) => setSpecies((s) => ({ ...s, cat: e.target.checked }))}
-                                        size="small"
-                                    />
-                                }
-                                label="Γάτα"
-                            />
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={species.rabbit}
-                                        onChange={(e) => setSpecies((s) => ({ ...s, rabbit: e.target.checked }))}
-                                        size="small"
-                                    />
-                                }
-                                label="Κουνέλι"
-                            />
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={species.hamster}
-                                        onChange={(e) => setSpecies((s) => ({ ...s, hamster: e.target.checked }))}
-                                        size="small"
-                                    />
-                                }
-                                label="Χάμστερ"
-                            />
-                        </FormGroup>
+                        <FormControl
+                            size="small"
+                            fullWidth
+                            sx={{
+                                mb: 2,
+                                "& .MuiOutlinedInput-root": {
+                                    borderRadius: 2,
+                                    backgroundColor: "rgba(255,255,255,0.62)",
+                                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.6)",
+                                    "& fieldset": { borderColor: "rgba(0,0,0,0.12)" },
+                                    "&:hover fieldset": { borderColor: "rgba(0,0,0,0.20)" },
+                                    "&.Mui-focused fieldset": { borderColor: "rgba(0,0,0,0.28)" },
+                                },
+                            }}
+                        >
+                            <Select
+                                value={speciesLabel}
+                                onChange={(e) => setSpeciesLabel(e.target.value)}
+                                displayEmpty
+                            >
+                                <MenuItem value="">
+                                    <em>Όλα τα είδη ({totalInSpeciesBase})</em>
+                                </MenuItem>
+                                {speciesCounts.map((s) => (
+                                    <MenuItem key={normalizeText(s.label)} value={s.label}>
+                                        {s.label} ({s.count})
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
 
                         <Typography sx={{ fontWeight: 900, mb: 1, letterSpacing: "-0.2px" }}>Φυλή Ζώου</Typography>
                         <FormControl
@@ -698,6 +763,8 @@ export default function LostAndFoundMainGrid({ mode }) {
                                         return shortened ? `${short}…` : short;
                                     })();
 
+                                    const createdRelative = formatRelativeCreatedLabel(card?.createdAt, card?.createdTime);
+
                                     return (
                                 <Box
                                     key={card.id}
@@ -768,6 +835,18 @@ export default function LostAndFoundMainGrid({ mode }) {
                                             gap: 1,
                                         }}
                                     >
+                                        {createdRelative && (
+                                            <Typography
+                                                sx={{
+                                                    fontSize: 11,
+                                                    fontWeight: 900,
+                                                    opacity: 0.7,
+                                                    overflowWrap: "anywhere",
+                                                }}
+                                            >
+                                                Δημιουργήθηκε: {createdRelative}
+                                            </Typography>
+                                        )}
                                         <Box
                                             sx={{
                                                 display: "flex",
@@ -795,6 +874,7 @@ export default function LostAndFoundMainGrid({ mode }) {
                                                 </Typography>
                                             </Box>
                                         </Box>
+
                                     </Box>
                                 </Box>
                                     );
@@ -949,22 +1029,20 @@ export default function LostAndFoundMainGrid({ mode }) {
                                 <Box sx={{ width: 36, flex: "0 0 auto" }} />
                             </Box>
 
-                            {mode === "found" && (
-                                <Box
-                                    sx={{
-                                        mt: 0.75,
-                                        display: "flex",
-                                        flexWrap: "wrap",
-                                        gap: 1,
-                                        alignItems: "center",
-                                        color: "rgba(0,0,0,0.75)",
-                                    }}
-                                >
-                                    <Typography sx={{ fontSize: 11, fontWeight: 800, overflowWrap: "anywhere" }}>
-                                        Δημιουργήθηκε: {selectedDeclaration?.createdAt ?? "-"}{selectedDeclaration?.createdTime ? `, ${selectedDeclaration.createdTime}` : ""}
-                                    </Typography>
-                                </Box>
-                            )}
+                            <Box
+                                sx={{
+                                    mt: 0.75,
+                                    display: "flex",
+                                    flexWrap: "wrap",
+                                    gap: 1,
+                                    alignItems: "center",
+                                    color: "rgba(0,0,0,0.75)",
+                                }}
+                            >
+                                <Typography sx={{ fontSize: 11, fontWeight: 800, overflowWrap: "anywhere" }}>
+                                    Δημιουργήθηκε: {selectedDeclaration?.createdAt ?? "-"}{selectedDeclaration?.createdTime ? `, ${selectedDeclaration.createdTime}` : ""}
+                                </Typography>
+                            </Box>
                         </Box>
 
                         <Box
@@ -1194,7 +1272,7 @@ export default function LostAndFoundMainGrid({ mode }) {
                                         </>
                                     )}
 
-                                    {mode === "found" && (Number.isFinite(selectedDeclaration?.location?.lat) || Number.isFinite(selectedDeclaration?.location?.lon)) && (
+                                    {(Number.isFinite(selectedDeclaration?.location?.lat) || Number.isFinite(selectedDeclaration?.location?.lon)) && (
                                         <Typography sx={{ fontSize: 11, fontWeight: 700, opacity: 0.7, mb: 2, overflowWrap: "anywhere" }}>
                                             Συντεταγμένες: {Number.isFinite(selectedDeclaration?.location?.lat) ? selectedDeclaration.location.lat : "-"},{" "}
                                             {Number.isFinite(selectedDeclaration?.location?.lon) ? selectedDeclaration.location.lon : "-"}
@@ -1238,9 +1316,52 @@ export default function LostAndFoundMainGrid({ mode }) {
                             {/* Right column */}
                             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                                 <Box>
-                                    <Typography sx={{ fontWeight: 900, fontSize: 16, mb: 1 }}>
-                                        Στοιχεία κατοικιδίου
-                                    </Typography>
+                                    {mode === "lost" ? (
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                alignItems: "baseline",
+                                                flexWrap: "wrap",
+                                                gap: 1,
+                                                mb: 1,
+                                            }}
+                                        >
+                                            <Typography sx={{ fontWeight: 900, fontSize: 16 }}>
+                                                Στοιχεία κατοικιδίου
+                                            </Typography>
+                                        </Box>
+                                    ) : (
+                                        <Typography sx={{ fontWeight: 900, fontSize: 16, mb: 1 }}>
+                                            Στοιχεία κατοικιδίου
+                                        </Typography>
+                                    )}
+
+                                    {mode === "lost" && hasText(pet?.microchip) && (
+                                        <>
+                                            <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
+                                                Microchip
+                                            </Typography>
+                                            <Box
+                                                sx={{
+                                                    minHeight: 34,
+                                                    height: "auto",
+                                                    borderRadius: 2,
+                                                    backgroundColor: "rgba(251,243,214,0.65)",
+                                                    border: "1px solid rgba(0,0,0,0.10)",
+                                                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55)",
+                                                    mb: 1.5,
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    px: 1.5,
+                                                    py: 0.75,
+                                                }}
+                                            >
+                                                <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
+                                                    {pet?.microchip}
+                                                </Typography>
+                                            </Box>
+                                        </>
+                                    )}
 
                                     {(mode === "found" && hasPetType) ? (
                                         <>
@@ -1294,111 +1415,269 @@ export default function LostAndFoundMainGrid({ mode }) {
                                       </>
                                     )}
 
-                                    <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 2, mb: 1.5 }}>
-                                        {hasBreed && (
-                                        <Box>
-                                            <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
-                                                Φυλή
-                                            </Typography>
+                                    {mode === "lost" ? (
+                                        <>
+                                            {/* Row 1: Name + Breed */}
                                             <Box
                                                 sx={{
-                                                    minHeight: 34,
-                                                    height: "auto",
-                                                    borderRadius: 2,
-                                                    backgroundColor: "rgba(251,243,214,0.65)",
-                                                    border: "1px solid rgba(0,0,0,0.10)",
-                                                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55)",
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    px: 1.5,
-                                                    py: 0.75,
+                                                    display: "grid",
+                                                    gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+                                                    gap: 2,
+                                                    mb: 1.5,
                                                 }}
                                             >
-                                                <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
-                                                    {pet?.breed}
-                                                </Typography>
-                                            </Box>
-                                        </Box>
-                                        )}
-                                        {hasGender && (
-                                        <Box>
-                                            <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
-                                                Φύλο
-                                            </Typography>
-                                            <Box
-                                                sx={{
-                                                    minHeight: 34,
-                                                    height: "auto",
-                                                    borderRadius: 2,
-                                                    backgroundColor: "rgba(251,243,214,0.65)",
-                                                    border: "1px solid rgba(0,0,0,0.10)",
-                                                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55)",
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    px: 1.5,
-                                                    py: 0.75,
-                                                }}
-                                            >
-                                                <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
-                                                    {pet?.gender}
-                                                </Typography>
-                                            </Box>
-                                        </Box>
-                                        )}
-                                    </Box>
+                                                {hasText(pet?.name) && (
+                                                    <Box>
+                                                        <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
+                                                            Όνομα
+                                                        </Typography>
+                                                        <Box
+                                                            sx={{
+                                                                minHeight: 34,
+                                                                height: "auto",
+                                                                borderRadius: 2,
+                                                                backgroundColor: "rgba(251,243,214,0.65)",
+                                                                border: "1px solid rgba(0,0,0,0.10)",
+                                                                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55)",
+                                                                display: "flex",
+                                                                alignItems: "center",
+                                                                px: 1.5,
+                                                                py: 0.75,
+                                                            }}
+                                                        >
+                                                            <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
+                                                                {pet?.name}
+                                                            </Typography>
+                                                        </Box>
+                                                    </Box>
+                                                )}
 
-                                    <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 2, mb: 1.5 }}>
-                                        {hasColor && (
-                                        <Box>
-                                            <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
-                                                Χρώμα
-                                            </Typography>
+                                                {hasBreed && (
+                                                    <Box>
+                                                        <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
+                                                            Φυλή
+                                                        </Typography>
+                                                        <Box
+                                                            sx={{
+                                                                minHeight: 34,
+                                                                height: "auto",
+                                                                borderRadius: 2,
+                                                                backgroundColor: "rgba(251,243,214,0.65)",
+                                                                border: "1px solid rgba(0,0,0,0.10)",
+                                                                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55)",
+                                                                display: "flex",
+                                                                alignItems: "center",
+                                                                px: 1.5,
+                                                                py: 0.75,
+                                                            }}
+                                                        >
+                                                            <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
+                                                                {pet?.breed}
+                                                            </Typography>
+                                                        </Box>
+                                                    </Box>
+                                                )}
+                                            </Box>
+
+                                            {/* Row 2: Gender + Color */}
                                             <Box
                                                 sx={{
-                                                    minHeight: 34,
-                                                    height: "auto",
-                                                    borderRadius: 2,
-                                                    backgroundColor: "rgba(251,243,214,0.65)",
-                                                    border: "1px solid rgba(0,0,0,0.10)",
-                                                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55)",
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    px: 1.5,
-                                                    py: 0.75,
+                                                    display: "grid",
+                                                    gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+                                                    gap: 2,
+                                                    mb: 1.5,
                                                 }}
                                             >
-                                                <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
-                                                    {pet?.color}
-                                                </Typography>
+                                                {hasGender && (
+                                                    <Box>
+                                                        <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
+                                                            Φύλο
+                                                        </Typography>
+                                                        <Box
+                                                            sx={{
+                                                                minHeight: 34,
+                                                                height: "auto",
+                                                                borderRadius: 2,
+                                                                backgroundColor: "rgba(251,243,214,0.65)",
+                                                                border: "1px solid rgba(0,0,0,0.10)",
+                                                                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55)",
+                                                                display: "flex",
+                                                                alignItems: "center",
+                                                                px: 1.5,
+                                                                py: 0.75,
+                                                            }}
+                                                        >
+                                                            <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
+                                                                {pet?.gender}
+                                                            </Typography>
+                                                        </Box>
+                                                    </Box>
+                                                )}
+
+                                                {hasColor && (
+                                                    <Box>
+                                                        <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
+                                                            Χρώμα
+                                                        </Typography>
+                                                        <Box
+                                                            sx={{
+                                                                minHeight: 34,
+                                                                height: "auto",
+                                                                borderRadius: 2,
+                                                                backgroundColor: "rgba(251,243,214,0.65)",
+                                                                border: "1px solid rgba(0,0,0,0.10)",
+                                                                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55)",
+                                                                display: "flex",
+                                                                alignItems: "center",
+                                                                px: 1.5,
+                                                                py: 0.75,
+                                                            }}
+                                                        >
+                                                            <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
+                                                                {pet?.color}
+                                                            </Typography>
+                                                        </Box>
+                                                    </Box>
+                                                )}
                                             </Box>
-                                        </Box>
-                                        )}
-                                        {hasSize && (
-                                        <Box>
-                                            <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
-                                                Μέγεθος
-                                            </Typography>
-                                            <Box
-                                                sx={{
-                                                    minHeight: 34,
-                                                    height: "auto",
-                                                    borderRadius: 2,
-                                                    backgroundColor: "rgba(251,243,214,0.65)",
-                                                    border: "1px solid rgba(0,0,0,0.10)",
-                                                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55)",
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    px: 1.5,
-                                                    py: 0.75,
-                                                }}
-                                            >
-                                                <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
-                                                    {pet?.size || pet?.weight}
-                                                </Typography>
+
+                                            {/* Rest as-is: keep Size below */}
+                                            {hasSize && (
+                                                <Box sx={{ mb: 1.5 }}>
+                                                    <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
+                                                        Μέγεθος
+                                                    </Typography>
+                                                    <Box
+                                                        sx={{
+                                                            minHeight: 34,
+                                                            height: "auto",
+                                                            borderRadius: 2,
+                                                            backgroundColor: "rgba(251,243,214,0.65)",
+                                                            border: "1px solid rgba(0,0,0,0.10)",
+                                                            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55)",
+                                                            display: "flex",
+                                                            alignItems: "center",
+                                                            px: 1.5,
+                                                            py: 0.75,
+                                                        }}
+                                                    >
+                                                        <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
+                                                            {pet?.size || pet?.weight}
+                                                        </Typography>
+                                                    </Box>
+                                                </Box>
+                                            )}
+                                        </>
+                                    ) : (
+                                        <>
+                                            {/* FOUND layout (unchanged) */}
+                                            <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 2, mb: 1.5 }}>
+                                                {hasBreed && (
+                                                <Box>
+                                                    <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
+                                                        Φυλή
+                                                    </Typography>
+                                                    <Box
+                                                        sx={{
+                                                            minHeight: 34,
+                                                            height: "auto",
+                                                            borderRadius: 2,
+                                                            backgroundColor: "rgba(251,243,214,0.65)",
+                                                            border: "1px solid rgba(0,0,0,0.10)",
+                                                            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55)",
+                                                            display: "flex",
+                                                            alignItems: "center",
+                                                            px: 1.5,
+                                                            py: 0.75,
+                                                        }}
+                                                    >
+                                                        <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
+                                                            {pet?.breed}
+                                                        </Typography>
+                                                    </Box>
+                                                </Box>
+                                                )}
+                                                {hasGender && (
+                                                <Box>
+                                                    <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
+                                                        Φύλο
+                                                    </Typography>
+                                                    <Box
+                                                        sx={{
+                                                            minHeight: 34,
+                                                            height: "auto",
+                                                            borderRadius: 2,
+                                                            backgroundColor: "rgba(251,243,214,0.65)",
+                                                            border: "1px solid rgba(0,0,0,0.10)",
+                                                            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55)",
+                                                            display: "flex",
+                                                            alignItems: "center",
+                                                            px: 1.5,
+                                                            py: 0.75,
+                                                        }}
+                                                    >
+                                                        <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
+                                                            {pet?.gender}
+                                                        </Typography>
+                                                    </Box>
+                                                </Box>
+                                                )}
                                             </Box>
-                                        </Box>
-                                        )}
-                                    </Box>
+
+                                            <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 2, mb: 1.5 }}>
+                                                {hasColor && (
+                                                <Box>
+                                                    <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
+                                                        Χρώμα
+                                                    </Typography>
+                                                    <Box
+                                                        sx={{
+                                                            minHeight: 34,
+                                                            height: "auto",
+                                                            borderRadius: 2,
+                                                            backgroundColor: "rgba(251,243,214,0.65)",
+                                                            border: "1px solid rgba(0,0,0,0.10)",
+                                                            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55)",
+                                                            display: "flex",
+                                                            alignItems: "center",
+                                                            px: 1.5,
+                                                            py: 0.75,
+                                                        }}
+                                                    >
+                                                        <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
+                                                            {pet?.color}
+                                                        </Typography>
+                                                    </Box>
+                                                </Box>
+                                                )}
+                                                {hasSize && (
+                                                <Box>
+                                                    <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
+                                                        Μέγεθος
+                                                    </Typography>
+                                                    <Box
+                                                        sx={{
+                                                            minHeight: 34,
+                                                            height: "auto",
+                                                            borderRadius: 2,
+                                                            backgroundColor: "rgba(251,243,214,0.65)",
+                                                            border: "1px solid rgba(0,0,0,0.10)",
+                                                            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55)",
+                                                            display: "flex",
+                                                            alignItems: "center",
+                                                            px: 1.5,
+                                                            py: 0.75,
+                                                        }}
+                                                    >
+                                                        <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
+                                                            {pet?.size || pet?.weight}
+                                                        </Typography>
+                                                    </Box>
+                                                </Box>
+                                                )}
+                                            </Box>
+                                        </>
+                                    )}
                                 </Box>
 
                                 <Box>
@@ -1487,6 +1766,88 @@ export default function LostAndFoundMainGrid({ mode }) {
                                     )}
 
                                     {mode === "found" && hasAltContact && (
+                                        <>
+                                            <Typography sx={{ fontWeight: 900, fontSize: 14, mt: 2, mb: 1 }}>
+                                                Εναλλακτική επικοινωνία
+                                            </Typography>
+
+                                            {hasText(altContact?.name) && (
+                                                <>
+                                                    <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
+                                                        Όνομα
+                                                    </Typography>
+                                                    <Box
+                                                        sx={{
+                                                            minHeight: 34,
+                                                            height: "auto",
+                                                            borderRadius: 1.2,
+                                                            backgroundColor: "#eef0d2",
+                                                            mb: 1.5,
+                                                            display: "flex",
+                                                            alignItems: "center",
+                                                            px: 1.5,
+                                                            py: 0.75,
+                                                        }}
+                                                    >
+                                                        <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
+                                                            {altContact?.name}
+                                                        </Typography>
+                                                    </Box>
+                                                </>
+                                            )}
+
+                                            {hasText(altContact?.phone) && (
+                                                <>
+                                                    <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
+                                                        Τηλέφωνο
+                                                    </Typography>
+                                                    <Box
+                                                        sx={{
+                                                            minHeight: 34,
+                                                            height: "auto",
+                                                            borderRadius: 1.2,
+                                                            backgroundColor: "#eef0d2",
+                                                            mb: 1.5,
+                                                            display: "flex",
+                                                            alignItems: "center",
+                                                            px: 1.5,
+                                                            py: 0.75,
+                                                        }}
+                                                    >
+                                                        <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
+                                                            {altContact?.phone}
+                                                        </Typography>
+                                                    </Box>
+                                                </>
+                                            )}
+
+                                            {hasText(altContact?.email) && (
+                                                <>
+                                                    <Typography sx={{ fontSize: 12, fontWeight: 800, mb: 0.75 }}>
+                                                        Email
+                                                    </Typography>
+                                                    <Box
+                                                        sx={{
+                                                            minHeight: 34,
+                                                            height: "auto",
+                                                            borderRadius: 1.2,
+                                                            backgroundColor: "#eef0d2",
+                                                            display: "flex",
+                                                            alignItems: "center",
+                                                            px: 1.5,
+                                                            py: 0.75,
+                                                        }}
+                                                    >
+                                                        <Typography sx={{ fontSize: 12, fontWeight: 800, opacity: 0.75, overflowWrap: "anywhere" }}>
+                                                            {altContact?.email}
+                                                        </Typography>
+                                                    </Box>
+                                                </>
+                                            )}
+                                        </>
+                                    )}
+
+                                    {mode === "lost" && hasAltContact && (
                                         <>
                                             <Typography sx={{ fontWeight: 900, fontSize: 14, mt: 2, mb: 1 }}>
                                                 Εναλλακτική επικοινωνία
