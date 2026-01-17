@@ -694,46 +694,6 @@ export default function LostAndFoundMainGrid({ mode }) {
                                 ),
                             }}
                         />
-
-                        <Button
-                            fullWidth
-                            variant="outlined"
-                            startIcon={<LocationOnIcon />}
-                            sx={{
-                                mb: 2,
-                                borderRadius: 999,
-                                backgroundColor: "rgba(255,255,255,0.45)",
-                                borderColor: "rgba(255,255,255,0.55)",
-                                color: "#1a1a1a",
-                                textTransform: "none",
-                                fontWeight: 600,
-                                boxShadow: "0 10px 22px rgba(0,0,0,0.10)",
-                                backdropFilter: "saturate(160%) blur(10px)",
-                                WebkitBackdropFilter: "saturate(160%) blur(10px)",
-                                "&:hover": { backgroundColor: "rgba(255,255,255,0.60)", borderColor: "rgba(255,255,255,0.70)" },
-                            }}
-                        >
-                            Χρήση τρέχουσας τοποθεσίας
-                        </Button>
-
-                        <Button
-                            fullWidth
-                            variant="contained"
-                            startIcon={<SearchIcon />}
-                            sx={{
-                                backgroundColor: "rgba(155, 184, 211, 0.95)",
-                                color: "#1a1a1a",
-                                textTransform: "none",
-                                borderRadius: 999,
-                                fontWeight: 800,
-                                py: 1.25,
-                                boxShadow: "0 14px 28px rgba(0,0,0,0.12)",
-                                "&:hover": { backgroundColor: "rgba(155, 184, 211, 0.95)", filter: "brightness(0.96)" },
-                            }}
-                        >
-                            Αναζήτηση
-                        </Button>
-
                     </Box>
 
                     {/* Right Results */}
