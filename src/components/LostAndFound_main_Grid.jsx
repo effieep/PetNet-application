@@ -142,7 +142,7 @@ export default function LostAndFoundMainGrid({ mode }) {
                 // For now: only wire LOSS declarations as requested.
                 const desiredType = mode === "lost" ? "LOSS" : "FOUND";
                 const [declRes, petsRes, usersRes] = await Promise.all([
-                    fetch(`${API_URL}/declarations?type=${encodeURIComponent(desiredType)}`, { signal: controller.signal }),
+                    fetch(`${API_URL}/declarations?type=${encodeURIComponent(desiredType)}&status=SUBMITTED`, { signal: controller.signal }),
                     fetch(`${API_URL}/pets`, { signal: controller.signal }),
                     fetch(`${API_URL}/users`, { signal: controller.signal }),
                 ]);
