@@ -57,7 +57,7 @@ const StepLogin = ({ isLoggedIn, user, onOpenLogin, logout }) => (
             onClick={logout}
             sx={{ px: 4, py: 1, fontWeight: "bold", display: isLoggedIn ? 'block' : 'none', ml:2 }}
           >
-            Αποσύνδεση
+            Αποσυνδεση
           </Button>
         </Box>
       </>
@@ -969,6 +969,7 @@ export default function ReportLostStepper() {
           />
           <Button
             variant="contained"
+            disabled={!tempSavedDataId}
             onClick={handleTempDelete}
             sx={{ fontWeight: "bold", height: "5vh", textTransform: "none", 
               color: '#ffffffff',
