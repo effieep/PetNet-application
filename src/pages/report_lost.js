@@ -281,7 +281,7 @@ const StepContactDetails = ({ formData, updateField, errors, user, contactPreset
         <Grid item xs={12}>
           <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
             <Button variant="outlined" onClick={onToggleAltContact} sx={{ fontWeight: 700 }}>
-              {showAltContact ? "Αφαίρεση επιπλέον επαφής" : "Προσθήκη επιπλέον επαφής"}
+              {showAltContact ? "ΑΦΑΙΡΕΣΗ ΕΠΙΠΛΕΟΝ ΕΠΑΦΗΣ" : "ΠΡΟΣΘΗΚΗ ΕΠΙΠΛΕΟΝ ΕΠΑΦΗΣ"}
             </Button>
           </Box>
         </Grid>

@@ -43,7 +43,7 @@ const DeclarationPreview = ({ open, onClose, declaration, foundOnClick }) => {
     // Υποθέτουμε ότι το parent component έχει κάνει join το pet object
     const pet = declaration.pet || {};
     // Αν υπάρχει φωτογραφία στο array, παίρνουμε την πρώτη
-    const photoUrl = pet.photoUrl || null;
+    const photoUrl = isLoss ? pet.photoUrl || null : declaration.pet.photos ? declaration.pet.photos[0] || null : null;
 
     // Στοιχεία Επικοινωνίας
     const contact = declaration.contact || {};

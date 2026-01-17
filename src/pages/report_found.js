@@ -168,7 +168,7 @@ const StepAnimalDetails = ({ formData, updateField, errors, onAddPhotos, onRemov
               Φωτογραφίες (υποχρεωτικό)
             </Typography>
             <Button component="label" variant="outlined" sx={{ fontWeight: 700 }}>
-              Προσθήκη φωτογραφιών
+              ΠΡΟΣΘΗΚΗ ΦΩΤΟΓΡΑΦΙΩΝ
               <input
                 hidden
                 type="file"
@@ -332,7 +332,7 @@ const StepContactDetails = ({
         <Grid item xs={12}>
           <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
             <Button variant="outlined" onClick={onToggleAltContact} sx={{ fontWeight: 700 }}>
-              {showAltContact ? "Αφαίρεση επιπλέον επαφής" : "Προσθήκη επιπλέον επαφής"}
+              {showAltContact ? "ΑΦΑΙΡΕΣΗ ΕΠΙΠΛΕΟΝ ΕΠΑΦΗΣ" : "ΠΡΟΣΘΗΚΗ ΕΠΙΠΛΕΟΝ ΕΠΑΦΗΣ"}
             </Button>
           </Box>
         </Grid>

@@ -158,7 +158,7 @@ const VetDetails = () => {
                 {/* Αξιολόγηση */}
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2, mt:2, justifyContent: { xs: 'center', md: 'flex-start' } }}>
                     <Rating value={ratingValue} precision={0.5} readOnly />
-                    <Typography fontWeight="bold">{ratingValue} / 5</Typography>
+                    <Typography fontWeight="bold">{ratingValue.toFixed(1)} / 5</Typography>
                     <Typography color="text.secondary">({reviewsCount} αξιολογήσεις)</Typography>
                 </Box>
 

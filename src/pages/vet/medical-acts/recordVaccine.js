@@ -104,6 +104,9 @@
             date.setDate(date.getDate() + 7);
             nextDate = date.toISOString().split('T')[0];
           }
+          if( newValue === 'Εφάπαξ' ) {
+            nextDate = 'Δεν ορίζεται';
+          }
         }
       }
 
@@ -123,6 +126,9 @@
         if (data.dose && data.dose === 'Εβδομαδιαίως') {
           date.setDate(date.getDate() + 7);
           nextDate = date.toISOString().split('T')[0];
+        }
+        if( data.dose && data.dose === 'Εφάπαξ' ) {
+          nextDate = 'Δεν ορίζεται';
         }
       }
 
@@ -355,7 +361,8 @@
               {isRepeating && [
                 <MenuItem key="weekly" value="Εβδομαδιαίως">Εβδομαδιαίως</MenuItem>,
                 <MenuItem key="monthly" value="Μηνιαίως">Μηνιαίως</MenuItem>,
-                <MenuItem key="yearly" value="Ετησίως">Ετησίως</MenuItem>
+                <MenuItem key="yearly" value="Ετησίως">Ετησίως</MenuItem>,
+                <MenuItem key="non-repeating" value="Εφάπαξ">Εφάπαξ</MenuItem>
               ]}
             </TextField>
           </Box>
