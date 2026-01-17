@@ -325,7 +325,7 @@ function NavBar() {
             }}
           >
             {[
-              { label: "Δυνατότητες", link: "/vet" },
+              { label: "Δυνατότητες", link: "/owner" },
               { label: "Αναζήτηση Κτηνιάτρου", link: "/owner/search-vet" },
               { label: "Χάθηκε/Βρέθηκε Ζώο", link: "/lost-found" },
               { label: "Το προφίλ μου", link: "/owner/info" }
